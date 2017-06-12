@@ -5,6 +5,8 @@
 
 - [X] Basic integration tests for contrib
 
+- [ ] Rename contrib to `builtins`
+
 - [ ] QoL settings improvement
     - [ ] Make settings like Django so you import where you need instead of
       pass around a "config" object
@@ -38,8 +40,6 @@
 - [ ] Fix running unoconv within venv
     - [ ] Check if in virtualenv and ensure environments Python is used when
       doing subprocess calls
-
-- [ ] Rename contrib to `builtins` (?)
 
 - [ ] QoL conversion grid improvements:
     - [ ] Think more about how to make extension "supersede" mimetype in a

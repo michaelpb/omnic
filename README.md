@@ -5,7 +5,7 @@
 
 # Omni-Converter - omnic
 
-![Travis CI](https://travis-ci.org/michaelpb/omnithumb.svg?branch=master)
+![Travis CI](https://travis-ci.org/michaelpb/omnic.svg?branch=master)
 
 Mostly stateless microservice for generating on-the-fly thumbs and previews of
 a wide variety of file types.
@@ -24,7 +24,8 @@ Depending on your needs, you will probably want to install a variety of other
 system-level package conversion programs. This might include:
 
 - `unoconv` - for converting many document formats
-- `imagemagick` - for image conversion and manipulation
+- `imagemagick` - for raster image conversion and manipulation
+- `inkscape` - for vector conversion and manipulation
 
 Additionally, converters specific to certain domains might be useful:
 
@@ -48,7 +49,8 @@ TODO: Stub
 ## 2. Media conversion server web-framework
 
 Omnic is written in a very modular format, with a structure inspired partially
-by Django. This means you can create a
+by Django. This allows you to tailor-make your own converters, using it as a
+library, without forking. You can easily swap out any part, also.
 
 TODO: Stub
 
@@ -57,9 +59,10 @@ TODO: Stub
 
 While OmniConverter was written for the web, the server components are
 optional. You can install without them. The handy `omnic` command is exposed in
-the CLI to, thus exposing the power of 
+the CLI to, thus exposing the power of
 
-Omnic in this capacity functions simply as a web of "glue" around a variety of 
+Omnic in this capacity functions simply as a web of very handy "glue" around
+the other conversion programs used.
 
 TODO: Stub
 
