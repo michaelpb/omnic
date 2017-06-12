@@ -3,9 +3,9 @@
 ## Top priority
 - [X] Worker unit tests
 
-- [X] Basic integration tests for contrib
+- [X] Basic integration tests for builtin
 
-- [ ] Rename contrib to `builtins`
+- [X] Rename to `builtin` (from contrib)
 
 - [ ] QoL settings improvement
     - [ ] Make settings like Django so you import where you need instead of
@@ -19,7 +19,7 @@
 
 - [ ] Fix setup.py packaging, set up pypi
     - [ ] Add to setup.py only the minimum needed packages
-    - [ ] Document which packages needed for which contrib stuff
+    - [ ] Document which packages needed for which builtin stuff
 
 ## Done
 - [X] Finish doc -> thumb proof of concept
@@ -57,7 +57,7 @@
     - [ ] Replace all file system calls with aiofiles
     - [ ] Replace all spawn system calls with asyncio equivalent
 
-- [ ] Build out full integration tests for contrib
+- [ ] Build out full integration tests for builtin
     - [ ] Mock out all spawn calls
     - [ ] CLI interface
 
@@ -67,7 +67,7 @@
     - [X] Integrate JSC3D with node canvas
     - [X] STL -> PNG
 
-# Build out contrib
+# Build out builtin
 
 ## Thumb / media proof of concept
 - [X] Build out the thumb converter
@@ -79,7 +79,7 @@
 
 - [X] Build out a default settings so it can be run for the original demo
 
-- [X] Contrib placeholder
+- [X] Builtin placeholder
 
 - [X] Delete old thumb demo code
 

@@ -1,9 +1,9 @@
-from omnic.contrib.converters.thumb import PILThumb
-from omnic.contrib.converters.document import Unoconv, ImageMagickPageRasterizer
-from omnic.contrib.converters.mesh import MeshLabConverter, Jsc3dRenderer
-from omnic.contrib.converters.chemical import OpenBabelConverter
-from omnic.contrib.converters.vector import InkscapeConverter, InkscapeRasterizer
-from omnic.contrib.responses.placeholders import PNGPixel
+from omnic.builtin.converters.thumb import PILThumb
+from omnic.builtin.converters.document import Unoconv, ImageMagickPageRasterizer
+from omnic.builtin.converters.mesh import MeshLabConverter, Jsc3dRenderer
+from omnic.builtin.converters.chemical import OpenBabelConverter
+from omnic.builtin.converters.vector import InkscapeConverter, InkscapeRasterizer
+from omnic.builtin.responses.placeholders import PNGPixel
 
 # Set up logging format
 import logging
@@ -17,8 +17,8 @@ logging.basicConfig(
 )
 
 SERVICES = [
-    'omnic.contrib.services.media',
-    'omnic.contrib.services.test',
+    'omnic.builtin.services.media',
+    'omnic.builtin.services.test',
 ]
 
 CONVERTERS = [
