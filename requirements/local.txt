@@ -1,0 +1,7 @@
+# Local development dependencies go here
+-r test.txt
+
+Sphinx==1.5.5
+
+# improved REPL
+ipdb==0.10.3
