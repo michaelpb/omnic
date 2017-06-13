@@ -1,6 +1,6 @@
 '''
-Defines a service useful for writing unit tests or service availability
-checks
+Defines a service useful for writing automated tests or service availability
+checks. Serves up Magic Bytes of a few different file types.
 '''
 from sanic import Blueprint
 from sanic import response

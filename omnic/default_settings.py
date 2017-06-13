@@ -19,6 +19,7 @@ logging.basicConfig(
 SERVICES = [
     'omnic.builtin.services.media',
     'omnic.builtin.services.test',
+    'omnic.builtin.services.admin',
 ]
 
 CONVERTERS = [
