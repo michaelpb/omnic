@@ -20,6 +20,8 @@
 - [ ] Fix setup.py packaging, set up pypi
     - [ ] Add to setup.py only the minimum needed packages
     - [ ] Document which packages needed for which builtin stuff
+    - [ ] Build simple scaffolding
+    - [ ] Move requirements file to test dir
 
 ## Done
 - [X] Finish doc -> thumb proof of concept

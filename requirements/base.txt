@@ -4,12 +4,18 @@
 # Verified bug on Python 3.5.1
 wheel==0.29.0
 
-sanic==0.5.4
-Pillow==4.1.1
-python-magic==0.4.13
-
+# Hard dependencies:
 click==6.7
-requests==2.14.2
-
+python-magic==0.4.13
 aiohttp==2.1.0
 async_timeout==1.2.1
+
+# Medium dependencies
+sanic==0.5.4
+Pillow==4.1.1
+
+# Soft dependencies (only for admin module ATM)
+jinja2==2.9.6
+
+# Probably deprecated dependencies:
+requests==2.14.2
