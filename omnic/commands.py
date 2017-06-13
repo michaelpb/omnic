@@ -4,15 +4,16 @@ import os
 import click
 
 import asyncio
-from omnic import default_settings
 from omnic.conversion.utils import convert_local
 from omnic.utils.graph import DirectedGraph
 from omnic.types.typestring import TypeString
 from omnic.config import settings
 
+
 @click.group()
 def cmds():
     pass
+
 
 @cmds.command()
 @click.option('--port', default=os.environ.get('PORT', 8080), type=int,
@@ -27,11 +28,12 @@ def runserver(port, ip, debug):
     '''
     from omnic.server import runserver as do_runserver
     click.echo('Start server at: {}:{}'.format(ip, port))
-    # TODO: add reloading, add environ 
+    # TODO: add reloading, add environ
     do_runserver(settings, host=ip, port=port, debug=debug)
 
-    #register_all()
+    # register_all()
     #app.run(host=ip, port=port, debug=debug)
+
 
 @cmds.command()
 @click.argument('file', required=True)
@@ -51,6 +53,7 @@ def convert(file, type):
     except DirectedGraph.NoPath as e:
         print('ERROR: %s' % str(e))
     loop.close()
+
 
 def main():
     cmds()

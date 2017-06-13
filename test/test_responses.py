@@ -1,15 +1,13 @@
 """
 Tests for `responses` module.
 """
-import pytest
 
-import os
-from asyncio import iscoroutine, wait
 
-from omnic.types.typestring import TypeString, guess_typestring
+from omnic.types.typestring import TypeString
 from omnic.responses import placeholder
 
 from .testing_utils import Magic
+
 
 class ExampleBytesPlaceholder(placeholder.BytesPlaceholder):
     types = [
@@ -19,20 +17,25 @@ class ExampleBytesPlaceholder(placeholder.BytesPlaceholder):
     content_type = 'image/png'
     bytes = Magic.PNG_PIXEL_B
 
+
 class ExampleCustomPlaceholder(placeholder.Placeholder):
     types = [
         'JPEG',
         'JPG',
     ]
     content_type = 'image/jpeg'
+
     async def stream_response(self, response):
         response.write(Magic.JPEG)
+
 
 class ExampleWildcardPlaceholder(placeholder.Placeholder):
     types = all
     content_type = 'image/png'
+
     async def stream_response(self, response):
         response.write(Magic.PNG)
+
 
 class MockConfig:
     PLACEHOLDERS = [
@@ -40,6 +43,7 @@ class MockConfig:
         ExampleCustomPlaceholder,
         ExampleWildcardPlaceholder,
     ]
+
 
 class TestResponsePlaceholders:
     @classmethod
@@ -58,20 +62,21 @@ class TestResponsePlaceholders:
         ExampleWildcardPlaceholder.types = []
         ph = self.phs.get_placeholder(TypeString('nonexistent'))
         assert ph is None
-        ExampleWildcardPlaceholder.types = all # restore
+        ExampleWildcardPlaceholder.types = all  # restore
 
     def test_placeholder_stream_response(self):
         class mock_response:
             @staticmethod
             def write(data):
                 mock_response.data = data
+
             @staticmethod
             def stream(streamer=None, content_type=None):
                 mock_response.ct = content_type
                 # For now, too hard to test this bit
                 #coro = streamer(mock_response)
                 #assert iscoroutine(coro)
-                #yield from coro(mock_response)
+                # yield from coro(mock_response)
 
         self.phs.stream_response(TypeString('PNG'), mock_response)
         assert mock_response.ct == 'image/png'
@@ -84,4 +89,3 @@ class TestResponsePlaceholders:
         self.phs.stream_response(TypeString('lol'), mock_response)
         assert mock_response.ct == 'image/png'
         #assert mock_response.data == Magic.PNG
-

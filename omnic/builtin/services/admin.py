@@ -4,7 +4,6 @@ and testing conversions.
 '''
 from sanic import Blueprint
 from sanic import response
-from sanic import Sanic
 
 TEMPLATE = '''
 <!DOCTYPE HTML>
@@ -27,6 +26,7 @@ TEMPLATE = '''
 </html>
 '''
 
+
 class ServiceMeta:
     NAME = 'admin'
     blueprint = Blueprint(NAME)
@@ -35,8 +35,8 @@ class ServiceMeta:
     log = None
     enqueue = None
 
+
 @ServiceMeta.blueprint.get('/')
 async def admin_route(request):
     html = TEMPLATE
     return response.html(html)
-

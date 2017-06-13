@@ -1,15 +1,13 @@
-from base64 import b64decode
 
-from PIL import Image
 
 from sanic import Blueprint
 from sanic import response
-from sanic import Sanic
 
 from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource, TypedForeignResource, ForeignResource
+from omnic.types.resource import ForeignResource, TypedResource
 from omnic.conversion.utils import enqueue_conversion_path
 from omnic.config import settings
+
 
 class ServiceMeta:
     NAME = 'media'
@@ -18,6 +16,7 @@ class ServiceMeta:
     app = None
     log = None
     enqueue = None
+
 
 @ServiceMeta.blueprint.get('/<ts>/')
 async def media_route(request, ts):
@@ -34,8 +33,8 @@ async def media_route(request, ts):
     # Send back cache if it exists
     if target_resource.cache_exists():
         return await response.file(target_resource.cache_path, headers={
-                'Content-Type': target_ts.mimetype,
-            })
+            'Content-Type': target_ts.mimetype,
+        })
 
     # Check if already downloaded. If not, queue up download.
     if not foreign_res.cache_exists():
@@ -51,4 +50,3 @@ async def media_route(request, ts):
 
     # Respond with placeholder
     return settings.placeholders.stream_response(target_ts, response)
-

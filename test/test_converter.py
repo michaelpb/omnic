@@ -1,11 +1,9 @@
 """
 Tests for `resource` module.
 """
-import pytest
 
 import tempfile
 import os
-from base64 import b64decode
 
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource
@@ -16,6 +14,7 @@ URL = 'http://mocksite.local/file.png'
 
 # TODO: Fix these tests to be less integrate-y, mock out subprocess
 # calls
+
 
 class HardLinkConverter(converter.HardLinkConverter):
     inputs = ['JPEG']
@@ -47,6 +46,7 @@ class ExecConverterWithOutputFilename(ExecConverter):
         '$IN',
         '_tmp_output_file',
     ]
+
     def get_output_filename(self, in_res, out_res):
         return '_tmp_output_file'
 
@@ -76,6 +76,7 @@ class CleanUpAudio(converter.HardLinkConverter):
     inputs = ['MP3', 'WAV', 'OGG']
     outputs = ['cleaned.ogg']
 
+
 class MockConfig:
     PATH_GROUPING = 'MD5'
     PATH_PREFIX = ''
@@ -88,6 +89,7 @@ class MockConfig:
         CleanUpAudio,
     ]
 
+
 class ConverterTestBase:
     def setup_method(self, method):
         self.config = MockConfig
@@ -98,17 +100,23 @@ class ConverterTestBase:
             f.write(Magic.JPEG)
 
     def teardown_method(self, method):
-        try: os.remove(self.res.cache_path)
-        except OSError: pass
+        try:
+            os.remove(self.res.cache_path)
+        except OSError:
+            pass
         if self.res2:
-            try: os.remove(self.res2.cache_path)
-            except OSError: pass
+            try:
+                os.remove(self.res2.cache_path)
+            except OSError:
+                pass
         try:
             os.removedirs(os.path.dirname(self.res.cache_path))
-        except OSError: pass
+        except OSError:
+            pass
         try:
             os.removedirs(os.path.dirname(self.res2.cache_path))
-        except OSError: pass
+        except OSError:
+            pass
 
     def _check_convert(self):
         self.converter.convert_sync(self.res, self.res2)
@@ -152,15 +160,15 @@ class TestBasicConverterGraph(ConverterTestBase):
     def test_find_path(self):
         # Test typical case
         results = self._path('AVI', 'thumb.png:200x200')
-        assert len(results) == 2 # should be 2 steps
-        assert all(len(step) == 3 for step in results) # each step should be 3
+        assert len(results) == 2  # should be 2 steps
+        assert all(len(step) == 3 for step in results)  # each step should be 3
         assert results[0][0] is ConvertMovieToImage
         assert results[1][0] is ConvertImageToThumb
 
     def test_finds_shortest_path(self):
         # Ensure not taking long route
         results = self._path('STL', 'thumb.png:100x100')
-        assert len(results) == 2 # should be 2 steps
-        assert all(len(step) == 3 for step in results) # each step should be 3
+        assert len(results) == 2  # should be 2 steps
+        assert all(len(step) == 3 for step in results)  # each step should be 3
         assert results[0][0] is Convert3DGraphicsToImage
         assert results[1][0] is ConvertImageToThumb

@@ -7,12 +7,13 @@ import os
 
 from sanic import Blueprint
 from sanic import response
-from sanic import Sanic
+
 
 @functools.lru_cache(maxsize=None)
 def get_template(name):
     dirname = os.path.dirname(__file__)
     return open(os.path.join(dirname, 'templates', name)).read()
+
 
 def render(request, template_filename, extra_context={}):
     context = {}
@@ -22,14 +23,17 @@ def render(request, template_filename, extra_context={}):
     rendered = template_text.format(**context)
     return response.html(rendered)
 
+
 def get_shared_context(request):
     return {
-            'TEMPLATE_TOP': get_template('template_top.html'),
-            'TEMPLATE_BOTTOM': get_template('template_bottom.html'),
-        }
+        'TEMPLATE_TOP': get_template('template_top.html'),
+        'TEMPLATE_BOTTOM': get_template('template_bottom.html'),
+    }
+
 
 blueprint = Blueprint('admin')
+
+
 @blueprint.get('/')
 async def admin_route(request):
     return render(request, 'index.html', {})
-

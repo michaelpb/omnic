@@ -1,7 +1,6 @@
 """
 Tests for `typestring` module.
 """
-import pytest
 import tempfile
 
 import os
@@ -70,7 +69,8 @@ class TestQualifierArgumentsTypeString:
         assert self.ts.arguments == ('400x300',)
 
     def test_modify_basename(self):
-        assert self.ts.modify_basename('thing.xml') == 'thing.xml.400x300.thumb.png'
+        assert self.ts.modify_basename(
+            'thing.xml') == 'thing.xml.400x300.thumb.png'
         assert self.ts.modify_basename('thing') == 'thing.400x300.thumb.png'
 
 
@@ -79,7 +79,7 @@ class TestGuessPNGTypeString:
         self.fd = tempfile.NamedTemporaryFile(suffix='test.png', delete=False)
 
     def test_guesses_by_extension(self):
-        self.fd.close() # Empty file, no possible guess of mimetype, use ext
+        self.fd.close()  # Empty file, no possible guess of mimetype, use ext
         ts = guess_typestring(self.fd.name)
         assert ts.mimetype == 'image/png'
 

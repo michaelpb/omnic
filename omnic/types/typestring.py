@@ -1,13 +1,14 @@
 '''
 TypeString is a core class that extends mimetypes 
 '''
-import re
 import os
 import mimetypes
 
 import magic
 
-UNKNOWN_MIMETYPE = ('application/x-empty', 'application/octet-stream', 'text/plain')
+UNKNOWN_MIMETYPE = ('application/x-empty',
+                    'application/octet-stream', 'text/plain')
+
 
 class TypeString:
     def __init__(self, s):
@@ -33,7 +34,7 @@ class TypeString:
         elif self.ts_format.isupper():
             self.extension = self.ts_format
             fn = 'fn.%s' % self.extension
-            self.mimetype, _ = mimetypes.guess_type(fn) # discard encoding
+            self.mimetype, _ = mimetypes.guess_type(fn)  # discard encoding
         else:
             # Is qualifier, can't determine mimetype
             self.is_qualifier = True
@@ -53,6 +54,7 @@ class TypeString:
 
     def __repr__(self):
         return "TypeString(%s)" % repr(str(self))
+
 
 def guess_typestring(path):
     '''

@@ -1,8 +1,7 @@
 from PIL import Image
 
-from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource
 from omnic.conversion import converter
+
 
 class PILThumb(converter.Converter):
     inputs = [
@@ -46,4 +45,3 @@ class PILThumb(converter.Converter):
             width_s, _, height_s = arguments[0].partition('x')
             size = (int(width_s), int(height_s))
         self.generate_thumb(size, in_resource, out_resource)
-

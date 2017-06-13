@@ -10,6 +10,7 @@ from omnic.worker import Task
 
 app = None
 
+
 def register_service(settings, service):
     service.config = settings
     service.app = app
@@ -32,6 +33,7 @@ def register_service(settings, service):
         coro = settings.worker.enqueue(Task.CONVERT, args)
         asyncio.ensure_future(coro)
     service.enqueue_convert = enqueue_convert
+
 
 def register_all(settings, services):
     for service_name in services:
@@ -61,4 +63,3 @@ def runserver(settings, host, port, debug=False, just_setup_app=False):
     loop.run_until_complete(asyncio.gather(server_coro, worker_coro))
 
     return app
-

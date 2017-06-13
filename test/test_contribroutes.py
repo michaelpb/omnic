@@ -1,14 +1,13 @@
 from urllib.parse import urlencode
 
 import pytest
-import asyncio
-import sys
 import os
 import tempfile
 
 from omnic.worker import Task
 from .testing_utils import RunOnceWorker
 from .testing_utils import Magic
+
 
 class BaseRoutes:
     @classmethod
@@ -35,12 +34,12 @@ class TestBuiltinTestRoutes(BaseRoutes):
         request, response = self.app.test_client.get('/test/test.jpg')
         assert response.status == 200
         value = await response.read()
-        assert value == Magic.JPEG # check its magic JPEG bytes
+        assert value == Magic.JPEG  # check its magic JPEG bytes
 
         request, response = self.app.test_client.get('/test/test.png')
         assert response.status == 200
         value = await response.read()
-        assert value[:4] == Magic.PNG # check its magic PNG bytes
+        assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
     def test_misc_binary(self):
         # For now we just skip testing magic bytes for these, since too
@@ -56,13 +55,14 @@ class TestBuiltinMediaRoutes(BaseRoutes):
     async def test_media_placeholder(self):
         # reverse test.png route
         qs = '?%s' % urlencode({'url': '%s/test.png' % self.host})
-        request, response = self.app.test_client.get('/media/thumb.jpg:200x200/%s' % qs)
+        request, response = self.app.test_client.get(
+            '/media/thumb.jpg:200x200/%s' % qs)
 
         # ensure that it gave back the placeholder
         value = await response.read()
         assert response.status == 200
         assert response.headers['Content-Type'] == 'image/png'
-        assert value[:4] == Magic.PNG # check its magic PNG bytes
+        assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
         # Inspect whats been enqueued, ensure as expected
         q = self.settings.worker.next_queue
@@ -85,9 +85,7 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         # TODO: not fully tested here, need to write after refactor of
         # 'enqueue' helper functions in server
         # Give control to the loop again
-        #await asyncio.sleep(1)
-        #await self.settings.worker.run_once()
-        #await asyncio.sleep(0)
+        # await asyncio.sleep(1)
+        # await self.settings.worker.run_once()
+        # await asyncio.sleep(0)
         #assert 0
-
-

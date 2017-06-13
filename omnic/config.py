@@ -1,5 +1,6 @@
 import os
 
+
 def load_settings():
     from omnic import default_settings
     from omnic.conversion.converter import ConverterGraph
@@ -13,11 +14,13 @@ def load_settings():
     settings.placeholders = PlaceholderSelector(settings)
     return default_settings
 
+
 def override_settings(new_settings):
     global settings
     old_settings = settings
     settings = new_settings
     return old_settings
+
 
 def get_settings():
     global settings
@@ -25,5 +28,5 @@ def get_settings():
         settings = load_settings()
     return settings
 
-settings = load_settings()
 
+settings = load_settings()

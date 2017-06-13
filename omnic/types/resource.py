@@ -8,10 +8,12 @@ import requests
 
 from .typestring import guess_typestring
 
+
 class Resource:
     '''
     Abstract base class for Resources
     '''
+
     def __init__(self, config, url):
         # Setup props
         self.url_string = url
@@ -31,10 +33,10 @@ class Resource:
 
         # Generate filepath
         self.cache_path = os.path.join(
-                self.config.PATH_PREFIX,
-                *self.path_grouping(),
-                self.basename,
-            )
+            self.config.PATH_PREFIX,
+            *self.path_grouping(),
+            self.basename,
+        )
 
     def _get_basename(self):
         NotImplemented
@@ -71,7 +73,6 @@ class Resource:
         if isinstance(other, self.__class__):
             return not self.__eq__(other)
         return NotImplemented
-
 
 
 class ForeignResource(Resource):
@@ -162,8 +163,12 @@ class TypedPathedLocalResource(TypedLocalResource):
         return self.typestring.modify_basename(base)
 
 
-class URLError(ValueError): pass
-class CacheError(RuntimeError): pass
+class URLError(ValueError):
+    pass
+
+
+class CacheError(RuntimeError):
+    pass
 
 
 def check_url(config, url):

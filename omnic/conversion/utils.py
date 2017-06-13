@@ -1,4 +1,3 @@
-import asyncio
 
 from omnic.types.resource import (
     ForeignResource,
@@ -10,6 +9,7 @@ from omnic.types.resource import (
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
 from omnic.config import settings
+
 
 async def convert_local(path, to_type):
     '''
@@ -25,13 +25,14 @@ async def convert_local(path, to_type):
         converter_class, from_ts, to_ts = path_step
         converter = converter_class(settings)
         in_resource = TypedLocalResource(settings, path, from_ts)
-        if is_first: # Ensure first resource is just the source one
+        if is_first:  # Ensure first resource is just the source one
             in_resource = typed_foreign_res
         out_resource = TypedLocalResource(settings, path, to_ts)
 
         if is_last:
             out_resource = TypedPathedLocalResource(settings, path, to_ts)
             await converter.convert(in_resource, out_resource)
+
 
 def enqueue_conversion_path(url_string, to_type, enqueue_convert):
     '''
@@ -57,9 +58,8 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
     for converter_class, from_ts, to_ts in path:
         converter = converter_class(settings)
         in_resource = TypedResource(settings, url_string, from_ts)
-        if is_first: # Ensure first resource is just the source one
+        if is_first:  # Ensure first resource is just the source one
             in_resource = TypedForeignResource(settings, url_string, from_ts)
         out_resource = TypedResource(settings, url_string, to_ts)
         enqueue_convert(converter, in_resource, out_resource)
         is_first = False
-

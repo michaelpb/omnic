@@ -1,13 +1,16 @@
 import math
 import functools
 
+
 class DirectedGraph:
     '''
     Simple weighted directed graph implementation with memoized naive algorithm
     for shortest path.
     '''
 
-    class NoPath(ValueError): pass
+    class NoPath(ValueError):
+        pass
+
     def __init__(self):
         self.edges = {}
 
@@ -51,8 +54,9 @@ class DirectedGraph:
             for weight, path in paths_from_start:
                 end = path[-1]
                 if start == end:
-                    continue # Skip over self paths
-                shortest, _ = shortest_paths.get((start, end), (math.inf, None))
+                    continue  # Skip over self paths
+                shortest, _ = shortest_paths.get(
+                    (start, end), (math.inf, None))
                 if weight < shortest:
                     shortest_paths[(start, end)] = (weight, path)
         return shortest_paths
@@ -66,6 +70,6 @@ class DirectedGraph:
         '''
         shortest_paths = self.get_shortest_paths()
         try:
-            return shortest_paths[(start, end)][1] # 1 is path
+            return shortest_paths[(start, end)][1]  # 1 is path
         except KeyError:
             raise self.NoPath("%s -> %s" % (start, end))

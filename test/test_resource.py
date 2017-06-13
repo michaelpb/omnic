@@ -3,7 +3,6 @@ Tests for `resource` module.
 """
 import tempfile
 import os
-from base64 import b64decode
 
 import pytest
 import requests_mock
@@ -83,19 +82,19 @@ class TestResourceValidate:
         res = ForeignResource(config, URL)
         res1 = ForeignResource(config, URL1)
         res2 = ForeignResource(config, URL2)
-        res.validate() # no exceptions since config is loose
-        res1.validate() # no exceptions since config is loose
-        res2.validate() # no exceptions since config is loose
+        res.validate()  # no exceptions since config is loose
+        res1.validate()  # no exceptions since config is loose
+        res2.validate()  # no exceptions since config is loose
 
     def test_validate_restrictive(self):
         config = MockConfigRestrictive
         res = ForeignResource(config, URL)
         res1 = ForeignResource(config, URL1)
         res2 = ForeignResource(config, URL2)
-        res.validate() # no exceptions since okay
-        res1.validate() # no exceptions since okay
+        res.validate()  # no exceptions since okay
+        res1.validate()  # no exceptions since okay
         with pytest.raises(URLError):
-            res2.validate() # exception since different domain
+            res2.validate()  # exception since different domain
 
 
 class TestTypedResource:
@@ -111,11 +110,15 @@ class TestTypedResource:
 
     def test_uniqueness(self):
         paths = set([
-            TypedResource(self.config, URL, TypeString('image/gif')).cache_path,
-            TypedResource(self.config, URL, TypeString('image/png')).cache_path,
-            TypedResource(self.config, URL_GIF, TypeString('image/gif')).cache_path,
-            TypedResource(self.config, URL1, TypeString('image/gif')).cache_path,
-            TypedResource(self.config, URL2, TypeString('image/gif')).cache_path,
+            TypedResource(self.config, URL, TypeString(
+                'image/gif')).cache_path,
+            TypedResource(self.config, URL, TypeString(
+                'image/png')).cache_path,
+            TypedResource(self.config, URL_GIF,
+                          TypeString('image/gif')).cache_path,
+            TypedResource(self.config, URL1, TypeString(
+                'image/gif')).cache_path,
+            TypedResource(self.config, URL2, TypeString(
+                'image/gif')).cache_path,
         ])
         assert len(paths) == 5
-

@@ -7,10 +7,12 @@ import pytest
 
 from omnic.worker import Worker, AioWorker, Task
 
+
 class RunOnceWorker(Worker):
     '''
     Test worker to test abstract Worker base class
     '''
+
     def __init__(self):
         self.fake_next = None
         self._running = True
@@ -43,6 +45,7 @@ class TestBaseWorker:
     @pytest.mark.asyncio
     async def test_run_once(self):
         worker = RunOnceWorker()
+
         def fake_func(*args):
             worker.called_args = args
         worker.fake_next = (Task.FUNC, (fake_func, 1, 2, 3))
@@ -68,6 +71,7 @@ class TestAsyncioWorker:
     async def test_run_once(self):
         worker = AioWorker(FakeAioQueue())
         worker.called = 0
+
         def fake_func(*args):
             called = worker.called
             assert args == (1 + called, 2 + called, 3 + called)
@@ -82,4 +86,3 @@ class TestAsyncioWorker:
         res = await worker.run()
         assert res is None
         assert worker.called == 4
-

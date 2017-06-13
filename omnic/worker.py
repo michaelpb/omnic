@@ -8,18 +8,22 @@ log = logging.getLogger()
 
 number = 1
 
+
 class Task(Enum):
     FUNC = 1          # Synchronous function
     DOWNLOAD = 2      # Downloading a file
     CONVERT = 3       # Running a converter
 
+
 DOWNLOAD_TIMEOUT = 20
 DOWNLOAD_CHUNK_SIZE = 1024
+
 
 class Worker:
     '''
     Worker base class, for use with coroutines
     '''
+
     def __init__(self):
         self.aiohttp = aiohttp.ClientSession(loop=asyncio.get_event_loop())
 
@@ -98,6 +102,7 @@ class AioWorker(Worker):
     '''
     Uses an asyncio Queue to enqueue tasks
     '''
+
     def __init__(self, queue):
         super().__init__()
         self.running = True
@@ -131,4 +136,3 @@ class AioWorker(Worker):
             return False
         self.converting_resources.add(key)
         return True
-

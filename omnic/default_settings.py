@@ -33,8 +33,10 @@ CONVERTERS = [
     InkscapeRasterizer,
 ]
 
+
 class CatchAll(PNGPixel):
     types = all
+
 
 PLACEHOLDERS = [
     PNGPixel,

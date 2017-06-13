@@ -1,18 +1,20 @@
 import os
-import asyncio
 import subprocess
 
 from omnic.utils.graph import DirectedGraph
 from omnic.utils.iters import pair_looper
 from omnic.types.typestring import TypeString
 
+
 class Converter:
     cost = 1
+
     def __init__(self, config):
         self.config = config
 
     def configure(self, config):
         pass
+
 
 class ExecConverter(Converter):
     def get_arguments(self, resource):
@@ -56,7 +58,6 @@ class ExecConverter(Converter):
         return result
 
 
-
 class HardLinkConverter(Converter):
     def convert_sync(self, in_resource, out_resource):
         os.link(in_resource.cache_path, out_resource.cache_path)
@@ -85,4 +86,3 @@ class ConverterGraph:
             ts_right = out if out.ts_format == right else TypeString(right)
             results.append((converter, ts_left, ts_right))
         return results
-

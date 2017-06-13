@@ -1,11 +1,13 @@
 from omnic.worker import Worker
 from base64 import b64decode
 
+
 class Magic:
     JPEG = bytes([0xff, 0xd8, 0xff, 0xe0])
     PNG = bytes([0x89, 0x50, 0x4e, 0x47])
     PNG_PIXEL_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
     PNG_PIXEL_B = b64decode(PNG_PIXEL_B64)
+
 
 class RunOnceWorker(Worker):
     '''
@@ -13,7 +15,8 @@ class RunOnceWorker(Worker):
     New tasks get put into a next_queue that is only accessible after
     switching to it.
     '''
-    def __init__(self, queue = []):
+
+    def __init__(self, queue=[]):
         super().__init__()
         self.queue = queue
         self.next_queue = []
@@ -40,5 +43,3 @@ class RunOnceWorker(Worker):
     async def check_convert(self, converter, in_r, out_r):
         self.check_convert_was_called = True
         return True
-
-

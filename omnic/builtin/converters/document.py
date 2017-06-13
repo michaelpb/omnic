@@ -1,8 +1,7 @@
 import os
 
-from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource
 from omnic.conversion import converter
+
 
 class Unoconv(converter.ExecConverter):
     inputs = [
@@ -59,6 +58,7 @@ class Unoconv(converter.ExecConverter):
     def get_arguments(self, out_resource):
         return [out_resource.typestring.extension.lower()]
 
+
 class ImageMagickPageRasterizer(converter.ExecConverter):
     inputs = [
         # Document
@@ -90,4 +90,3 @@ class ImageMagickPageRasterizer(converter.ExecConverter):
         basename_base, _ = os.path.splitext(basename)
         suffix = '0.png'
         return os.path.join(dirname, '%s-%s' % (basename_base, suffix))
-

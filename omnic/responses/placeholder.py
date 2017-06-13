@@ -1,4 +1,6 @@
-class PlaceholderNotFound(ValueError): pass
+class PlaceholderNotFound(ValueError):
+    pass
+
 
 class Placeholder:
     types = []
@@ -39,8 +41,6 @@ class PlaceholderSelector:
         if not placeholder:
             raise PlaceholderNotFound(str(typestring))
         return response.stream(
-                placeholder.stream_response,
-                content_type=placeholder.content_type,
-            )
-
-
+            placeholder.stream_response,
+            content_type=placeholder.content_type,
+        )

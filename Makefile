@@ -32,6 +32,12 @@ test:
 test-all:
 	tox
 
+cleanup-pep8:
+	autopep8 --in-place -r omnic
+	autopep8 --in-place -r test
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r omnic
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r test
+
 coverage:
 	coverage run --source omnic setup.py test
 	coverage report -m

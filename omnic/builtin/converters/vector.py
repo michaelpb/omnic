@@ -1,5 +1,6 @@
 from omnic.conversion import converter
 
+
 class InkscapeConverter(converter.ExecConverter):
     inputs = [
         'SVGZ',
@@ -23,9 +24,10 @@ class InkscapeConverter(converter.ExecConverter):
         '-z',
         '-f',
         '$IN',
-        '-l', # means: Export plain SVG
+        '-l',  # means: Export plain SVG
         '$OUT',
     ]
+
 
 class InkscapeRasterizer(converter.ExecConverter):
     inputs = [
@@ -42,7 +44,6 @@ class InkscapeRasterizer(converter.ExecConverter):
         '-z',
         '-f',
         '$IN',
-        '-e', # means: Export PNG
+        '-e',  # means: Export PNG
         '$OUT',
     ]
-

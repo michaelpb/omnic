@@ -6,6 +6,7 @@ import pytest
 from omnic.utils import iters
 from omnic.utils import graph
 
+
 class TestDirectedGraph:
     #  ,-> F ,-> E
     # A -> B  -> C
@@ -51,7 +52,6 @@ class TestDirectedGraph:
     #  WAV  -> cleaned.ogg
     #  OGG '
 
-
     def _realistic_edges(self):
         self.dg = graph.DirectedGraph()
         self.dg.add_edge('MOV', 'JPG')
@@ -86,7 +86,7 @@ class TestDirectedGraph:
     def test_raises_on_invalid_path(self):
         self._simple_tree()
         with pytest.raises(graph.DirectedGraph.NoPath):
-            path = self.dg.shortest_path('B', 'A')
+            self.dg.shortest_path('B', 'A')
 
     def test_shortest_route(self):
         self._multi_pathed_graph()
@@ -116,7 +116,7 @@ class TestDirectedGraph:
         path = self.dg.shortest_path('A', 'G')
         assert path == ('A', 'B', 'G')
         path = self.dg.shortest_path('A', 'C')
-        assert path == ('A', 'B', 'G', 'C') # Avoid A->F route
+        assert path == ('A', 'B', 'G', 'C')  # Avoid A->F route
 
     def test_realistic_routing(self):
         self._realistic_edges()
@@ -128,6 +128,7 @@ class TestDirectedGraph:
         assert path == ('MP3', 'cleaned.ogg')
         with pytest.raises(graph.DirectedGraph.NoPath):
             self.dg.shortest_path('MP3', 'thumb.png')
+
 
 class TestIterUtils:
     def test_pair_looper(self):
@@ -155,4 +156,3 @@ class TestIterUtils:
     def test_group_by(self):
         group_by = iters.group_by
         assert list(group_by('asdf', 2)) == ['as', 'df']
-

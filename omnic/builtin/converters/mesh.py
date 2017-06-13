@@ -1,5 +1,6 @@
 from omnic.conversion import converter
 
+
 class MeshLabConverter(converter.ExecConverter):
     inputs = [
         # All 3D model formats and extensions supported by meshlabserver
@@ -60,6 +61,7 @@ class Jsc3dRenderer(converter.ExecConverter):
         '$OUT',
     ]
 
+
 class DimeConverter(converter.ExecConverter):
     # Uses DIME converter
     inputs = [
@@ -78,6 +80,7 @@ class DimeConverter(converter.ExecConverter):
         '-o',
         '$OUT',
     ]
+
 
 class KabejaAutocadConverter(converter.ExecConverter):
     # TODO Test

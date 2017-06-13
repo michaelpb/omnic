@@ -1,5 +1,6 @@
 from .views import blueprint
 
+
 class ServiceMeta:
     NAME = 'admin'
     blueprint = blueprint
@@ -7,6 +8,3 @@ class ServiceMeta:
     app = None
     log = None
     enqueue = None
-
-
-
