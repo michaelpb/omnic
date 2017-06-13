@@ -58,8 +58,8 @@ class TestQualifierArgumentsTypeString:
         cls.ts = TypeString('thumb.png:400x300')
 
     def test_is_mimetype_method(self):
-        assert self.ts.mimetype == None
-        assert self.ts.extension == None
+        assert self.ts.mimetype is None
+        assert self.ts.extension is None
         assert self.ts.is_qualifier
 
     def test_str(self):
