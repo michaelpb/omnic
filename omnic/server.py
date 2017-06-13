@@ -7,6 +7,7 @@ import asyncio
 
 from omnic.worker import AioWorker
 from omnic.worker import Task
+from omnic import singletons
 
 app = None
 
@@ -52,7 +53,9 @@ def runserver(settings, host, port, debug=False, just_setup_app=False):
     loop = uvloop.new_event_loop()
     asyncio.set_event_loop(loop)
     settings.async_queue = asyncio.Queue(loop=loop)
+    # TODO: fix
     settings.worker = AioWorker(settings.async_queue)
+    singletons.workers.append(settings.worker)
 
     if just_setup_app:
         return app  # in unit tests likely, don't make the coroutines

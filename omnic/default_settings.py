@@ -20,6 +20,7 @@ SERVICES = [
     'omnic.builtin.services.media',
     'omnic.builtin.services.test',
     'omnic.builtin.services.admin',
+    'omnic.builtin.services.viewer',
 ]
 
 CONVERTERS = [
@@ -50,5 +51,5 @@ ALLOWED_LOCATIONS = {
     'localhost', '127.0.0.1',
 
     # test sites mentioned in README
-    'unsplash.it', 'people.sc.fsu.edu', 'ideee.org',
+    'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov',
 }

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="fluid-container">
+    <div class="row">
+        <div class="col-md-12" style="min-height: 100%">
+            <h1>
+            {% if ext != "*" %}
+                    <a href="/admin/graph/">&larr;</a>
+            {% endif %}
+            Graph <small>{{ ext }}</small>
+            </h1>
+            <div style="right: 300px; position: fixed; top: 100px;" id="extclicker"></div>
+            <div id="content">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.0/vis.min.js"></script>
+
+<script>
+
+const NODES = {{ nodes_json|safe }};
+
+////////////////////////////////////////////////////
+
+const EDGES = {{ edges_json|safe }};
+
+////////////////////////////////////////////////////
+
+const NODE_IDS_TO_EXTENSIONS = {{ id_to_ext_json|safe }};
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        // create an array with nodes
+        const nodes = new vis.DataSet(NODES);
+
+        // create an array with edges
+        const edges = new vis.DataSet(EDGES)
+
+        // create a network
+        const container = document.getElementById('content');
+        const data = {
+            nodes: nodes,
+            edges: edges
+        };
+        const options = {
+            height: '800px',
+            width: '100%',
+            nodes: {
+                shape: 'circle',
+                size: 80,
+                borderWidth: 2
+            },
+            layout: {
+                hierarchical: {
+                    sortMethod: 'directed',
+                    levelSeparation: 200,
+                    nodeSpacing: 150,
+                    treeSpacing: 300,
+                    blockShifting: false,
+                    edgeMinimization: false,
+                    parentCentralization: false,
+                },
+            },
+        };
+        const network = new vis.Network(container, data, options);
+        network.on("click", function (params) {
+            var ext = NODE_IDS_TO_EXTENSIONS[params.nodes[0]];
+            if (!ext) {
+                return;
+            }
+            $('#extclicker').html(
+                `<a class="btn btn-lg btn-success" href="/admin/graph/${ext}/">View ${ext}</a>`
+            );
+            console.log('this is ext', ext);
+            $('#extclicker').show();
+        });
+    });
+</script>
+
+{% endblock body %}

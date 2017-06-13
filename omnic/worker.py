@@ -6,8 +6,6 @@ import async_timeout
 from enum import Enum
 log = logging.getLogger()
 
-number = 1
-
 
 class Task(Enum):
     FUNC = 1          # Synchronous function
@@ -26,6 +24,10 @@ class Worker:
 
     def __init__(self):
         self.aiohttp = aiohttp.ClientSession(loop=asyncio.get_event_loop())
+        self.stats_dequeued = 0
+        self.stats_began = 0
+        self.stats_success = 0
+        self.stats_error = 0
 
     def __del__(self):
         if hasattr(self, 'aiohttp'):
@@ -36,6 +38,7 @@ class Worker:
         while self.running:
             # Queue up consuming next item
             task_type, args = await self.get_next()
+            self.stats_dequeued += 1
             method = None
 
             # Determine the type of task, and possibly skip if we have
@@ -56,9 +59,12 @@ class Worker:
                 method = self.run_convert
 
             # Queue it up and run it
+            self.stats_began += 1
             try:
                 await method(*args)
+                self.stats_success += 1
             except Exception as e:
+                self.stats_error += 1
                 log.error('Error in task: "%s"' % repr(e))
 
     async def run_func(self, func, *func_args):
@@ -112,16 +118,17 @@ class AioWorker(Worker):
         self.downloading_resources = set()
         self.converting_resources = set()
 
+    async def queue_size(self):
+        return self.queue.qsize()
+
     async def enqueue(self, task_type, args):
-        global number
-        number += 1
-        return await self.queue.put((number, task_type, args))
+        await self.queue.put((task_type, args))
 
     async def get_next(self):
         '''
         Await the next item on the queue
         '''
-        number, task_type, args = await self.queue.get()
+        task_type, args = await self.queue.get()
         return task_type, args
 
     async def check_download(self, foreign_resource):

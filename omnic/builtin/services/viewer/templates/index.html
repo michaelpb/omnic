@@ -37,43 +37,37 @@
                     />
                 </div>
                 <div class="col-sm-6">
-                    <h3>Code</h3>
 <pre>
 &lt;img omnic-thumb
     src="{{ thumb_src }}"
     width="{{ form.thumb_width }}" height="{{ form.thumb_height }}" /&gt;
 </pre>
-
-
-                {% if ext %}
-                    <a class="btn btn-success btn-lg"
-                        href="/admin/graph/{{ ext }}/">{{ ext }}
-                    </a>
-                {% endif %}
                 </div>
             </div>
 
             <h1>Workers</h1>
-            <div class="row" id="workers">
-                {% include "workers.html" %}
+            <div class="row">
+                {% for worker in workers %}
+                <div class="col-sm-3 col-md-3">
+                    <div class="thumbnail">
+                        <h1>{{ worker.queue_size }}</h1>
+                        <div class="caption">
+                            <h3>Worker [{{ worker.number }}]</h3>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
 
-<script src="/viewer/js/reload-thumb.js"></script>
-
+{#
 <script>
     $(document).ready(function () {
-        // Auto-reload workers every 1 second
-        var reloadWorkers = function () {
-            $('#workers').load('/admin/ajax/workers/', function () {
-                console.log('refreshing workers');
-                setTimeout(reloadWorkers, 1000);
-            });
-        };
-        setTimeout(reloadWorkers, 1000);
+        // TODO
+
     });
 </script>
-
+#}
 {% endblock body %}

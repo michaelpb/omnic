@@ -104,7 +104,7 @@ Subsequent times it should be 200x200 thumbnail
 
 You might also be able to run this, if you have `unoconv` and ImageMagick
 (providing the `convert` command) installed:
-* `http://localhost:8080/media/thumb.jpg:200x200/?url=idee.org/Georgia_opposition_NATO-Eng-F.doc`
+* `http://localhost:8080/media/thumb.jpg:200x200/?url=imr.sandia.gov/imrtemplate.doc`
 
 This will convert the `.doc` into a PDF, then into a JPG thumbnail
 

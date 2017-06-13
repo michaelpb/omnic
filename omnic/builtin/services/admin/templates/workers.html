@@ -1,0 +1,13 @@
+{% for worker in workers %}
+    <div class="col-sm-3 col-md-3">
+        <div class="thumbnail">
+            <div class="caption">
+                <h3>Worker [{{ worker.number }}]</h3>
+            </div>
+            <h2>{{ worker.dequeued }} <small>Dequeued</small></h2>
+            <h2>{{ worker.success }} <small>Success</small></h2>
+            <h2>{{ worker.began }} <small>Began</small></h2>
+            <h2>{{ worker.error }} <small>Error</small></h2>
+        </div>
+    </div>
+{% endfor %}
