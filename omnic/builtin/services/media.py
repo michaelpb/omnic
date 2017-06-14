@@ -6,7 +6,6 @@ from sanic import response
 from omnic.types.typestring import TypeString
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.conversion.utils import enqueue_conversion_path
-from omnic.config import settings
 from omnic import singletons
 
 
@@ -26,6 +25,7 @@ async def media_route(request, ts):
 
     # Prep ForeignResource and ensure does not validate security settings
     # TODO: catch errors one up, and return 4xx errors?
+    settings = singletons.settings
     foreign_res = ForeignResource(settings, url_string)
     foreign_res.validate()
 
@@ -40,10 +40,10 @@ async def media_route(request, ts):
 
     # Check if already downloaded. If not, queue up download.
     if not foreign_res.cache_exists():
-        ServiceMeta.enqueue_download(foreign_res)
+        singletons.workers.enqueue_download(foreign_res)
 
     # Queue up a single function that will in turn queue up conversion process
-    ServiceMeta.enqueue_sync(
+    singletons.workers.enqueue_sync(
         enqueue_conversion_path,
         url_string,
         str(target_ts),

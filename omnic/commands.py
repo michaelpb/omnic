@@ -1,13 +1,15 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+'''
+Contains main entrypoint of all things Omni Converter
+'''
+
 import os
 import click
 
 import asyncio
+
 from omnic.conversion.utils import convert_local
 from omnic.utils.graph import DirectedGraph
 from omnic.types.typestring import TypeString
-from omnic.config import settings
 
 
 @click.group()
@@ -28,11 +30,7 @@ def runserver(port, ip, debug):
     '''
     from omnic.server import runserver as do_runserver
     click.echo('Start server at: {}:{}'.format(ip, port))
-    # TODO: add reloading, add environ
-    do_runserver(settings, host=ip, port=port, debug=debug)
-
-    # register_all()
-    #app.run(host=ip, port=port, debug=debug)
+    do_runserver(host=ip, port=port, debug=debug)
 
 
 @cmds.command()

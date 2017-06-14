@@ -11,7 +11,6 @@ from sanic.response import redirect
 
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic import singletons
-from omnic.config import settings
 from omnic.types.resource import ForeignResource
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
@@ -120,6 +119,7 @@ async def conversion_tester_root(request):
 
 @blueprint.get('/conversion/')
 async def conversion_tester(request):
+    settings = singletons.settings
     workers = await get_worker_info()
 
     form = {}
@@ -133,7 +133,7 @@ async def conversion_tester(request):
     try:
         foreign_res = ForeignResource(settings, url_string)
     except:
-        pass  # a myriad of invalid types
+        pass  # could be a myriad of errors
     else:
         if foreign_res.cache_exists():
             # Determine the file type of the foreign resource

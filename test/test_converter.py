@@ -5,6 +5,7 @@ Tests for `resource` module.
 import tempfile
 import os
 
+from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource
 from omnic.conversion import converter
@@ -94,6 +95,7 @@ class ConverterTestBase:
     def setup_method(self, method):
         self.config = MockConfig
         self.config.PATH_PREFIX = tempfile.mkdtemp()
+        singletons.settings.use_settings(self.config)
         self.res = TypedResource(self.config, URL, TypeString('JPEG'))
         self.res2 = TypedResource(self.config, URL, TypeString('JPG'))
         with self.res.cache_open('wb') as f:

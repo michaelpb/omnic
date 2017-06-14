@@ -7,6 +7,7 @@ import os
 import pytest
 import requests_mock
 
+from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource, ForeignResource, URLError, CacheError
 from .testing_utils import Magic
@@ -31,8 +32,10 @@ class MockConfigRestrictive(MockConfig):
 class TestForeignResource:
     @classmethod
     def setup_class(cls):
+        singletons.settings.use_settings(MockConfig)
         cls.config = MockConfig
         cls.config.PATH_PREFIX = tempfile.mkdtemp()
+        singletons.settings.use_settings(cls.config)
         cls.res = ForeignResource(cls.config, URL)
 
     def test_properties(self):
@@ -78,6 +81,7 @@ class TestForeignResource:
 
 class TestResourceValidate:
     def test_validate_global(self):
+        singletons.settings.use_settings(MockConfig)
         config = MockConfig
         res = ForeignResource(config, URL)
         res1 = ForeignResource(config, URL1)
@@ -87,6 +91,7 @@ class TestResourceValidate:
         res2.validate()  # no exceptions since config is loose
 
     def test_validate_restrictive(self):
+        singletons.settings.use_settings(MockConfigRestrictive)
         config = MockConfigRestrictive
         res = ForeignResource(config, URL)
         res1 = ForeignResource(config, URL1)
@@ -100,6 +105,7 @@ class TestResourceValidate:
 class TestTypedResource:
     @classmethod
     def setup_class(cls):
+        singletons.settings.use_settings(MockConfig)
         cls.config = MockConfig
         cls.res = TypedResource(cls.config, URL, TypeString('image/gif'))
 

@@ -8,7 +8,6 @@ from omnic.types.resource import (
 )
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
-from omnic.config import settings
 from omnic import singletons
 
 
@@ -16,6 +15,7 @@ async def convert_local(path, to_type):
     '''
     Given an absolute path to a local file, convert to a given to_type
     '''
+    settings = singletons.settings
     # Now find path between types
     typed_foreign_res = TypedLocalResource(settings, path)
     original_ts = typed_foreign_res.typestring

@@ -5,6 +5,8 @@ import os
 import tempfile
 
 from omnic.worker import Task
+from omnic import singletons
+
 from .testing_utils import RunOnceWorker
 from .testing_utils import Magic
 
@@ -12,15 +14,17 @@ from .testing_utils import Magic
 class BaseRoutes:
     @classmethod
     def setup_class(cls):
-        from omnic.config import settings
         from omnic.server import runserver
+        settings = singletons.settings
         cls.app = runserver(settings, 'ignored', 0, just_setup_app=True)
         cls.host = '127.0.0.1:42101'
         cls.settings = settings
         settings.PATH_PREFIX = tempfile.mkdtemp()
         settings.PATH_GROUPING = None
         settings.ALLOWED_LOCATIONS = {cls.host}
+        del singletons.workers[0]
         settings.worker = RunOnceWorker()
+        singletons.workers.append(settings.worker)
 
         # Disable all HTTP logging for sanic since it leaves open FDs and
         # causes warnings galore

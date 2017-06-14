@@ -18,22 +18,9 @@ def register_service(settings, service):
     app.blueprint(service.blueprint, url_prefix='/%s' % service.NAME)
     service.log = logging.getLogger()
 
-    def enqueue_sync(func, *func_args):
-        args = (func,) + func_args
-        coro = settings.worker.enqueue(Task.FUNC, args)
-        asyncio.ensure_future(coro)
-    service.enqueue_sync = enqueue_sync
-
-    def enqueue_download(resource):
-        coro = settings.worker.enqueue(Task.DOWNLOAD, (resource,))
-        asyncio.ensure_future(coro)
-    service.enqueue_download = enqueue_download
-
-    def enqueue_convert(converter, from_resource, to_resource):
-        args = (converter, from_resource, to_resource)
-        coro = settings.worker.enqueue(Task.CONVERT, args)
-        asyncio.ensure_future(coro)
-    service.enqueue_convert = enqueue_convert
+    service.enqueue_sync = singletons.workers.enqueue_sync
+    service.enqueue_download = singletons.workers.enqueue_download
+    service.enqueue_convert = singletons.workers.enqueue_convert
 
 
 def register_all(settings, services):
@@ -42,11 +29,12 @@ def register_all(settings, services):
         register_service(settings, service.ServiceMeta)
 
 
-def runserver(settings, host, port, debug=False, just_setup_app=False):
+def runserver(host, port, debug=False, just_setup_app=False):
     # Only import if actually running server (so that Sanic is not a dependency
     # if only using for convert mode)
     global app
     app = Sanic(__name__)
+    settings = singletons.settings
     register_all(settings, settings.SERVICES)
 
     # Set up loop + queue
