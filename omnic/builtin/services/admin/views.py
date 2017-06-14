@@ -7,12 +7,11 @@ import json
 from urllib.parse import urlencode
 
 from sanic import Blueprint
-from sanic import response
 
-from omnic.utils.template import Jinja2TemplateHelper
+from omnic.responses.template import Jinja2TemplateHelper
 from omnic import singletons
 from omnic.config import settings
-from omnic.types.resource import ForeignResource, TypedForeignResource
+from omnic.types.resource import ForeignResource
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
@@ -25,13 +24,16 @@ FORM_DEFAULT = {
     'thumb_height': 200,
 }
 
+
 def _gen_thumb_src(form):
     qs = urlencode({'url': form['res_url']})
     ts = 'thumb.jpg:%sx%s' % (form['thumb_width'], form['thumb_height'])
     return 'http://localhost:8080/media/%s/?%s' % (ts, qs)
 
+
 def _depluralize_query_dict(dct):
     return {key: value[0] for key, value in dct.items()}
+
 
 async def get_worker_info():
     workers = [
@@ -53,6 +55,7 @@ async def get_worker_info():
     #     worker['queue_size'] = await worker['queue_size']
 
     return workers
+
 
 def get_nodes_edges_ids(ext=None):
     dgraph = settings.converter_graph.dgraph
@@ -113,6 +116,7 @@ def get_nodes_edges_ids(ext=None):
 async def conversion_tester_root(request):
     return await conversion_tester(request)
 
+
 @blueprint.get('/conversion/')
 async def conversion_tester(request):
     workers = await get_worker_info()
@@ -145,6 +149,7 @@ async def conversion_tester(request):
 async def conversion_graph(request):
     return await conversion_graph(request, None)
 
+
 @blueprint.get('/graph/<ext>/')
 async def conversion_graph(request, ext):
     nodes, edges, id_to_ext = get_nodes_edges_ids(ext)
@@ -164,4 +169,3 @@ async def poll_worker_queue(request):
     return templates.render(request, 'workers.html', {
         'workers': workers,
     })
-
