@@ -10,8 +10,8 @@ from omnic import singletons
 class Converter:
     cost = 1
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
+        self.config = singletons.settings
 
     def configure(self, config):
         pass

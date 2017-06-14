@@ -93,15 +93,15 @@ class MockConfig:
 
 class ConverterTestBase:
     def setup_method(self, method):
-        self.config = MockConfig
-        self.config.PATH_PREFIX = tempfile.mkdtemp()
-        singletons.settings.use_settings(self.config)
+        MockConfig.PATH_PREFIX = tempfile.mkdtemp()
+        singletons.settings.use_settings(MockConfig)
         self.res = TypedResource(URL, TypeString('JPEG'))
         self.res2 = TypedResource(URL, TypeString('JPG'))
         with self.res.cache_open('wb') as f:
             f.write(Magic.JPEG)
 
     def teardown_method(self, method):
+        singletons.settings.use_previous_settings()
         try:
             os.remove(self.res.cache_path)
         except OSError:
@@ -129,25 +129,25 @@ class ConverterTestBase:
 
 class TestHardLinkConverter(ConverterTestBase):
     def test_convert(self):
-        self.converter = HardLinkConverter(self.config)
+        self.converter = HardLinkConverter()
         self._check_convert()
 
 
 class TestExecConverter(ConverterTestBase):
     def test_convert(self):
-        self.converter = ExecConverter(self.config)
+        self.converter = ExecConverter()
         self._check_convert()
 
     def test_convert_with_arg(self):
         # cp -s creates a symbolic link
         self.res2 = TypedResource(URL, TypeString('JPG:-s'))
-        self.converter = ExecConverterWithArgs(self.config)
+        self.converter = ExecConverterWithArgs()
         self._check_convert()
         assert os.path.islink(self.res2.cache_path)
 
     def test_convert_with_custom_filename(self):
         self.res2 = TypedResource(URL, TypeString('JPG'))
-        self.converter = ExecConverterWithOutputFilename(self.config)
+        self.converter = ExecConverterWithOutputFilename()
         self._check_convert()
 
 

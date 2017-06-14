@@ -18,7 +18,6 @@ class Resource:
     def __init__(self, url):
         # Setup props
         self.url_string = url
-        self.config = singletons.settings
 
         # Parse and process URL
         self.url = urlparse(url)
@@ -34,7 +33,7 @@ class Resource:
 
         # Generate filepath
         self.cache_path = os.path.join(
-            self.config.PATH_PREFIX,
+            singletons.settings.PATH_PREFIX,
             *self.path_grouping(),
             self.basename,
         )
@@ -43,7 +42,7 @@ class Resource:
         NotImplemented
 
     def path_grouping(self):
-        if self.config.PATH_GROUPING == 'MD5':
+        if singletons.settings.PATH_GROUPING == 'MD5':
             return group_by(self.md5, 8)
         return ['']
 
@@ -86,7 +85,7 @@ class ForeignResource(Resource):
             shutil.copyfileobj(req.raw, f)
 
     def validate(self):
-        if not check_url(self.config, self.url):
+        if not check_url(singletons.settings, self.url):
             raise URLError('Invalid URL: "%s"' % self.url_string)
 
     def guess_typed(self):
