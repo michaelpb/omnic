@@ -15,7 +15,6 @@ async def convert_local(path, to_type):
     '''
     Given an absolute path to a local file, convert to a given to_type
     '''
-    settings = singletons.settings
     # Now find path between types
     typed_foreign_res = TypedLocalResource(path)
     original_ts = typed_foreign_res.typestring
@@ -25,7 +24,7 @@ async def convert_local(path, to_type):
     # Loop through each step in graph path and convert
     for is_first, is_last, path_step in first_last_iterator(conversion_path):
         converter_class, from_ts, to_ts = path_step
-        converter = converter_class(settings)
+        converter = converter_class()
         in_resource = TypedLocalResource(path, from_ts)
         if is_first:  # Ensure first resource is just the source one
             in_resource = typed_foreign_res
@@ -41,7 +40,6 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
     Given a URL string that has already been downloaded, enqueue
     necessary conversion to get to target type
     '''
-    settings = singletons.settings
     target_ts = TypeString(to_type)
     foreign_res = ForeignResource(url_string)
 
@@ -59,7 +57,7 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
     # Loop through each step in graph path and convert
     is_first = True
     for converter_class, from_ts, to_ts in path:
-        converter = converter_class(settings)
+        converter = converter_class()
         in_resource = TypedResource(url_string, from_ts)
         if is_first:  # Ensure first resource is just the source one
             in_resource = TypedForeignResource(url_string, from_ts)

@@ -13,9 +13,6 @@ class Converter:
     def __init__(self):
         self.config = singletons.settings
 
-    def configure(self, config):
-        pass
-
 
 class ExecConverter(Converter):
     def get_arguments(self, resource):

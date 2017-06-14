@@ -7,3 +7,5 @@ from omnic.utils.singleton import SingletonManager
 singletons = SingletonManager()
 
 # Ensure settings, at least, gets registered
+from omnic import config
+singletons.register('settings', config.Settings)
