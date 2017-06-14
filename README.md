@@ -112,6 +112,10 @@ If you have `jsc3d` installed (a Node JavaScript based 3D model renderer), then
 the following should render a delightful trumpet:
 * `http://localhost:8080/media/thumb.jpg:200x200/?url=people.sc.fsu.edu/~jburkardt/data/obj/trumpet.obj`
 
+Molecular visualization:
+
+* `http://localhost:8080/media/thumb.jpg:200x200/?url=wiki.jmol.org/images/c/ca/Caffeine.mol`
+
 The built-in converters interface with a variety of system binaries in order to
 provide rendering and conversion of many document, image, mesh. Adding new
 converters and rasterizers is simple, with relatively minimal code!

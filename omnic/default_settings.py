@@ -51,5 +51,5 @@ ALLOWED_LOCATIONS = {
     'localhost', '127.0.0.1',
 
     # test sites mentioned in README
-    'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov',
+    'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov', 'wiki.jmol.org',
 }
