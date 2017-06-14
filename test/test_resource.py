@@ -34,7 +34,7 @@ class TestForeignResource:
     def setup_class(cls):
         MockConfig.PATH_PREFIX = tempfile.mkdtemp()
         singletons.settings.use_settings(MockConfig)
-        cls.res = ForeignResource(None, URL)
+        cls.res = ForeignResource(URL)
 
     @classmethod
     def teardown_class(cls):
@@ -47,8 +47,8 @@ class TestForeignResource:
         assert not self.res.cache_exists()
 
     def test_uniqueness(self):
-        res1 = ForeignResource(None, URL1)
-        res2 = ForeignResource(None, URL2)
+        res1 = ForeignResource(URL1)
+        res2 = ForeignResource(URL2)
         assert self.res.cache_path != res1.cache_path
         assert self.res.cache_path != res2.cache_path
         assert res2.cache_path != res1.cache_path
@@ -83,9 +83,9 @@ class TestForeignResource:
 
 class TestResourceValidate:
     def test_validate_global(self):
-        res = ForeignResource(None, URL)
-        res1 = ForeignResource(None, URL1)
-        res2 = ForeignResource(None, URL2)
+        res = ForeignResource(URL)
+        res1 = ForeignResource(URL1)
+        res2 = ForeignResource(URL2)
         singletons.settings.use_settings(MockConfig)
         res.validate()  # no exceptions since config is loose
         res1.validate()  # no exceptions since config is loose
@@ -93,9 +93,9 @@ class TestResourceValidate:
 
     def test_validate_restrictive(self):
         singletons.settings.use_settings(MockConfigRestrictive)
-        res = ForeignResource(None, URL)
-        res1 = ForeignResource(None, URL1)
-        res2 = ForeignResource(None, URL2)
+        res = ForeignResource(URL)
+        res1 = ForeignResource(URL1)
+        res2 = ForeignResource(URL2)
         res.validate()  # no exceptions since okay
         res1.validate()  # no exceptions since okay
         with pytest.raises(URLError):
@@ -106,7 +106,7 @@ class TestTypedResource:
     @classmethod
     def setup_class(cls):
         singletons.settings.use_settings(MockConfig)
-        cls.res = TypedResource(None, URL, TypeString('image/gif'))
+        cls.res = TypedResource(URL, TypeString('image/gif'))
 
     @classmethod
     def teardown_class(cls):
@@ -119,15 +119,15 @@ class TestTypedResource:
 
     def test_uniqueness(self):
         paths = set([
-            TypedResource(None, URL, TypeString(
+            TypedResource(URL, TypeString(
                 'image/gif')).cache_path,
-            TypedResource(None, URL, TypeString(
+            TypedResource(URL, TypeString(
                 'image/png')).cache_path,
-            TypedResource(None, URL_GIF,
+            TypedResource(URL_GIF,
                           TypeString('image/gif')).cache_path,
-            TypedResource(None, URL1, TypeString(
+            TypedResource(URL1, TypeString(
                 'image/gif')).cache_path,
-            TypedResource(None, URL2, TypeString(
+            TypedResource(URL2, TypeString(
                 'image/gif')).cache_path,
         ])
         assert len(paths) == 5

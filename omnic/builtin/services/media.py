@@ -26,11 +26,11 @@ async def media_route(request, ts):
     # Prep ForeignResource and ensure does not validate security settings
     # TODO: catch errors one up, and return 4xx errors?
     settings = singletons.settings
-    foreign_res = ForeignResource(settings, url_string)
+    foreign_res = ForeignResource(url_string)
     foreign_res.validate()
 
     target_ts = TypeString(ts)
-    target_resource = TypedResource(settings, url_string, target_ts)
+    target_resource = TypedResource(url_string, target_ts)
 
     # Send back cache if it exists
     if target_resource.cache_exists():

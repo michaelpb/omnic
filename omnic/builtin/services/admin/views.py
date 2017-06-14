@@ -131,7 +131,7 @@ async def conversion_tester(request):
     ext = None
     url_string = 'http://%s' % form['res_url']
     try:
-        foreign_res = ForeignResource(settings, url_string)
+        foreign_res = ForeignResource(url_string)
     except:
         pass  # could be a myriad of errors
     else:

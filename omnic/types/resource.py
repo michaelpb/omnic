@@ -15,7 +15,7 @@ class Resource:
     Abstract base class for Resources
     '''
 
-    def __init__(self, config, url):
+    def __init__(self, url):
         # Setup props
         self.url_string = url
         self.config = singletons.settings
@@ -93,13 +93,13 @@ class ForeignResource(Resource):
         if not self.cache_exists():
             raise CacheError('Cannot guess type without first downloaded')
         ts = guess_typestring(self.cache_path)
-        return TypedForeignResource(self.config, self.url_string, ts)
+        return TypedForeignResource(self.url_string, ts)
 
 
 class TypedForeignResource(Resource):
-    def __init__(self, config, url, typestring):
+    def __init__(self, url, typestring):
         self.typestring = typestring
-        super().__init__(config, url)
+        super().__init__(url)
 
     def _get_basename(self):
         # Ignores URL basename
@@ -113,9 +113,9 @@ class TypedForeignResource(Resource):
 
 
 class TypedResource(Resource):
-    def __init__(self, config, url, typestring):
+    def __init__(self, url, typestring):
         self.typestring = typestring
-        super().__init__(config, url)
+        super().__init__(url)
 
     def _get_basename(self):
         return self.typestring.modify_basename(self.url_path_basename)
@@ -125,7 +125,7 @@ class TypedResource(Resource):
 
 
 class TypedLocalResource(Resource):
-    def __init__(self, config, path, typestring=None):
+    def __init__(self, path, typestring=None):
         self.path = path
 
         if typestring:
@@ -137,7 +137,7 @@ class TypedLocalResource(Resource):
             typestring = guess_typestring(path)
 
         self.typestring = typestring
-        super().__init__(config, 'file://%s' % path)
+        super().__init__('file://%s' % path)
         if self.foreign:
             self.cache_path = self.path
 
@@ -152,8 +152,8 @@ class TypedLocalResource(Resource):
 
 
 class TypedPathedLocalResource(TypedLocalResource):
-    def __init__(self, config, path, typestring):
-        super().__init__(config, path, typestring)
+    def __init__(self, path, typestring):
+        super().__init__(path, typestring)
         self.cache_path = os.path.join(
             os.path.dirname(path),
             self._get_basename(),

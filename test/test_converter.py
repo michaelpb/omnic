@@ -96,8 +96,8 @@ class ConverterTestBase:
         self.config = MockConfig
         self.config.PATH_PREFIX = tempfile.mkdtemp()
         singletons.settings.use_settings(self.config)
-        self.res = TypedResource(self.config, URL, TypeString('JPEG'))
-        self.res2 = TypedResource(self.config, URL, TypeString('JPG'))
+        self.res = TypedResource(URL, TypeString('JPEG'))
+        self.res2 = TypedResource(URL, TypeString('JPG'))
         with self.res.cache_open('wb') as f:
             f.write(Magic.JPEG)
 
@@ -140,13 +140,13 @@ class TestExecConverter(ConverterTestBase):
 
     def test_convert_with_arg(self):
         # cp -s creates a symbolic link
-        self.res2 = TypedResource(self.config, URL, TypeString('JPG:-s'))
+        self.res2 = TypedResource(URL, TypeString('JPG:-s'))
         self.converter = ExecConverterWithArgs(self.config)
         self._check_convert()
         assert os.path.islink(self.res2.cache_path)
 
     def test_convert_with_custom_filename(self):
-        self.res2 = TypedResource(self.config, URL, TypeString('JPG'))
+        self.res2 = TypedResource(URL, TypeString('JPG'))
         self.converter = ExecConverterWithOutputFilename(self.config)
         self._check_convert()
 
