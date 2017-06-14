@@ -6,7 +6,6 @@ import uvloop
 import asyncio
 
 from omnic.worker import AioWorker
-from omnic.worker import Task
 from omnic import singletons
 
 app = None

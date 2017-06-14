@@ -119,7 +119,7 @@ async def conversion_tester_root(request):
 
 @blueprint.get('/conversion/')
 async def conversion_tester(request):
-    settings = singletons.settings
+    singletons.settings
     workers = await get_worker_info()
 
     form = {}

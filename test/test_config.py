@@ -7,6 +7,7 @@ from omnic.config import Settings
 
 TEST_SETTING = 123
 
+
 class TestForeignResource:
     def test_default(self):
         settings = Settings()
@@ -14,6 +15,7 @@ class TestForeignResource:
 
     def test_overriding(self):
         settings = Settings()
+
         class MockSettings:
             SERVICES = []
         settings.use_settings(MockSettings)
@@ -21,6 +23,7 @@ class TestForeignResource:
 
     def test_catching_lowercase_errors(self):
         settings = Settings()
+
         class MockSettings:
             private_thing = 123
         settings.use_settings(MockSettings)
@@ -32,4 +35,3 @@ class TestForeignResource:
         os.environ['OMNIC_SETTINGS'] = 'test.test_config'
         settings = Settings()
         assert settings.TEST_SETTING == 123
-

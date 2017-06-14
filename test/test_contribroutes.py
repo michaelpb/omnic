@@ -18,6 +18,7 @@ class BaseRoutes:
         cls.app = runserver('ignored', 0, just_setup_app=True)
         cls.host = '127.0.0.1:42101'
         cls.tmp_path_prefix = tempfile.mkdtemp()
+
         class FakeSettings:
             PATH_PREFIX = cls.tmp_path_prefix
             PATH_GROUPING = None
