@@ -133,7 +133,7 @@ async def conversion_tester(request):
     try:
         foreign_res = ForeignResource(settings, url_string)
     except:
-        pass # a myriad of invalid types
+        pass  # a myriad of invalid types
     else:
         if foreign_res.cache_exists():
             # Determine the file type of the foreign resource

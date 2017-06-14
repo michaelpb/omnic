@@ -11,15 +11,16 @@ class Settings:
         custom_settings_path = os.environ.get('OMNIC_SETTINGS')
         self.settings_module = object()
         if custom_settings_path:
-            self.settings_module = importlib.import_module(custom_settings_path)
+            self.settings_module = importlib.import_module(
+                custom_settings_path)
 
     def use_settings(self, settings_module):
         self.settings_module = settings_module
 
     def __getattr__(self, key):
-        if key.upper() != key: # not upper case
+        if key.upper() != key:  # not upper case
             raise AttributeError('Invalid settings attribute, '
-                'must be all-uppercase: "%s"' % key)
+                                 'must be all-uppercase: "%s"' % key)
         try:
             return getattr(self.settings_module, key)
         except AttributeError:
@@ -32,14 +33,12 @@ class Settings:
 
         raise AttributeError('Invalid settings: "%s"' % key)
 
+
 singletons.register('settings', Settings)
 
 
 def load_settings():
     from omnic import default_settings
-    from omnic.conversion.converter import ConverterGraph
-    from omnic.responses.placeholder import PlaceholderSelector
-    settings = default_settings
     custom_settings_path = os.environ.get('OMNIC_SETTINGS')
     if custom_settings_path:
         # TODO import here

@@ -1,5 +1,6 @@
 from omnic import singletons
 
+
 class PlaceholderNotFound(ValueError):
     pass
 
@@ -32,6 +33,7 @@ class PlaceholderSelector:
     '''
     Helper singleton that takes in all placeholders
     '''
+
     def __init__(self, use_settings=None):
         # Used by testing
         if use_settings:
@@ -53,5 +55,6 @@ class PlaceholderSelector:
             placeholder.stream_response,
             content_type=placeholder.content_type,
         )
+
 
 singletons.register('placeholders', PlaceholderSelector)

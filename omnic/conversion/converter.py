@@ -91,4 +91,5 @@ class ConverterGraph:
             results.append((converter, ts_left, ts_right))
         return results
 
+
 singletons.register('converter_graph', ConverterGraph)

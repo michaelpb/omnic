@@ -147,12 +147,14 @@ class AioWorker(Worker):
         self.converting_resources.add(key)
         return True
 
+
 class WorkerManager(list):
     '''
     Singleton that handles either multiple workers, or a single worker
     connection (in the case of workers living in another process), and
     exposes relevant methods to enqueueing tasks related to conversion.
     '''
+
     def run(self):
         return asyncio.gather(*[worker.run() for worker in self])
 
@@ -172,5 +174,6 @@ class WorkerManager(list):
         args = (converter, from_resource, to_resource)
         coro = worker.enqueue(Task.CONVERT, args)
         asyncio.ensure_future(coro)
+
 
 singletons.register('workers', WorkerManager)

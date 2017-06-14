@@ -2,6 +2,7 @@
 Singleton related utilities
 '''
 
+
 class SingletonManager(object):
     def __init__(self):
         self.singletons = {}
