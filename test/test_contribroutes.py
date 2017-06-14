@@ -15,21 +15,27 @@ class BaseRoutes:
     @classmethod
     def setup_class(cls):
         from omnic.server import runserver
-        settings = singletons.settings
-        cls.app = runserver(settings, 'ignored', 0, just_setup_app=True)
+        cls.app = runserver('ignored', 0, just_setup_app=True)
         cls.host = '127.0.0.1:42101'
-        cls.settings = settings
-        settings.PATH_PREFIX = tempfile.mkdtemp()
-        settings.PATH_GROUPING = None
-        settings.ALLOWED_LOCATIONS = {cls.host}
+        cls.tmp_path_prefix = tempfile.mkdtemp()
+        class FakeSettings:
+            PATH_PREFIX = cls.tmp_path_prefix
+            PATH_GROUPING = None
+            ALLOWED_LOCATIONS = {cls.host}
+
         del singletons.workers[0]
-        settings.worker = RunOnceWorker()
-        singletons.workers.append(settings.worker)
+        cls.worker = RunOnceWorker()
+        singletons.workers.append(cls.worker)
+        singletons.settings.use_settings(FakeSettings)
 
         # Disable all HTTP logging for sanic since it leaves open FDs and
         # causes warnings galore
         from sanic.config import LOGGING
         LOGGING.clear()
+
+    @classmethod
+    def teardown_class(cls):
+        singletons.settings.use_previous_settings()
 
 
 class TestBuiltinTestRoutes(BaseRoutes):
@@ -69,7 +75,7 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
         # Inspect whats been enqueued, ensure as expected
-        q = self.settings.worker.next_queue
+        q = self.worker.next_queue
         assert q[0][0] == Task.DOWNLOAD
         assert q[1][0] == Task.FUNC
         assert q[1][1][1] == 'http://127.0.0.1:42101/test.png'
@@ -77,13 +83,13 @@ class TestBuiltinMediaRoutes(BaseRoutes):
 
         # Run through queue... this should download the resource, and in
         # turn enqueue the remaining steps
-        await self.settings.worker.run_once()
-        q = self.settings.worker.queue
+        await self.worker.run_once()
+        q = self.worker.queue
         assert len(q) == 0
 
         # Now make sure resource is downloaded to expected spot (no path
         # grouping, so just tmppath/test.png)
-        path = os.path.join(self.settings.PATH_PREFIX, 'test.png')
+        path = os.path.join(self.tmp_path_prefix, 'test.png')
         assert os.path.exists(path)
 
         # TODO: not fully tested here, need to write after refactor of

@@ -47,7 +47,7 @@ async def media_route(request, ts):
         enqueue_conversion_path,
         url_string,
         str(target_ts),
-        ServiceMeta.enqueue_convert
+        singletons.workers.enqueue_convert
     )
 
     # Respond with placeholder

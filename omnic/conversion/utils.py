@@ -41,6 +41,7 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
     Given a URL string that has already been downloaded, enqueue
     necessary conversion to get to target type
     '''
+    settings = singletons.settings
     target_ts = TypeString(to_type)
     foreign_res = ForeignResource(settings, url_string)
 

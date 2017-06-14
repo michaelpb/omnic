@@ -2,11 +2,12 @@ import hashlib
 import os
 import shutil
 from urllib.parse import urlparse
-from omnic.utils.iters import group_by
 
 import requests
 
-from .typestring import guess_typestring
+from omnic import singletons
+from omnic.utils.iters import group_by
+from omnic.types.typestring import guess_typestring
 
 
 class Resource:
@@ -17,7 +18,7 @@ class Resource:
     def __init__(self, config, url):
         # Setup props
         self.url_string = url
-        self.config = config
+        self.config = singletons.settings
 
         # Parse and process URL
         self.url = urlparse(url)

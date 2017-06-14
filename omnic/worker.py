@@ -68,7 +68,7 @@ class Worker:
                 self.stats_success += 1
             except Exception as e:
                 self.stats_error += 1
-                log.error('Error in task: "%s"' % repr(e))
+                log.exception('Error in task: "%s"' % repr(e))
 
     async def run_func(self, func, *func_args):
         '''

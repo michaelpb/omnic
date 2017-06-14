@@ -18,10 +18,6 @@ def register_service(settings, service):
     app.blueprint(service.blueprint, url_prefix='/%s' % service.NAME)
     service.log = logging.getLogger()
 
-    service.enqueue_sync = singletons.workers.enqueue_sync
-    service.enqueue_download = singletons.workers.enqueue_download
-    service.enqueue_convert = singletons.workers.enqueue_convert
-
 
 def register_all(settings, services):
     for service_name in services:

@@ -15,7 +15,17 @@ class Settings:
                 custom_settings_path)
 
     def use_settings(self, settings_module):
+        '''
+        Useful for tests for overriding current settings manually
+        '''
+        self._previous_settings = self.settings_module
         self.settings_module = settings_module
+
+    def use_previous_settings(self):
+        '''
+        Useful for tests for restoring previous state of singleton
+        '''
+        self.settings_module = self._previous_settings
 
     def __getattr__(self, key):
         if key.upper() != key:  # not upper case

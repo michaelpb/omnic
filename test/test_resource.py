@@ -32,11 +32,13 @@ class MockConfigRestrictive(MockConfig):
 class TestForeignResource:
     @classmethod
     def setup_class(cls):
+        MockConfig.PATH_PREFIX = tempfile.mkdtemp()
         singletons.settings.use_settings(MockConfig)
-        cls.config = MockConfig
-        cls.config.PATH_PREFIX = tempfile.mkdtemp()
-        singletons.settings.use_settings(cls.config)
-        cls.res = ForeignResource(cls.config, URL)
+        cls.res = ForeignResource(None, URL)
+
+    @classmethod
+    def teardown_class(cls):
+        singletons.settings.use_previous_settings()
 
     def test_properties(self):
         assert self.res.url_string == URL
@@ -45,8 +47,8 @@ class TestForeignResource:
         assert not self.res.cache_exists()
 
     def test_uniqueness(self):
-        res1 = ForeignResource(self.config, URL1)
-        res2 = ForeignResource(self.config, URL2)
+        res1 = ForeignResource(None, URL1)
+        res2 = ForeignResource(None, URL2)
         assert self.res.cache_path != res1.cache_path
         assert self.res.cache_path != res2.cache_path
         assert res2.cache_path != res1.cache_path
@@ -81,21 +83,19 @@ class TestForeignResource:
 
 class TestResourceValidate:
     def test_validate_global(self):
+        res = ForeignResource(None, URL)
+        res1 = ForeignResource(None, URL1)
+        res2 = ForeignResource(None, URL2)
         singletons.settings.use_settings(MockConfig)
-        config = MockConfig
-        res = ForeignResource(config, URL)
-        res1 = ForeignResource(config, URL1)
-        res2 = ForeignResource(config, URL2)
         res.validate()  # no exceptions since config is loose
         res1.validate()  # no exceptions since config is loose
         res2.validate()  # no exceptions since config is loose
 
     def test_validate_restrictive(self):
         singletons.settings.use_settings(MockConfigRestrictive)
-        config = MockConfigRestrictive
-        res = ForeignResource(config, URL)
-        res1 = ForeignResource(config, URL1)
-        res2 = ForeignResource(config, URL2)
+        res = ForeignResource(None, URL)
+        res1 = ForeignResource(None, URL1)
+        res2 = ForeignResource(None, URL2)
         res.validate()  # no exceptions since okay
         res1.validate()  # no exceptions since okay
         with pytest.raises(URLError):
@@ -106,8 +106,11 @@ class TestTypedResource:
     @classmethod
     def setup_class(cls):
         singletons.settings.use_settings(MockConfig)
-        cls.config = MockConfig
-        cls.res = TypedResource(cls.config, URL, TypeString('image/gif'))
+        cls.res = TypedResource(None, URL, TypeString('image/gif'))
+
+    @classmethod
+    def teardown_class(cls):
+        singletons.settings.use_previous_settings()
 
     def test_properties(self):
         assert self.res.url_string == URL
@@ -116,15 +119,15 @@ class TestTypedResource:
 
     def test_uniqueness(self):
         paths = set([
-            TypedResource(self.config, URL, TypeString(
+            TypedResource(None, URL, TypeString(
                 'image/gif')).cache_path,
-            TypedResource(self.config, URL, TypeString(
+            TypedResource(None, URL, TypeString(
                 'image/png')).cache_path,
-            TypedResource(self.config, URL_GIF,
+            TypedResource(None, URL_GIF,
                           TypeString('image/gif')).cache_path,
-            TypedResource(self.config, URL1, TypeString(
+            TypedResource(None, URL1, TypeString(
                 'image/gif')).cache_path,
-            TypedResource(self.config, URL2, TypeString(
+            TypedResource(None, URL2, TypeString(
                 'image/gif')).cache_path,
         ])
         assert len(paths) == 5
