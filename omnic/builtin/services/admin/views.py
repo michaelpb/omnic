@@ -7,6 +7,7 @@ import json
 from urllib.parse import urlencode
 
 from sanic import Blueprint
+from sanic.response import redirect
 
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic import singletons
@@ -58,13 +59,12 @@ async def get_worker_info():
 
 
 def get_nodes_edges_ids(ext=None):
-    dgraph = settings.converter_graph.dgraph
+    dgraph = singletons.converter_graph.dgraph
     paths_flat = None
     if ext is not None:
         paths = dgraph.get_all_paths_from(ext)
         path_list = [item for item in (path for cost, path in paths)]
         paths_flat = frozenset(sum(path_list, tuple()))
-    dgraph = settings.converter_graph.dgraph
     nodes = []
     edges = []
     all_node_set = set()
@@ -85,11 +85,12 @@ def get_nodes_edges_ids(ext=None):
 
     idified = {}
     id_to_ext = {}
+    converters = singletons.converter_graph.converter_list
     for i, node in enumerate(node_set):
         idified[node] = i
         id_to_ext[i] = node
-        converters = settings.CONVERTERS
         group = -1
+        # Identify which converters for each node
         for num, converter in enumerate(converters):
             if node in converter.inputs:
                 group = num
@@ -114,7 +115,7 @@ def get_nodes_edges_ids(ext=None):
 
 @blueprint.get('/')
 async def conversion_tester_root(request):
-    return await conversion_tester(request)
+    return redirect('/admin/conversion/')
 
 
 @blueprint.get('/conversion/')
@@ -129,12 +130,16 @@ async def conversion_tester(request):
     # Determine type
     ext = None
     url_string = 'http://%s' % form['res_url']
-    foreign_res = ForeignResource(settings, url_string)
-    if foreign_res.cache_exists():
-        # Determine the file type of the foreign resource
-        typed_foreign_res = foreign_res.guess_typed()
-        ext = typed_foreign_res.typestring.extension
-        #nodes, edges, id_to_ext = get_nodes_edges_ids(ext)
+    try:
+        foreign_res = ForeignResource(settings, url_string)
+    except:
+        pass # a myriad of invalid types
+    else:
+        if foreign_res.cache_exists():
+            # Determine the file type of the foreign resource
+            typed_foreign_res = foreign_res.guess_typed()
+            ext = typed_foreign_res.typestring.extension
+            #nodes, edges, id_to_ext = get_nodes_edges_ids(ext)
 
     return templates.render(request, 'index.html', {
         'is_conversion': True,

@@ -9,6 +9,7 @@ from omnic.types.resource import (
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
 from omnic.config import settings
+from omnic import singletons
 
 
 async def convert_local(path, to_type):
@@ -18,7 +19,7 @@ async def convert_local(path, to_type):
     # Now find path between types
     typed_foreign_res = TypedLocalResource(settings, path)
     original_ts = typed_foreign_res.typestring
-    conversion_path = settings.converter_graph.find_path(original_ts, to_type)
+    conversion_path = singletons.converter_graph.find_path(original_ts, to_type)
 
     # Loop through each step in graph path and convert
     for is_first, is_last, path_step in first_last_iterator(conversion_path):
@@ -51,7 +52,7 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
 
     # Now find path between types
     original_ts = typed_foreign_res.typestring
-    path = settings.converter_graph.find_path(original_ts, target_ts)
+    path = singletons.converter_graph.find_path(original_ts, target_ts)
 
     # Loop through each step in graph path and convert
     is_first = True

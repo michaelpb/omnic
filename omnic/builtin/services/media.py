@@ -7,6 +7,7 @@ from omnic.types.typestring import TypeString
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.conversion.utils import enqueue_conversion_path
 from omnic.config import settings
+from omnic import singletons
 
 
 class ServiceMeta:
@@ -24,6 +25,7 @@ async def media_route(request, ts):
     url_string = 'http://' + url_suffix
 
     # Prep ForeignResource and ensure does not validate security settings
+    # TODO: catch errors one up, and return 4xx errors?
     foreign_res = ForeignResource(settings, url_string)
     foreign_res.validate()
 
@@ -49,4 +51,4 @@ async def media_route(request, ts):
     )
 
     # Respond with placeholder
-    return settings.placeholders.stream_response(target_ts, response)
+    return singletons.placeholders.stream_response(target_ts, response)

@@ -62,7 +62,7 @@ def runserver(settings, host, port, debug=False, just_setup_app=False):
 
     # Start server and worker
     server_coro = app.create_server(host=host, port=port, debug=debug)
-    worker_coro = settings.worker.run()
-    loop.run_until_complete(asyncio.gather(server_coro, worker_coro))
+    worker_coros = singletons.workers.run()
+    loop.run_until_complete(asyncio.gather(server_coro, worker_coros))
 
     return app

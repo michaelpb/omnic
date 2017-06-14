@@ -1,3 +1,5 @@
+from omnic import singletons
+
 class PlaceholderNotFound(ValueError):
     pass
 
@@ -27,8 +29,15 @@ class BytesPlaceholder(Placeholder):
 
 
 class PlaceholderSelector:
-    def __init__(self, config):
-        self.placeholders = config.PLACEHOLDERS
+    '''
+    Helper singleton that takes in all placeholders
+    '''
+    def __init__(self, use_settings=None):
+        # Used by testing
+        if use_settings:
+            self.placeholders = use_settings.PLACEHOLDERS
+        else:
+            self.placeholders = singletons.settings.PLACEHOLDERS
 
     def get_placeholder(self, typestring):
         for placeholder_class in self.placeholders:
@@ -44,3 +53,5 @@ class PlaceholderSelector:
             placeholder.stream_response,
             content_type=placeholder.content_type,
         )
+
+singletons.register('placeholders', PlaceholderSelector)
