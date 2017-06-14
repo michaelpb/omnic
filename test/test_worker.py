@@ -14,6 +14,7 @@ class RunOnceWorker(Worker):
     '''
 
     def __init__(self):
+        super().__init__()
         self.fake_next = None
         self._running = True
         self.called_args = None
