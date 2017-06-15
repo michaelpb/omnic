@@ -1,5 +1,6 @@
 import os
 import importlib
+import functools
 
 from omnic import default_settings
 
@@ -7,11 +8,10 @@ from omnic import default_settings
 class Settings:
     def __init__(self):
         self.default_settings_module = default_settings
-        custom_settings_path = os.environ.get('OMNIC_SETTINGS')
+        path = os.environ.get('OMNIC_SETTINGS')
         self.settings_module = object()
-        if custom_settings_path:
-            self.settings_module = importlib.import_module(
-                custom_settings_path)
+        if path:
+            self.settings_module = importlib.import_module(path)
 
     def use_settings(self, settings_module):
         '''
@@ -19,6 +19,15 @@ class Settings:
         '''
         self._previous_settings = self.settings_module
         self.settings_module = settings_module
+
+    def load_all(self, key):
+        '''
+        Useful for tests for restoring previous state of singleton
+        '''
+        return [
+            importlib.import_module(path)
+            for path in getattr(self, key)
+        ]
 
     def use_previous_settings(self):
         '''

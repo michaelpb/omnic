@@ -10,34 +10,22 @@ from omnic import singletons
 
 app = None
 
-
-def register_service(settings, service):
-    service.config = settings
-    service.app = app
-    app.blueprint(service.blueprint, url_prefix='/%s' % service.NAME)
-    service.log = logging.getLogger()
-
-
-def register_all(settings, services):
-    for service_name in services:
-        service = importlib.import_module(service_name)
-        register_service(settings, service.ServiceMeta)
-
-
 def runserver(host, port, debug=False, just_setup_app=False):
     # Only import if actually running server (so that Sanic is not a dependency
     # if only using for convert mode)
     global app
     app = Sanic(__name__)
-    settings = singletons.settings
-    register_all(settings, settings.SERVICES)
+
+    # Set up all routes for all services
+    for service in singletons.settings.load_all('SERVICES'):
+        info = service.ServiceMeta
+        app.blueprint(info.blueprint, url_prefix='/%s' % info.NAME)
 
     # Set up loop + queue
     loop = uvloop.new_event_loop()
     asyncio.set_event_loop(loop)
-    settings.async_queue = asyncio.Queue(loop=loop)
-    # TODO: fix
-    worker = AioWorker(settings.async_queue)
+    async_queue = asyncio.Queue(loop=loop)
+    worker = AioWorker(async_queue)
     singletons.workers.append(worker)
 
     if just_setup_app:

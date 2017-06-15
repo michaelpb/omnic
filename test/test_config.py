@@ -35,3 +35,14 @@ class TestForeignResource:
         os.environ['OMNIC_SETTINGS'] = 'test.test_config'
         settings = Settings()
         assert settings.TEST_SETTING == 123
+
+    def test_loading_modules(self):
+        # Simply use self as a test settings
+        settings = Settings()
+        class MockSettings:
+            SERVICES = [
+                'test.test_config',
+            ]
+        settings.use_settings(MockSettings)
+        assert len(settings.load_all('SERVICES')) == 1
+        assert hasattr(settings.load_all('SERVICES')[0], 'TEST_SETTING')

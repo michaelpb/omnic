@@ -155,7 +155,7 @@ class WorkerManager(list):
     exposes relevant methods to enqueueing tasks related to conversion.
     '''
 
-    def run(self):
+    def gather_run(self):
         '''
         Gathers all workers to be run in a loop.
         '''
