@@ -10,6 +10,10 @@ from sanic import response
 SERVICE_NAME = 'test'
 blueprint = Blueprint(SERVICE_NAME)
 
+JPEG_TEST_BYTES = bytes([0xff, 0xd8, 0xff, 0xe0])
+PNG_TEST_BYTES = bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+EMPTY_ZIP_TEST_BYTES = bytes([0x50, 0x4B, 0x05, 0x06])
+
 
 @blueprint.get('/test.jpg')
 async def jpeg_route(request):
@@ -17,16 +21,12 @@ async def jpeg_route(request):
         response.write(JPEG_TEST_BYTES)
     return response.stream(streaming_fn, content_type='image/jpeg')
 
-PNG_TEST_BYTES = bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
-
 
 @blueprint.get('/test.png')
 async def png_route(request):
     async def streaming_fn(response):
         response.write(PNG_TEST_BYTES)
     return response.stream(streaming_fn, content_type='image/jpeg')
-
-EMPTY_ZIP_TEST_BYTES = bytes([0x50, 0x4B, 0x05, 0x06])
 
 
 @blueprint.get('/empty.zip')

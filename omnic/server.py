@@ -6,6 +6,7 @@ from omnic import singletons
 
 
 def runserver(host, port, debug=False, just_setup_app=False):
+    singletons.settings
     # Set up loop + queue
     loop = uvloop.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -18,7 +19,8 @@ def runserver(host, port, debug=False, just_setup_app=False):
         return singletons.server.app  # in unit tests likely, no coroutines
 
     # Start server and worker
-    server_coro = singletons.server.create_server_coro(host=host, port=port, debug=debug)
+    server_coro = singletons.server.create_server_coro(
+        host=host, port=port, debug=debug)
     worker_coros = singletons.workers.gather_run()
     loop.run_until_complete(asyncio.gather(server_coro, worker_coros))
 

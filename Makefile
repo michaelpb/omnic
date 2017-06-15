@@ -33,6 +33,12 @@ test:
 test-all:
 	tox
 
+test-watch:
+	find omnic/ test/ -name \*.py | entr -r py.test
+
+runserver-watch:
+	find omnic/ test/ -name \*.py | entr -r python ./bin/omnic runserver
+
 cleanup-pep8:
 	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r omnic
 	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r test

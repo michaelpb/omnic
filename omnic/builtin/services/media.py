@@ -14,6 +14,7 @@ from omnic import singletons
 SERVICE_NAME = 'media'
 blueprint = Blueprint(SERVICE_NAME)
 
+
 @blueprint.get('/<ts>/')
 async def media_route(request, ts):
     url_suffix = request.args['url'][0]
