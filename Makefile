@@ -10,6 +10,7 @@ help:
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
 	@echo "sdist - package"
+	@echo "cleanup-pep8 - automatical clean up some linting violations"
 
 clean: clean-build clean-pyc
 
@@ -39,10 +40,11 @@ cleanup-pep8:
 	autopep8 --in-place -r test
 
 coverage:
-	coverage run --source omnic setup.py test
+	coverage run --source omnic `which py.test`
+	#coverage run `which py.test`
 	coverage report -m
 	coverage html
-	open htmlcov/index.html
+	xdg-open htmlcov/index.html
 
 docs:
 	rm -f docs/omnic.rst
@@ -50,7 +52,7 @@ docs:
 	sphinx-apidoc -o docs/ omnic
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	open docs/_build/html/index.html
+	xdfg-open docs/_build/html/index.html
 
 release: clean
 	python setup.py sdist upload

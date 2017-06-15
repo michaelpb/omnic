@@ -156,21 +156,40 @@ class WorkerManager(list):
     '''
 
     def run(self):
+        '''
+        Gathers all workers to be run in a loop.
+        '''
         return asyncio.gather(*[worker.run() for worker in self])
 
+    def pick_sticky(self, hashable):
+        '''
+        Chooses a worker 'stickily' (keeping with the same)
+        '''
+        return self[hash(hashable) % len(self)]
+
     def enqueue_sync(self, func, *func_args):
-        worker = self[0]
+        '''
+        Enqueue an arbitrary synchronous function.
+        '''
+        worker = self.pick_sticky(0)  # just pick first always
         args = (func,) + func_args
         coro = worker.enqueue(Task.FUNC, args)
         asyncio.ensure_future(coro)
 
     def enqueue_download(self, resource):
-        worker = self[0]
+        '''
+        Enqueue the download of the given foreign resource.
+        '''
+        worker = self.pick_sticky(resource.url_string)
         coro = worker.enqueue(Task.DOWNLOAD, (resource,))
         asyncio.ensure_future(coro)
 
     def enqueue_convert(self, converter, from_resource, to_resource):
-        worker = self[0]
+        '''
+        Enqueue use of the given converter to convert to given
+        resources.
+        '''
+        worker = self.pick_sticky(from_resource.url_string)
         args = (converter, from_resource, to_resource)
         coro = worker.enqueue(Task.CONVERT, args)
         asyncio.ensure_future(coro)

@@ -15,7 +15,7 @@ class BaseRoutes:
     @classmethod
     def setup_class(cls):
         from omnic.server import runserver
-        cls.app = runserver('ignored', 0, just_setup_app=True)
+
         cls.host = '127.0.0.1:42101'
         cls.tmp_path_prefix = tempfile.mkdtemp()
 
@@ -23,11 +23,13 @@ class BaseRoutes:
             PATH_PREFIX = cls.tmp_path_prefix
             PATH_GROUPING = None
             ALLOWED_LOCATIONS = {cls.host}
+        singletons.settings.use_settings(FakeSettings)
 
-        del singletons.workers[0]
+        cls.app = runserver('ignored', 0, just_setup_app=True)
+
+        singletons.workers.clear()
         cls.worker = RunOnceWorker()
         singletons.workers.append(cls.worker)
-        singletons.settings.use_settings(FakeSettings)
 
         # Disable all HTTP logging for sanic since it leaves open FDs and
         # causes warnings galore
@@ -77,6 +79,8 @@ class TestBuiltinMediaRoutes(BaseRoutes):
 
         # Inspect whats been enqueued, ensure as expected
         q = self.worker.next_queue
+        assert q
+        assert q[0]
         assert q[0][0] == Task.DOWNLOAD
         assert q[1][0] == Task.FUNC
         assert q[1][1][1] == 'http://127.0.0.1:42101/test.png'
@@ -96,7 +100,4 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         # TODO: not fully tested here, need to write after refactor of
         # 'enqueue' helper functions in server
         # Give control to the loop again
-        # await asyncio.sleep(1)
-        # await self.settings.worker.run_once()
-        # await asyncio.sleep(0)
-        #assert 0
+        # assert 0

@@ -37,15 +37,15 @@ def runserver(host, port, debug=False, just_setup_app=False):
     asyncio.set_event_loop(loop)
     settings.async_queue = asyncio.Queue(loop=loop)
     # TODO: fix
-    settings.worker = AioWorker(settings.async_queue)
-    singletons.workers.append(settings.worker)
+    worker = AioWorker(settings.async_queue)
+    singletons.workers.append(worker)
 
     if just_setup_app:
         return app  # in unit tests likely, don't make the coroutines
 
     # Start server and worker
     server_coro = app.create_server(host=host, port=port, debug=debug)
-    worker_coros = singletons.workers.run()
+    worker_coros = singletons.workers.gather_run()
     loop.run_until_complete(asyncio.gather(server_coro, worker_coros))
 
     return app
