@@ -1,7 +1,3 @@
-from sanic import Sanic
-
-import logging
-import importlib
 import uvloop
 import asyncio
 
@@ -10,9 +6,11 @@ from omnic import singletons
 
 app = None
 
+
 def runserver(host, port, debug=False, just_setup_app=False):
     # Only import if actually running server (so that Sanic is not a dependency
     # if only using for convert mode)
+    from sanic import Sanic
     global app
     app = Sanic(__name__)
 

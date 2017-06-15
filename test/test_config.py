@@ -8,6 +8,14 @@ from omnic.config import Settings
 TEST_SETTING = 123
 
 
+class ExampleClassA:
+    pass
+
+
+class ExampleClassB:
+    pass
+
+
 class TestForeignResource:
     def test_default(self):
         settings = Settings()
@@ -39,6 +47,7 @@ class TestForeignResource:
     def test_loading_modules(self):
         # Simply use self as a test settings
         settings = Settings()
+
         class MockSettings:
             SERVICES = [
                 'test.test_config',
@@ -46,3 +55,29 @@ class TestForeignResource:
         settings.use_settings(MockSettings)
         assert len(settings.load_all('SERVICES')) == 1
         assert hasattr(settings.load_all('SERVICES')[0], 'TEST_SETTING')
+
+    def test_loading_class_modules(self):
+        # Simply use self as a test settings
+        settings = Settings()
+
+        class MockSettings:
+            SERVICES = [
+                'test.test_config.ExampleClassA',
+            ]
+        settings.use_settings(MockSettings)
+        assert len(settings.load_all('SERVICES')) == 1
+        assert settings.load_all('SERVICES')[0] is ExampleClassA
+
+    def test_loading_modules_dict(self):
+        # Simply use self as a test settings
+        settings = Settings()
+
+        class MockSettings:
+            SERVICES = {
+                'a': 'test.test_config.ExampleClassA',
+                'b': 'test.test_config.ExampleClassB',
+            }
+        settings.use_settings(MockSettings)
+        assert len(settings.load_all('SERVICES')) == 2
+        assert settings.load_all('SERVICES')['a'] is ExampleClassA
+        assert settings.load_all('SERVICES')['b'] is ExampleClassB

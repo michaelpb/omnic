@@ -28,3 +28,7 @@ class PNGPixel(placeholder.BytesPlaceholder):
     ]
     content_type = 'image/png'
     bytes = TRANSPARENT_PNG_PIXEL_BYTES
+
+
+class PNGPixelAll(PNGPixel):
+    types = all

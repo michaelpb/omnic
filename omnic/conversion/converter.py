@@ -65,7 +65,8 @@ class ConverterGraph:
     def __init__(self, converter_list=None):
         self.converter_list = converter_list
         if self.converter_list is None:
-            self.converter_list = singletons.settings.CONVERTERS
+            self.converter_list = singletons.settings.load_all('CONVERTERS')
+            #self.converter_list = singletons.settings.CONVERTERS
         self.dgraph = DirectedGraph()
         self.converters = {}
         for converter in self.converter_list:

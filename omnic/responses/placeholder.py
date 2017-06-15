@@ -35,11 +35,11 @@ class PlaceholderSelector:
     '''
 
     def __init__(self, use_settings=None):
-        # Used by testing
         if use_settings:
+            # Used by testing, TODO remove
             self.placeholders = use_settings.PLACEHOLDERS
         else:
-            self.placeholders = singletons.settings.PLACEHOLDERS
+            self.placeholders = singletons.settings.load_all('PLACEHOLDERS')
 
     def get_placeholder(self, typestring):
         for placeholder_class in self.placeholders:

@@ -1,6 +1,6 @@
 import os
 import importlib
-import functools
+import logging
 
 from omnic import default_settings
 
@@ -13,6 +13,12 @@ class Settings:
         if path:
             self.settings_module = importlib.import_module(path)
 
+        self.reconfigure()
+
+    def reconfigure(self):
+        self.load_all('AUTOLOAD')
+        logging.basicConfig(**self.LOGGING)
+
     def use_settings(self, settings_module):
         '''
         Useful for tests for overriding current settings manually
@@ -24,10 +30,27 @@ class Settings:
         '''
         Useful for tests for restoring previous state of singleton
         '''
-        return [
-            importlib.import_module(path)
-            for path in getattr(self, key)
-        ]
+        value = getattr(self, key)
+        if isinstance(value, dict):
+            return {key: self.load(value) for key, value in value.items()}
+        elif isinstance(value, list):
+            return [self.load(value) for value in value]
+        else:
+            raise ValueError('load_all must be list or dict')
+
+    def load(self, path):
+        containing_module, _, last_item = path.rpartition('.')
+        if last_item[0].isupper():
+            # Is a class definition, should do an "import from"
+            path = containing_module
+        imported_obj = importlib.import_module(path)
+        if last_item[0].isupper():
+            try:
+                imported_obj = getattr(imported_obj, last_item)
+            except:
+                raise ImportError(
+                    'CamelCase only for classes: "%s"' % last_item)
+        return imported_obj
 
     def use_previous_settings(self):
         '''

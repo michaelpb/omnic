@@ -6,6 +6,6 @@ __version__ = '0.1.0'
 from omnic.utils.singleton import SingletonManager
 singletons = SingletonManager()
 
-# Ensure settings, at least, gets registered
+# Ensure settings gets registered as a singleton
 from omnic import config
 singletons.register('settings', config.Settings)

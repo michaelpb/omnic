@@ -1,20 +1,17 @@
-from omnic.builtin.converters.thumb import PILThumb
-from omnic.builtin.converters.document import Unoconv, ImageMagickPageRasterizer
-from omnic.builtin.converters.mesh import MeshLabConverter, Jsc3dRenderer
-from omnic.builtin.converters.chemical import OpenBabelConverter
-from omnic.builtin.converters.vector import InkscapeConverter, InkscapeRasterizer
-from omnic.builtin.responses.placeholders import PNGPixel
+# Modules which are automatically loaded as soon as settings is loaded,
+# to ensure singletons etc get hooked up correctly
+AUTOLOAD = [
+    'omnic.conversion.converter',
+    'omnic.responses.placeholder',
+]
 
 # Set up logging format
-import logging
-logging_format = "[%(asctime)s] %(process)d-%(levelname)s "
-logging_format += "%(module)s::%(funcName)s():l%(lineno)d: "
-logging_format += "%(message)s"
-
-logging.basicConfig(
-    format=logging_format,
-    level=logging.DEBUG
-)
+LOGGING = {
+    'format': '[%(asctime)s] %(process)d-%(levelname)s '
+              '%(module)s::%(funcName)s():l%(lineno)d: '
+              '%(message)s',
+    'level': 10,  # logging.DEBUG,
+}
 
 SERVICES = [
     'omnic.builtin.services.media',
@@ -24,24 +21,19 @@ SERVICES = [
 ]
 
 CONVERTERS = [
-    PILThumb,
-    Unoconv,
-    ImageMagickPageRasterizer,
-    MeshLabConverter,
-    Jsc3dRenderer,
-    OpenBabelConverter,
-    InkscapeConverter,
-    InkscapeRasterizer,
+    'omnic.builtin.converters.thumb.PILThumb',
+    'omnic.builtin.converters.document.Unoconv',
+    'omnic.builtin.converters.document.ImageMagickPageRasterizer',
+    'omnic.builtin.converters.mesh.MeshLabConverter',
+    'omnic.builtin.converters.mesh.Jsc3dRenderer',
+    'omnic.builtin.converters.chemical.OpenBabelConverter',
+    'omnic.builtin.converters.vector.InkscapeConverter',
+    'omnic.builtin.converters.vector.InkscapeRasterizer',
 ]
 
 
-class CatchAll(PNGPixel):
-    types = all
-
-
 PLACEHOLDERS = [
-    PNGPixel,
-    CatchAll,
+    'omnic.builtin.responses.placeholders.PNGPixelAll',
 ]
 
 PATH_PREFIX = '/tmp/omnic/'
