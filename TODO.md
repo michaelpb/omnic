@@ -1,25 +1,10 @@
 # Next steps:
 
 ## Top priority
-- [X] Worker unit tests
-
-- [X] Basic integration tests for builtin
-
-- [X] Rename to `builtin` (from contrib)
-
-- [ ] QoL settings improvement
-    - [ ] Make settings like Django so you import where you need instead of
-      pass around a "config" object
-    - [ ] Swap out settings hack out for "singletons.py"
-    - [ ] Add import system like Django's, so that `settings.py` doesn't need
-      to import anything
-
-- [X] Decide on name: e.g. `OmniConverter`, or `omnic` for short. Move to
-  /omnic/ repo then
 
 - [ ] Fix setup.py packaging, set up pypi
     - [ ] Add to setup.py only the minimum needed packages
-    - [ ] Document which packages needed for which builtin stuff
+    - [X] Document which packages needed for which builtin stuff
     - [ ] Build simple scaffolding
     - [ ] Move requirements file to test dir
 
@@ -35,22 +20,46 @@
     - [X] STL,OBJ -> PNG (jsc3d)
     - [X] Molecule file conversion and visualization, just because
 
+
+- [X] Very admin simple panel:
+    1. Paste in a URL
+    2. It downloads and converts to TypedForeignResource
+    3. It shows all possible paths from that filetype
+    4. Shows thumbnail with live-reload
+
+- [X] Worker unit tests
+
+- [X] Basic integration tests for builtin
+
+- [X] Rename to `builtin` (from contrib)
+
+- [X] QoL settings improvement
+    - [X] Make settings like Django so you import where you need instead of
+      pass around a "config" object
+    - [X] Swap out settings hack out for "singletons.py"
+    - [X] Add import system like Django's, so that `settings.py` doesn't need
+      to import anything
+
+- [X] Decide on name: e.g. `OmniConverter`, or `omnic` for short. Move to
+  /omnic/ repo then
+
 ## Misc
 
-- [ ] Work on some very simple refresh javascript to integrate
+- [X] Work on some very simple refresh javascript to integrate
 
-- [ ] Fix running unoconv within venv
+- [ ] BUG: Fix running unoconv within venv
     - [ ] Check if in virtualenv and ensure environments Python is used when
       doing subprocess calls
 
 - [ ] QoL conversion grid improvements:
-    - [ ] Think more about how to make extension "supersede" mimetype in a
-      reliable way
-    - [ ] Add "configure" check to base Converter, which should ensure correct
-      Python and system packages installed for the converter to be functoinal
+    - [ ] Think more about how to make extension "supersede" mimetype
+      in a reliable way
+    - [ ] Add "configure" check to base Converter, which should ensure
+      correct Python and system packages installed for the converter to
+      be functoinal
     - [ ] Allow conversions to self
-    - [ ] Allow preferred conversion paths in settings, which are picked first
-      if available, e.g. like the following:
+    - [ ] Allow preferred conversion paths in settings, which are
+      picked first if available, e.g. like the following:
         {
             ('STL', 'JPG'): ['STL', 'PNG', 'add_background.png', 'JPG:1000x1000'],
         }
@@ -59,7 +68,7 @@
     - [ ] Replace all file system calls with aiofiles
     - [ ] Replace all spawn system calls with asyncio equivalent
 
-- [ ] Build out full integration tests for builtin
+- [ ] Build out better integration tests for builtin
     - [ ] Mock out all spawn calls
     - [ ] CLI interface
 
@@ -117,34 +126,21 @@
 - [ ] Test suite for CLI
 
 
-# Admin and demo
-
-### Admin service
-- [ ] Admin panel should use /ws/ backend to provide a graphical view of the
-  process of files being ingested
-
-- [ ] Very simple panel:
-    1. Paste in a URL
-    2. It downloads and converts to TypedForeignResource
-    3. It shows all possible paths from that filetype
-    4. Clicking on one will swap it with an embedded viewer (if
-    applicable)
-
 # Future
 
 ## JS viewer system
 
-- First API call looks for all `img[omnic-viewer]` and
-  `img[omnic-embed]` tags and sends 1 AJAX call to check if they are all
+-[ ] First API call looks for all `img[omnic-viewer]` and
+  `img[omnic-thumb]` tags and sends 1 AJAX call to check if they are all
   loaded.
-    - If not, it will add a spinner to all thumbnails of them, and try
-      again in X seconds (V2: could keep running average of every
+    - [ ] If not, it will add a spinner to all thumbnails of them, and
+      try again in X seconds (V2: could keep running average of every
       conversion path, and try again in `avg * 1.5` or something)
-    - If loaded, it will check if omnic-viewer, then add a hoverable (>)
-      button in the center, and an onclick event which will activate the
-      appropriate viewer
-    - If possible / cheap computationally, avoid API calls by checking
-      if the image is a 1x1 placeholder image (?)
+    - [ ] If loaded, it will check if omnic-viewer, then add a
+      hoverable (>) button in the center, and an onclick event which
+      will activate the appropriate viewer
+    - [X] If possible / cheap computationally, avoid API calls by
+      checking if the image is a 1x1 placeholder image (?)
 - [ ] New Viewer system: Each type can have a Viewer, that serves up JS
   that mounts a viewer on a particular element (given a URL). E.g. the
   STL, OBJ etc viewer, when clicked on, will enable JSC3D.

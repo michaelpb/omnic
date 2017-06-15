@@ -14,26 +14,36 @@ Fully extendable to create any arbitrary conversion pipelines.
 
 # Installation
 
+## Installing directly on your host system
+
 **NOTE: Only Python 3.5+ is supported.**
 
-The first step is simply installing the base python package:
+The first step is simply installing the Python package:
 
-`pip3 install omnic`
+```
+pip3 install omnic
+```
 
 Depending on your needs, you will probably want to install a variety of other
 system-level package conversion programs. This might include:
 
-- `unoconv` - for converting many document formats
-- `imagemagick` - for raster image conversion and manipulation
-- `inkscape` - for vector conversion and manipulation
+- `unoconv` - for converting many document formats - Debian package: `sudo apt-get install unoconv`
+- `imagemagick` - for raster image conversion and manipulation - Debian package: `sudo apt-get install imagemagick`
+- `inkscape` - for vector conversion and manipulation - Debian package: `sudo apt-get install inkscape`
 
 Additionally, converters specific to certain domains might be useful:
 
-- `meshlab` - for converting between 3D model types
-- `jsc3d` - for rendering 3D models in software (node npm package)
-- `obabel` - for converting between chemical structure types
-- `sdftosvg` - for rendering chemical structures (node npm package)
+- `meshlab` - for converting between 3D model types - Debian package: `sudo apt-get install meshlab`
+- `jsc3d` - for rendering 3D models in software - node package: `npm install -g jsc3d`
+- `obabel` - for converting between chemical molecule filetypes - Debian package: `sudo apt-get install obabel`
+- `sdftosvg` - for rendering chemical molecules - node package: `npm install -g jsc3d`
 
+## Using docker
+
+Because of the abundance of system dependencies, a rather bulky docker image
+can be built which offers a "kitchen-sink" of all built-in converters.
+
+*TODO: Build this docker image*
 
 # Usage
 
@@ -43,6 +53,10 @@ There are 3 principle ways to use Omnic
 
 The most common usage of Omnic is as a on-the-fly file format converter and
 preview or thumb generator.
+
+1. Install globally with `pip install omnic`
+
+2. Run
 
 TODO: Stub
 
@@ -67,14 +81,42 @@ the other conversion programs used.
 TODO: Stub
 
 
+# Launching the admin interface
+
+Omnic comes bundled with a read-only admin interface. It's main purpose
+is a sort of configuration sanity check, and queue monitoring, but it
+also serves as a great demo. Once installed, get the omnic server
+running:
+
+```
+./bin/omnic runserver
+```
+
+Now point your browser at `http://localhost:8080/admin/` for the admin
+interface.
+
+From here you can paste in an URL to a resource, that Omnic will
+attempt to display as a thumbnail. In this example an OBJ file (3D
+model format) of a trumpet was pasted in, and a 200x200 thumbnail was
+generated:
+
+![Admin interface screenshot](docs/admin_conversion_view.jpg)
+
+
+To the right of the thumbnail it has an HTML snippet (the source-code
+of the thumbnail to the left), and a button that will take you to the
+conversion graph for that type:
+
+![Admin interface screenshot](docs/admin_conversion_view.jpg)
+
+
 
 # Contributing
 
 ## Setting up a dev environment
 
-It's much simpler to run a dev environment without Docker, just using
-`virtualenv`, and using asyncio's task queueing. This might not precisely
-resemble production environments, however it is very close.
+It's much simpler, at least on Linux-based operating systems, to run a dev
+environment without Docker, just using `virtualenv`.
 
 1. Install Python 3, including `pip` and `venv`:
     * On Debian-based distros:
@@ -92,7 +134,6 @@ resemble production environments, however it is very close.
     * `py.test`
 6. Start the server:
     * `./bin/omnic runserver`
-
 
 ## Test routes
 

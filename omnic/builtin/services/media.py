@@ -1,5 +1,6 @@
-
-
+'''
+Core media conversion service.
+'''
 from sanic import Blueprint
 from sanic import response
 
@@ -9,16 +10,11 @@ from omnic.conversion.utils import enqueue_conversion_path
 from omnic import singletons
 
 
-class ServiceMeta:
-    NAME = 'media'
-    blueprint = Blueprint(NAME)
-    config = None
-    app = None
-    log = None
-    enqueue = None
+# Required interface for service module
+SERVICE_NAME = 'media'
+blueprint = Blueprint(SERVICE_NAME)
 
-
-@ServiceMeta.blueprint.get('/<ts>/')
+@blueprint.get('/<ts>/')
 async def media_route(request, ts):
     url_suffix = request.args['url'][0]
     url_string = 'http://' + url_suffix

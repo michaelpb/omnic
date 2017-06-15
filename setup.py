@@ -13,6 +13,10 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
+if sys.argv[-1] == 'test':
+    os.system('py.test')
+    sys.exit()
+
 readme = open('README.md').read()
 doclink = """
 Documentation
@@ -38,7 +42,7 @@ setup(
     scripts=['bin/omnic'],
     install_requires=[
     ],
-    license='MIT',
+    license='GPL3',
     zip_safe=False,
     keywords='omnic',
     classifiers=[
