@@ -4,9 +4,12 @@ AUTOLOAD = [
     'omnic.conversion.converter',
     'omnic.responses.placeholder',
     'omnic.web.server',
+    'omnic.web.eventloop',
 ]
 
 WEB_SERVER = 'sanic'
+EVENT_LOOP = 'asyncio'
+WORKER = 'omnic.worker.AioWorker'
 
 # Set up logging format
 LOGGING = {
