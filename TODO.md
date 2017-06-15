@@ -6,7 +6,7 @@
     - [ ] Add to setup.py only the minimum needed packages
     - [X] Document which packages needed for which builtin stuff
     - [ ] Build simple scaffolding
-    - [ ] Move requirements file to test dir
+    - [X] Move requirements file to test dir
 
 ## Done
 - [X] Finish doc -> thumb proof of concept

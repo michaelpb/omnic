@@ -1,16 +1,18 @@
-# WIP
-
-*Nothing to see here, a work in progress!*
-
 
 # Omni-Converter - omnic
 
 ![Travis CI](https://travis-ci.org/michaelpb/omnic.svg?branch=master)
 
 Mostly stateless microservice for generating on-the-fly thumbs and previews of
-a wide variety of file types.
+a wide variety of file types.  Fully extendable to create any arbitrary
+conversion pipelines.
 
-Fully extendable to create any arbitrary conversion pipelines.
+Omni Converter (which can be shortened to OmniC or Omnic) is free
+software, licensed under the GPL 3.0.
+
+**WIP WARNING:** Omnic is still 'unreleased software', a work in
+progress. The API is subject to rapid change. I intend to release the
+first stable version before the end of this year (2017).
 
 # Installation
 
@@ -38,47 +40,52 @@ Additionally, converters specific to certain domains might be useful:
 - `obabel` - for converting between chemical molecule filetypes - Debian package: `sudo apt-get install obabel`
 - `sdftosvg` - for rendering chemical molecules - node package: `npm install -g jsc3d`
 
-## Using docker
+## TODO: Using Docker
 
-Because of the abundance of system dependencies, a rather bulky docker image
-can be built which offers a "kitchen-sink" of all built-in converters.
-
-*TODO: Build this docker image*
+The ideal situation would be to build a (bulky) docker image to support
+ALL built-in converters, a ready-to-use kitchen-sink of file
+conversion. This has not yet been done.
 
 # Usage
 
 There are 3 principle ways to use Omnic
 
-## 1. Ready-to-use conversion web-server
 
-The most common usage of Omnic is as a on-the-fly file format converter and
-preview or thumb generator.
+## 1. Commandline conversion and thumbnailing system
 
-1. Install globally with `pip install omnic`
+While OmniConverter was written for the web, the server components are
+optional. Thus it doubles as a handy "swiss-army knife" of file
+conversion and thumbnail generation.
 
-2. Run
+* Example: Create thumb of an `.doc` file with:
+    `omnic convert input.doc thumb.jpg:200x200`
 
-TODO: Stub
+## 2. Ready-to-use conversion and thumbnailing web-server
 
-## 2. Media conversion server web-framework
+The most common usage of Omnic is as a microservice, supplying
+on-the-fly file format converter and preview or thumb generator,
+
+* Running a server is as simple as `omnic runserver`
+
+* Override values in the `omnic/default_settings.py` by specifying an
+  `OMNIC_SETTINGS` to point to an import path to your custom settings
+  module.
+
+## 3. General purpose media conversion web-framework
 
 Omnic is written in a very modular format, with a structure inspired partially
 by Django. This allows you to tailor-make your own converters, using it as a
 library, without forking. You can easily swap out any part, also.
 
-TODO: Stub
+1. Create a new Python project as you normally would, including `omnic`
+  in your `requirements.txt`.
 
+2. As with the above, override settings with a custom `settings.py`
 
-## 3. Commandline file-format conversion sytem
-
-While OmniConverter was written for the web, the server components are
-optional. You can install without them. The handy `omnic` command is exposed in
-the CLI to, thus exposing the power of
-
-Omnic in this capacity functions simply as a web of very handy "glue" around
-the other conversion programs used.
-
-TODO: Stub
+3. Write your own converters and include them in `settings.py`. No full
+documentation or scaffolding is available for this yet: Take a look at
+the `omnic.builtin` for examples on writing your own converters or
+services.
 
 
 # Launching the admin interface
@@ -100,14 +107,14 @@ attempt to display as a thumbnail. In this example an OBJ file (3D
 model format) of a trumpet was pasted in, and a 200x200 thumbnail was
 generated:
 
-![Admin interface screenshot](docs/admin_conversion_view.jpg)
+![Admin interface screenshot](docs/images/admin_conversion_view.jpg)
 
 
 To the right of the thumbnail it has an HTML snippet (the source-code
 of the thumbnail to the left), and a button that will take you to the
 conversion graph for that type:
 
-![Admin interface screenshot](docs/admin_conversion_view.jpg)
+![Admin graph screenshot](docs/images/admin_graph_view.jpg)
 
 
 
@@ -129,15 +136,21 @@ environment without Docker, just using `virtualenv`.
     * `source ~/.venvs/omnic/bin/activate`
     * You will need to do this any time you want to work
 4. Install dependencies:
-    * `pip install -r requirements/local.txt`
+    * `pip install -r requirements.txt`
 5. (Optional) Run test suite:
     * `py.test`
 6. Start the server:
     * `./bin/omnic runserver`
 
+# Misc
+
 ## Test routes
 
+If you want to test it without the admin interface, take a look at the
+following URLs.
+
 To test it, try visiting something like:
+
 * http://localhost:8080/media/thumb.png:200x200/?url=unsplash.it/450/450
 
 The first time you visit it it will just be a single placeholder pixel.
@@ -145,12 +158,14 @@ Subsequent times it should be 200x200 thumbnail
 
 You might also be able to run this, if you have `unoconv` and ImageMagick
 (providing the `convert` command) installed:
+
 * `http://localhost:8080/media/thumb.jpg:200x200/?url=imr.sandia.gov/imrtemplate.doc`
 
 This will convert the `.doc` into a PDF, then into a JPG thumbnail
 
 If you have `jsc3d` installed (a Node JavaScript based 3D model renderer), then
 the following should render a delightful trumpet:
+
 * `http://localhost:8080/media/thumb.jpg:200x200/?url=people.sc.fsu.edu/~jburkardt/data/obj/trumpet.obj`
 
 Molecular visualization:
@@ -161,6 +176,37 @@ The built-in converters interface with a variety of system binaries in order to
 provide rendering and conversion of many document, image, mesh. Adding new
 converters and rasterizers is simple, with relatively minimal code!
 
-## Thx
+## Production
+
+Omnic is not yet production ready, although you are welcome to try -- I
+look forward to the pull requests!
+
+The intended use is running as a microservice as part of a larger
+server infrastructure.  This is to supplement or fully replace
+traditional work-queue based systems, such as using Celery. In a
+reasonable server topology, many `omnic` servers would sit behind a
+sticky load balancer (such as nginx), configured to "stick" based on
+the url GET component. In such a arrangement each omnic server would
+not need to be aware of its neighbors. The load balancer and/or an
+upstream proxy should also be configured to cache aggressively, to
+avoid Python serving static files (same philosophy to the `whitenoise`
+package).
+
+The rationale for using omnic over a work-queue system:
+
+1. It is stateless with the exception of (disk-based) caching, and, technically,
+(in-memory) queueing although both are non-critical, as either getting
+cleared results in only a slower service, not a non-functioning
+service.
+
+2. The load-balancer topology proposed above would eliminate the need
+of servers to be away of siblings. This results in a much easier to
+understand topology, and a very light-weight dev environment
+
+3. Processing, network, and disk space are coupled, which would make it
+very cheap to run on AWS or DO (I intend to make the $5 nodes
+sufficient).
+
+### Misc
 
 * Used Nekroze' cookiecutter to start this package: https://github.com/Nekroze/cookiecutter-pypackage
