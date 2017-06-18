@@ -17,11 +17,9 @@ class EventLoopManager:
 
     def reconfigure(self):
         # Set up loop + queue
-        # event_loop_lib = self.get_event_loop_lib()
-        # self.loop = event_loop_lib.new_event_loop()
-        import uvloop
+        event_loop_lib = self.get_event_loop_lib()
+        self.loop = event_loop_lib.new_event_loop()
         worker_class = singletons.settings.load(singletons.settings.WORKER)
-        self.loop = asyncio.get_event_loop()
         asyncio.set_event_loop(self.loop)
         self.async_queue = asyncio.Queue(loop=self.loop)
 
