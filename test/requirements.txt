@@ -4,7 +4,7 @@ wheel==0.29.0
 # Hard dependencies:
 click==6.7
 python-magic==0.4.13
-aiohttp==2.1.0
+aiohttp==1.3.5
 async_timeout==1.2.1
 
 # Medium dependencies
@@ -24,6 +24,7 @@ pytest-sugar==0.8.0
 pytest-asyncio==0.6.0
 requests-mock==1.3.0
 autopep8==1.3.2
+autoflake==0.7
 #pytest-aiohttp==0.1.3
 
 
