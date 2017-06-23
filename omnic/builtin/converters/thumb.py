@@ -6,6 +6,8 @@ from omnic.conversion import converter
 class PILThumb(converter.Converter):
     inputs = [
         'JPG',
+        'JPE',
+        'JPEG',
         'PNG',
         'GIF',
         'BMP',

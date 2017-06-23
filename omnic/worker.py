@@ -26,8 +26,8 @@ class Worker:
     '''
 
     def __init__(self):
-        #loop = singletons.eventloop.loop
-        loop = asyncio.get_event_loop()
+        loop = singletons.eventloop.loop
+        #loop = asyncio.get_event_loop()
         self.aiohttp = aiohttp.ClientSession(loop=loop)
         self.stats_dequeued = 0
         self.stats_began = 0
@@ -114,9 +114,12 @@ class AioWorker(Worker):
     Uses an asyncio Queue to enqueue tasks
     '''
 
-    def __init__(self, queue):
+    def __init__(self, queue=None):
         super().__init__()
         self.running = True
+        if queue is None:
+            # If no specific queue was specified, use singleton one
+            queue = singletons.eventloop.worker_queue
         self.queue = queue
 
         # Sets for locking to prevent race conditions
@@ -156,6 +159,10 @@ class WorkerManager(list):
     connection (in the case of workers living in another process), and
     exposes relevant methods to enqueueing tasks related to conversion.
     '''
+    def __init__(self):
+        # By default setup a single worker
+        self.worker_class = singletons.settings.load(singletons.settings.WORKER)
+        self.append(self.worker_class())
 
     def gather_run(self):
         '''

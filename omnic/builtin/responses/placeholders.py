@@ -13,6 +13,7 @@ class PNGPixel(placeholder.BytesPlaceholder):
         'PNG',
         'JPG',
         'JPEG',
+        'JPE',
         'BMP',
         'GIF',
         'PCX',
