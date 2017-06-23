@@ -36,6 +36,9 @@ test-all:
 test-watch:
 	find omnic/ test/ -name \*.py | entr -r py.test
 
+test-watch-s:
+	find omnic/ test/ -name \*.py | entr -r py.test -s
+
 runserver-watch:
 	find omnic/ test/ -name \*.py | entr -r python ./bin/omnic runserver
 

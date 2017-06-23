@@ -12,8 +12,7 @@ from .testing_utils import Magic
 
 
 class BaseRoutes:
-    @classmethod
-    def setup_class(cls):
+    def setup_method(cls, method):
         from omnic.server import runserver
 
         cls.host = '127.0.0.1:42101'
@@ -36,22 +35,22 @@ class BaseRoutes:
         from sanic.config import LOGGING
         LOGGING.clear()
 
-    @classmethod
-    def teardown_class(cls):
+    def teardown_method(cls, method):
         singletons.settings.use_previous_settings()
 
 class TestBuiltinTestRoutes(BaseRoutes):
-    @pytest.mark.skip(reason='mysteriously breaking on all but one machine')
-    @pytest.mark.asyncio
-    async def test_images(self):
+    def test_images(self, event_loop):
+        # NOTE: For some reason due to incorrect event loops, etc, one can't
+        # use pytest.mark.asyncio, making the tests themselves async
+        await_async = event_loop.run_until_complete
         request, response = self.app.test_client.get('/test/test.jpg')
         assert response.status == 200
-        value = await response.read()
+        value = event_loop.run_until_complete(response.read())
         assert value == Magic.JPEG  # check its magic JPEG bytes
 
         request, response = self.app.test_client.get('/test/test.png')
         assert response.status == 200
-        value = await response.read()
+        value = event_loop.run_until_complete(response.read())
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
     def test_images_sync(self):
@@ -70,16 +69,18 @@ class TestBuiltinTestRoutes(BaseRoutes):
 
 
 class TestBuiltinMediaRoutes(BaseRoutes):
-    @pytest.mark.skip(reason='mysteriously breaking on all but one machine')
-    @pytest.mark.asyncio
-    async def test_media_placeholder(self):
+    def test_media_placeholder(self, event_loop):
+        # NOTE: For some reason due to incorrect event loops, etc, one can't
+        # use pytest.mark.asyncio, making the tests themselves async
+        await_async = event_loop.run_until_complete
+
         # reverse test.png route
         qs = '?%s' % urlencode({'url': '%s/test.png' % self.host})
         request, response = self.app.test_client.get(
             '/media/thumb.jpg:200x200/%s' % qs)
 
         # ensure that it gave back the placeholder
-        value = await response.read()
+        value = await_async(response.read())
         assert response.status == 200
         assert response.headers['Content-Type'] == 'image/png'
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
@@ -95,7 +96,7 @@ class TestBuiltinMediaRoutes(BaseRoutes):
 
         # Run through queue... this should download the resource, and in
         # turn enqueue the remaining steps
-        await self.worker.run_once()
+        await_async(self.worker.run_once())
         q = self.worker.queue
         assert len(q) == 0
 
@@ -107,39 +108,7 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         # TODO: not fully tested here, need to write after refactor of
         # 'enqueue' helper functions in server
         # Give control to the loop again
+        #q = self.worker.next_queue
+        #print('this is q', q)
         # assert 0
 
-
-class TestBuiltinDefaults:
-    '''
-    High-level sanity tests for built-ins
-    '''
-    @classmethod
-    def setup_class(cls):
-        # Ensure no custom settings
-        singletons.settings.use_settings(object())
-
-    @classmethod
-    def teardown_class(cls):
-        # Ensure no custom settings
-        singletons.settings.use_previous_settings()
-
-    def test_default_settings_exist(self):
-        s = singletons.settings
-        assert hasattr(s, 'CONVERTERS')
-        assert len(s.CONVERTERS) > 7  # shouldn't drop below this
-        assert hasattr(s, 'SERVICES')
-        assert len(s.SERVICES) > 3  # shouldn't drop below this
-        assert hasattr(s, 'PLACEHOLDERS')
-        assert hasattr(s, 'ALLOWED_LOCATIONS')
-        assert len(s.ALLOWED_LOCATIONS) > 1  # at least localhost
-
-    def test_default_settings_are_importable(self):
-        s = singletons.settings
-        assert len(s.load_all('CONVERTERS')) > 7
-        assert len(s.load_all('SERVICES')) > 3
-
-    def test_singletons(self):
-        cg = singletons.converter_graph
-        assert len(cg.converters) > 7
-        singletons.placeholders

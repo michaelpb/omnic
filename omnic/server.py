@@ -4,7 +4,7 @@ from omnic.worker import AioWorker
 from omnic import singletons
 
 def runserver(host, port, debug=False, just_setup_app=False):
-    singletons.settings
+    singletons.settings # ensure settings gets loaded
 
     # Start server and worker
     singletons.eventloop.reconfigure()
