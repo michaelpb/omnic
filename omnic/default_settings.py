@@ -8,7 +8,7 @@ AUTOLOAD = [
 ]
 
 WEB_SERVER = 'sanic'
-EVENT_LOOP = 'asyncio'
+EVENT_LOOP = 'uvloop'
 WORKER = 'omnic.worker.AioWorker'
 
 # Set up logging format

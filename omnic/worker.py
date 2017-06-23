@@ -26,7 +26,9 @@ class Worker:
     '''
 
     def __init__(self):
-        self.aiohttp = aiohttp.ClientSession(loop=asyncio.get_event_loop())
+        #loop = singletons.eventloop.loop
+        loop = asyncio.get_event_loop()
+        self.aiohttp = aiohttp.ClientSession(loop=loop)
         self.stats_dequeued = 0
         self.stats_began = 0
         self.stats_success = 0
