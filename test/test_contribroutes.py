@@ -12,7 +12,8 @@ from .testing_utils import Magic
 
 
 class BaseRoutes:
-    def setup_method(cls, method):
+    @classmethod
+    def setup_class(cls):
         from omnic.server import runserver
 
         cls.host = '127.0.0.1:42101'
@@ -22,6 +23,7 @@ class BaseRoutes:
             PATH_PREFIX = cls.tmp_path_prefix
             PATH_GROUPING = None
             ALLOWED_LOCATIONS = {cls.host}
+            LOGGING = {}
         singletons.settings.use_settings(FakeSettings)
 
         cls.app = runserver('ignored', 0, just_setup_app=True)
@@ -35,7 +37,16 @@ class BaseRoutes:
         from sanic.config import LOGGING
         LOGGING.clear()
 
-    def teardown_method(cls, method):
+    def _get(self, *args, **kwargs):
+        kwargs.setdefault('debug', False)
+        kwargs.setdefault('gather_request', False)
+        kwargs.setdefault('server_kwargs', {
+            'log_config': None,
+        })
+        return self.app.test_client.get(*args, **kwargs)
+
+    @classmethod
+    def teardown_class(cls):
         singletons.settings.use_previous_settings()
 
 class TestBuiltinTestRoutes(BaseRoutes):
@@ -43,28 +54,28 @@ class TestBuiltinTestRoutes(BaseRoutes):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
         await_async = event_loop.run_until_complete
-        request, response = self.app.test_client.get('/test/test.jpg')
+        response = self._get('/test/test.jpg')
         assert response.status == 200
         value = event_loop.run_until_complete(response.read())
         assert value == Magic.JPEG  # check its magic JPEG bytes
 
-        request, response = self.app.test_client.get('/test/test.png')
+        response = self._get('/test/test.png')
         assert response.status == 200
         value = event_loop.run_until_complete(response.read())
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
     def test_images_sync(self):
-        request, response = self.app.test_client.get('/test/test.jpg')
+        response = self._get('/test/test.jpg')
         assert response.status == 200
-        request, response = self.app.test_client.get('/test/test.png')
+        response = self._get('/test/test.png')
         assert response.status == 200
 
     def test_misc_binary_sync(self):
         # For now we just skip testing magic bytes for these, since too
         # too specific
-        request, response = self.app.test_client.get('/test/empty.zip')
+        response = self._get('/test/empty.zip')
         assert response.status == 200
-        request, response = self.app.test_client.get('/test/test.3ds')
+        response = self._get('/test/test.3ds')
         assert response.status == 200
 
 
@@ -76,8 +87,7 @@ class TestBuiltinMediaRoutes(BaseRoutes):
 
         # reverse test.png route
         qs = '?%s' % urlencode({'url': '%s/test.png' % self.host})
-        request, response = self.app.test_client.get(
-            '/media/thumb.jpg:200x200/%s' % qs)
+        response = self._get('/media/thumb.jpg:200x200/%s' % qs)
 
         # ensure that it gave back the placeholder
         value = await_async(response.read())
@@ -107,8 +117,14 @@ class TestBuiltinMediaRoutes(BaseRoutes):
 
         # TODO: not fully tested here, need to write after refactor of
         # 'enqueue' helper functions in server
-        # Give control to the loop again
-        #q = self.worker.next_queue
-        #print('this is q', q)
-        # assert 0
+        q = self.worker.next_queue
+        assert q
+        assert len(q) == 1
+        assert q[0]
+        assert q[0][0] == Task.CONVERT
+        await_async(self.worker.run_once())
+
+        # ensure nothing more was added to queue
+        q = self.worker.next_queue
+        assert not q
 

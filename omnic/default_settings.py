@@ -12,12 +12,13 @@ EVENT_LOOP = 'uvloop'
 WORKER = 'omnic.worker.AioWorker'
 
 # Set up logging format
-LOGGING = {
-    'format': '[%(asctime)s] %(process)d-%(levelname)s '
-              '%(module)s::%(funcName)s():l%(lineno)d: '
-              '%(message)s',
-    'level': 10,  # logging.DEBUG,
-}
+# LOGGING = {
+#     'format': '[%(asctime)s] %(process)d-%(levelname)s '
+#               '%(module)s::%(funcName)s():l%(lineno)d: '
+#               '%(message)s',
+#     'level': 10,  # logging.DEBUG,
+# }
+LOGGING = {}
 
 SERVICES = [
     'omnic.builtin.services.media',
