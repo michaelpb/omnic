@@ -1,5 +1,5 @@
-from omnic.worker import Worker
 from base64 import b64decode
+from omnic.worker.base import BaseWorker
 
 
 class Magic:
@@ -9,32 +9,26 @@ class Magic:
     PNG_PIXEL_B = b64decode(PNG_PIXEL_B64)
 
 
-class RunOnceWorker(Worker):
+class MockWorker(BaseWorker):
     '''
-    Worker that stops running after it has gone through a given queue.
-    New tasks get put into a next_queue that is only accessible after
-    switching to it.
+    Test worker to test abstract Worker base class
     '''
 
-    def __init__(self, queue=[]):
+    def __init__(self):
         super().__init__()
-        self.queue = queue
-        self.next_queue = []
-
-    async def run_once(self):
-        self.queue = self.next_queue
-        self.next_queue = []
-        await self.run()
+        self.fake_next = None
+        self._running = True
+        self.called_args = None
 
     @property
     def running(self):
-        return bool(self.queue)
-
-    async def enqueue(self, *args):
-        self.next_queue.append(args)
+        if not self._running:
+            return False
+        self._running = False
+        return True
 
     async def get_next(self):
-        return self.queue.pop(0)
+        return self.fake_next
 
     async def check_download(self, foreign_resource):
         self.check_download_was_called = True
@@ -43,3 +37,12 @@ class RunOnceWorker(Worker):
     async def check_convert(self, converter, in_r, out_r):
         self.check_convert_was_called = True
         return True
+
+
+class MockAioQueue(list):
+    async def put(self, item):
+        self.append(item)
+
+    async def get(self):
+        return self.pop(0)
+

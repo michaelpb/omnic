@@ -5,47 +5,30 @@ import asyncio
 
 import pytest
 
-from omnic.worker import Worker, AioWorker, Task
+from omnic.worker.aioworker import AioWorker
+from omnic.worker.enums import Task
+from omnic.worker.base import BaseWorker
+from omnic import singletons
+
+from .testing_utils import MockWorker, MockAioQueue
 
 
-class RunOnceWorker(Worker):
-    '''
-    Test worker to test abstract Worker base class
-    '''
-
-    def __init__(self):
-        super().__init__()
-        self.fake_next = None
-        self._running = True
-        self.called_args = None
-
-    @property
-    def running(self):
-        if not self._running:
-            return False
-        self._running = False
-        return True
-
-    async def get_next(self):
-        return self.fake_next
-
-    async def check_download(self, foreign_resource):
-        self.check_download_was_called = True
-        return True
-
-    async def check_convert(self, converter, in_r, out_r):
-        self.check_convert_was_called = True
-        return True
-
-
-class TestBaseWorker:
+class WorkerTestBase:
+    @classmethod
     def setup_class(cls):
-        cls.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(cls.loop)
+        class FakeSettings:
+            LOGGING = {}
+        singletons.settings.use_settings(FakeSettings)
 
+    @classmethod
+    def teardown_class(cls):
+        singletons.settings.use_previous_settings()
+
+
+class TestBaseWorker(WorkerTestBase):
     @pytest.mark.asyncio
-    async def test_run_once(self):
-        worker = RunOnceWorker()
+    async def test_run_func(self):
+        worker = MockWorker()
 
         def fake_func(*args):
             worker.called_args = args
@@ -55,22 +38,10 @@ class TestBaseWorker:
         assert worker.called_args == (1, 2, 3)
 
 
-class FakeAioQueue(list):
-    async def put(self, item):
-        self.append(item)
-
-    async def get(self):
-        return self.pop(0)
-
-
-class TestAsyncioWorker:
-    def setup_class(cls):
-        cls.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(cls.loop)
-
+class TestAsyncioWorker(WorkerTestBase):
     @pytest.mark.asyncio
     async def test_run_once(self):
-        worker = AioWorker(FakeAioQueue())
+        worker = AioWorker(MockAioQueue())
         worker.called = 0
 
         def fake_func(*args):

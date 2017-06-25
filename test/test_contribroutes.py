@@ -5,9 +5,9 @@ import os
 import tempfile
 
 from omnic.worker import Task
+from omnic.worker.testing import RunOnceWorker
 from omnic import singletons
 
-from .testing_utils import RunOnceWorker
 from .testing_utils import Magic
 
 
