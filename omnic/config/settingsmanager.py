@@ -3,14 +3,15 @@ import importlib
 import logging
 from logging import config
 
-from omnic import default_settings
+from . import default_settings
 
 
-class ConfigurationError(Exception):
-    pass
+class SettingsManager:
+    '''
+    The `settings' singleton, used to house project settings, including logic
+    to default to default setings for unset settings.
+    '''
 
-
-class Settings:
     def __init__(self):
         self.default_settings_module = default_settings
         path = os.environ.get('OMNIC_SETTINGS')

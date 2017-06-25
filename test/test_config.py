@@ -3,7 +3,7 @@ Tests for `config` module.
 """
 import pytest
 import os
-from omnic.config import Settings
+from omnic.config.settingsmanager import SettingsManager
 
 TEST_SETTING = 123
 
@@ -18,11 +18,11 @@ class ExampleClassB:
 
 class TestForeignResource:
     def test_default(self):
-        settings = Settings()
+        settings = SettingsManager()
         assert settings.SERVICES
 
     def test_overriding(self):
-        settings = Settings()
+        settings = SettingsManager()
         assert settings.SERVICES
 
         class MockSettings:
@@ -31,7 +31,7 @@ class TestForeignResource:
         assert not settings.SERVICES
 
     def test_catching_lowercase_errors(self):
-        settings = Settings()
+        settings = SettingsManager()
 
         class MockSettings:
             private_thing = 123
@@ -42,12 +42,12 @@ class TestForeignResource:
     def test_custom(self):
         # Simply use self as a test settings
         os.environ['OMNIC_SETTINGS'] = 'test.test_config'
-        settings = Settings()
+        settings = SettingsManager()
         assert settings.TEST_SETTING == 123
 
     def test_loading_modules(self):
         # Simply use self as a test settings
-        settings = Settings()
+        settings = SettingsManager()
 
         class MockSettings:
             SERVICES = [
@@ -59,7 +59,7 @@ class TestForeignResource:
 
     def test_loading_class_modules(self):
         # Simply use self as a test settings
-        settings = Settings()
+        settings = SettingsManager()
 
         class MockSettings:
             SERVICES = [
@@ -71,7 +71,7 @@ class TestForeignResource:
 
     def test_loading_modules_dict(self):
         # Simply use self as a test settings
-        settings = Settings()
+        settings = SettingsManager()
 
         class MockSettings:
             SERVICES = {
