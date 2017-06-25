@@ -107,9 +107,8 @@ def get_nodes_edges_ids(ext=None):
 
 
 async def conversion_tester_root(request):
-    singletons.server.response
-    return singletons.server.response.redirect('/admin/conversion/')
-
+    redirect = singletons.server.response.redirect
+    return redirect('/admin/conversion/')
 
 async def conversion_tester(request):
     singletons.settings

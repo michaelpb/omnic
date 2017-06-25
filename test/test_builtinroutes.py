@@ -53,15 +53,15 @@ class TestBuiltinTestRoutes(BaseRoutes):
     def test_images(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
-        event_loop.run_until_complete
+        await_async = event_loop.run_until_complete
         response = self._get('/test/test.jpg')
         assert response.status == 200
-        value = event_loop.run_until_complete(response.read())
+        value = await_async(response.read())
         assert value == Magic.JPEG  # check its magic JPEG bytes
 
         response = self._get('/test/test.png')
         assert response.status == 200
-        value = event_loop.run_until_complete(response.read())
+        value = await_async(response.read())
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
     def test_images_sync(self):
@@ -77,6 +77,47 @@ class TestBuiltinTestRoutes(BaseRoutes):
         assert response.status == 200
         response = self._get('/test/test.3ds')
         assert response.status == 200
+
+
+class TestAdmin(BaseRoutes):
+    def test_admin_page(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/admin/')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert b'Conversion' in value
+        assert b'Graph Explorer' in value
+
+    def test_conversion_page(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/admin/conversion/')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert b'Conversion' in value
+        assert b'Graph Explorer' in value
+
+    def test_ajax_workers(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/admin/ajax/workers/')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert b'queue' in value
+
+    def test_graph(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/admin/graph/')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert b'Conversion' in value
+        assert b'Graph Explorer' in value
+
+    def test_subgraph(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/admin/graph/JPEG/')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert b'Conversion' in value
+        assert b'Graph Explorer' in value
 
 
 class TestBuiltinMediaRoutes(BaseRoutes):

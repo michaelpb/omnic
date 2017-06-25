@@ -24,6 +24,9 @@ class RunOnceWorker(BaseWorker):
     def running(self):
         return bool(self.queue)
 
+    async def queue_size(self):
+        return len(self.next_queue)
+
     async def enqueue(self, *args):
         self.next_queue.append(args)
 
