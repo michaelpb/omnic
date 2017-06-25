@@ -13,8 +13,6 @@ class SingletonManager(object):
         return cls
 
     def __getattr__(self, name):
-        '''
-        '''
         if name not in self.singleton_classes:
             raise AttributeError(name)
 

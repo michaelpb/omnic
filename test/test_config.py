@@ -4,6 +4,7 @@ Tests for `config` module.
 import pytest
 import os
 from omnic.config.settingsmanager import SettingsManager
+from omnic.config.exceptions import ConfigurationError
 
 TEST_SETTING = 123
 
@@ -68,6 +69,18 @@ class TestForeignResource:
         settings.use_settings(MockSettings)
         assert len(settings.load_all('SERVICES')) == 1
         assert settings.load_all('SERVICES')[0] is ExampleClassA
+
+    def test_loading_exceptions(self):
+        # Simply use self as a test settings
+        settings = SettingsManager()
+
+        class MockSettings:
+            SERVICES = [
+                'test.test_config.DoesntExist',
+            ]
+        settings.use_settings(MockSettings)
+        with pytest.raises(ConfigurationError):
+            settings.load_all('SERVICES')
 
     def test_loading_modules_dict(self):
         # Simply use self as a test settings

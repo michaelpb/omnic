@@ -24,11 +24,16 @@ class TestBuiltinDefaults:
         assert hasattr(s, 'PLACEHOLDERS')
         assert hasattr(s, 'ALLOWED_LOCATIONS')
         assert len(s.ALLOWED_LOCATIONS) > 1  # at least localhost
+        assert hasattr(s, 'LOGGING')
+        assert s.LOGGING.keys()
 
     def test_default_settings_are_importable(self):
         s = singletons.settings
+        assert len(s.load_all('PLACEHOLDERS')) > 0
+        assert len(s.load_all('AUTOLOAD')) > 3
         assert len(s.load_all('CONVERTERS')) > 7
         assert len(s.load_all('SERVICES')) > 3
+        assert s.load('WORKER')
 
     def test_singletons(self):
         cg = singletons.converter_graph

@@ -3,7 +3,8 @@ import importlib
 import logging
 from logging import config
 
-from . import default_settings
+from omnic.config import default_settings
+from omnic.config.exceptions import ConfigurationError
 
 
 class SettingsManager:
@@ -56,19 +57,28 @@ class SettingsManager:
         else:
             raise ConfigurationError('Invalid LOGGING: must be string, dict')
 
+    def load(self, key):
+        '''
+        Import settings key as import path
+        '''
+        return self.load_path(getattr(self, key))
+
     def load_all(self, key):
         '''
-        Useful for tests for restoring previous state of singleton
+        Import settings key as a dict or list with values of importable paths
         '''
         value = getattr(self, key)
         if isinstance(value, dict):
-            return {key: self.load(value) for key, value in value.items()}
+            return {key: self.load_path(value) for key, value in value.items()}
         elif isinstance(value, list):
-            return [self.load(value) for value in value]
+            return [self.load_path(value) for value in value]
         else:
             raise ValueError('load_all must be list or dict')
 
-    def load(self, path):
+    def load_path(self, path):
+        '''
+        Load and return a given import path to a module or class
+        '''
         containing_module, _, last_item = path.rpartition('.')
         if last_item[0].isupper():
             # Is a class definition, should do an "import from"

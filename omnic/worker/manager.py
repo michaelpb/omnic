@@ -14,8 +14,7 @@ class WorkerManager(list):
 
     def __init__(self):
         # By default setup a single worker
-        self.worker_class = singletons.settings.load(
-            singletons.settings.WORKER)
+        self.worker_class = singletons.settings.load('WORKER')
         self.append(self.worker_class())
 
     def gather_run(self):
