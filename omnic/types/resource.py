@@ -7,7 +7,6 @@ import requests
 
 from omnic import singletons
 from omnic.utils.iters import group_by
-from omnic.types.typestring import guess_typestring
 
 
 class Resource:
@@ -91,7 +90,7 @@ class ForeignResource(Resource):
     def guess_typed(self):
         if not self.cache_exists():
             raise CacheError('Cannot guess type without first downloaded')
-        ts = guess_typestring(self.cache_path)
+        ts = singletons.detectors.detect(self.cache_path)
         return TypedForeignResource(self.url_string, ts)
 
 
@@ -133,7 +132,7 @@ class TypedLocalResource(Resource):
         else:
             # No TypeString specified: foreign, keep path but guess type
             self.foreign = True
-            typestring = guess_typestring(path)
+            typestring = singletons.detectors.detect(path)
 
         self.typestring = typestring
         super().__init__('file://%s' % path)

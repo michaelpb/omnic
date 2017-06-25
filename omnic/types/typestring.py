@@ -4,17 +4,23 @@ TypeString is a core class that extends mimetypes
 import os
 import mimetypes
 
-import magic
-
-UNKNOWN_MIMETYPE = ('application/x-empty',
-                    'application/octet-stream', 'text/plain')
-
+from omnic import singletons
 
 class TypeString:
+    '''
+    Immutable utility class for typestring manipulation.
+
+    A typestring is a string used by OmniC to specify a file-extension, a
+    mimetype, or a custom "made up" type which can be more specific.
+
+    A typestring can also include arguments to be even more specific, that
+    might signify the process by which a file of that type might be derived
+    (example: thumb dimensions).
+    '''
     def __init__(self, s):
         self.str = s
 
-        # Extract arguments
+        # Extract arguments (anything that follows ':')
         if ':' in s:
             self.ts_format, _, arguments_str = s.partition(':')
             self.arguments = tuple(arguments_str.split(','))
@@ -36,7 +42,7 @@ class TypeString:
             fn = 'fn.%s' % self.extension
             self.mimetype, _ = mimetypes.guess_type(fn)  # discard encoding
         else:
-            # Is qualifier, can't determine mimetype
+            # Is qualifier, can't determine mimetype OR extension
             self.is_qualifier = True
 
     def modify_basename(self, basename):
@@ -55,16 +61,3 @@ class TypeString:
     def __repr__(self):
         return "TypeString(%s)" % repr(str(self))
 
-
-def guess_typestring(path):
-    '''
-    Guesses a TypeString from the given path
-    '''
-    with open(path, 'rb') as fd:
-        mimetype = magic.from_buffer(fd.read(128), mime=True)
-        if mimetype and mimetype not in UNKNOWN_MIMETYPE:
-            return TypeString(mimetype)
-
-    # Otherwise, tries based on extension
-    _, ext = os.path.splitext(path)
-    return TypeString(ext.strip('.').upper())

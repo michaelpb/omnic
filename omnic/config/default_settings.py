@@ -6,6 +6,7 @@ AUTOLOAD = [
     'omnic.web.server',
     'omnic.web.eventloop',
     'omnic.worker.manager',
+    'omnic.types.detectors',
 ]
 
 WEB_SERVER = 'sanic'

@@ -8,6 +8,8 @@
     - [ ] Build simple scaffolding
     - [X] Move requirements file to test dir
 
+- [ ] Create `MULTICONVERT` task type, and remove `FUNC`
+
 ## Done
 - [X] Finish doc -> thumb proof of concept
     - [X] ExecConverter needs a "rename from" feature, that allows you to
@@ -117,12 +119,6 @@
     - `omnic scaffold new-project` -- scaffolding
     - `omnic scaffold new-service` -- ditto
 
-- [ ] Redis-only commands:
-    - `omnic runworker` -- runs a worker-only process
-    - `omnic runserverworker` -- runs a process that is both server AND worker
-    - `omnic runmulti --worker=1 --server=1 --serverworker=2` -- runs X
-      processes of the given types
-
 - [ ] Test suite for CLI
 
 
@@ -156,7 +152,7 @@
 - [ ] Use: `aioredis` package
 - [ ] Allow swapping out asyncio's gimmick-y queuing for a custom-made
   Redis-based async queue (should be easy)
-- [ ] Eventually allow attachment of any arbitrary traditional task-queueing
+- [X] Eventually allow attachment of any arbitrary traditional task-queueing
   backend
 
 ## Rendering services
@@ -225,6 +221,36 @@
   and expose a CLI that can render (via software) STL models and such
 - [ ] DXF
 
+## CI + Code badges
+- "CI as a microservice"
+- Code badge generation - allow another service that is 'ci', which can be
+  given a (whitelisted) git repo. It then downloads that git repo and attempts
+  to run something (e.g. with docker). Any remaining artifacts then enter the
+  "media conversion graph".
+- Artifacts could include code coverage graphs, badges, etc
+- They could also include built websites, then conversion graph could include
+  launch
+- Mind blowing feature: Have a certain domain (e.g. not data) actually trigger
+  build of entire (e.g. static) site from a repo
+- Thus, omnic becomes "just in time deployment"
+- Obvs in real life, this would be triggered with a hook
+
+# Production caching control improvements
+
+These commands are necessary before production ready.
+
+- [ ] 'precache' command - triggers conversion / whatever, and blocks until
+  finished. Useful for adding as a build step.
+- [ ] 'mutable' concept - some foreign URLs might be mutable. All media
+  generated from them should have much more cautious client-side cache headers.
+- [ ] 'clear-cache' command - delete a single foreign resource from cache,
+  removing all generated media from that foreign resource
+- [ ] 'omnic-clear-cache-cascade' application - special separate (?)
+  application that would hook into any upstream proxies AND all siblings, fully
+  wiping the cache for a certain foreign resource
+
+
+
 # QoL improvements
 
 - [ ] TypeStringMatcher
@@ -240,7 +266,7 @@
 
 # Performance and stability improvements
 
-- [ ] Performance hack: Have a "sticky queue" system where resources go into
+- [X] Performance hack: Have a "sticky queue" system where resources go into
   several worker queues based on hash on URI
     - More importantly this would allow processing multiple resources at once,
       and assumedly max out CPU better e.g. if waiting on slow net IO, could be
@@ -248,3 +274,10 @@
     - [ ] Long term solution: Allow task ordering in work queue system
         - This would allow download + all conversions be queued w.r.t. each other
 
+# Decided against
+- Pool should probably be configured, and always run with `runserver`
+- [ ] Redis-only commands:
+    - `omnic runworker` -- runs a worker-only process
+    - `omnic runserverworker` -- runs a process that is both server AND worker
+    - `omnic runmulti --worker=1 --server=1 --serverworker=2` -- runs X
+      processes of the given types
