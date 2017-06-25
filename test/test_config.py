@@ -23,6 +23,7 @@ class TestForeignResource:
 
     def test_overriding(self):
         settings = Settings()
+        assert settings.SERVICES
 
         class MockSettings:
             SERVICES = []

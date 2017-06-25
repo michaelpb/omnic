@@ -23,6 +23,7 @@ class MockConfig:
     PATH_GROUPING = 'MD5'
     PATH_PREFIX = ''
     ALLOWED_LOCATIONS = '*'
+    LOGGING = None
 
 
 class MockConfigRestrictive(MockConfig):

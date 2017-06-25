@@ -89,6 +89,7 @@ class MockConfig:
         Convert3DGraphicsToImage,
         CleanUpAudio,
     ]
+    LOGGING = None
 
 
 class ConverterTestBase:

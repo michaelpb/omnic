@@ -12,14 +12,30 @@ WEB_SERVER = 'sanic'
 EVENT_LOOP = 'uvloop'
 WORKER = 'omnic.worker.aioworker.AioWorker'
 
-# Set up logging format
-# LOGGING = {
-#     'format': '[%(asctime)s] %(process)d-%(levelname)s '
-#               '%(module)s::%(funcName)s():l%(lineno)d: '
-#               '%(message)s',
-#     'level': 10,  # logging.DEBUG,
-# }
-LOGGING = {}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level': 'INFO',
+            'formatter': 'standard',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': True
+        },
+    }
+}
+
 
 SERVICES = [
     'omnic.builtin.services.media',

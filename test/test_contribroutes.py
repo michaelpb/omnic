@@ -22,7 +22,7 @@ class BaseRoutes:
             PATH_PREFIX = cls.tmp_path_prefix
             PATH_GROUPING = None
             ALLOWED_LOCATIONS = {cls.host}
-            LOGGING = {}
+            LOGGING = None
         singletons.settings.use_settings(FakeSettings)
 
         cls.app = runserver('ignored', 0, just_setup_app=True)

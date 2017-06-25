@@ -15,7 +15,7 @@ class WorkerTestBase:
     @classmethod
     def setup_class(cls):
         class FakeSettings:
-            LOGGING = {}
+            LOGGING = None
         singletons.settings.use_settings(FakeSettings)
 
     @classmethod
