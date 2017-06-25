@@ -4,15 +4,18 @@ from omnic import singletons
 
 from . import enums
 
+
 class WorkerManager(list):
     '''
     Singleton that handles either multiple workers, or a single worker
     connection (in the case of workers living in another process), and exposes
     relevant methods to enqueueing tasks related to conversion.
     '''
+
     def __init__(self):
         # By default setup a single worker
-        self.worker_class = singletons.settings.load(singletons.settings.WORKER)
+        self.worker_class = singletons.settings.load(
+            singletons.settings.WORKER)
         self.append(self.worker_class())
 
     def gather_run(self):

@@ -2,6 +2,7 @@ import asyncio
 
 from omnic import singletons
 
+
 class EventLoopManager:
     def __init__(self):
         self.reconfigure()
@@ -24,5 +25,6 @@ class EventLoopManager:
 
     def run(self, *coros):
         self.loop.run_until_complete(asyncio.gather(*coros))
+
 
 singletons.register('eventloop', EventLoopManager)

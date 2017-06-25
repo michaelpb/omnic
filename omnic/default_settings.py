@@ -5,11 +5,12 @@ AUTOLOAD = [
     'omnic.responses.placeholder',
     'omnic.web.server',
     'omnic.web.eventloop',
+    'omnic.worker.manager',
 ]
 
 WEB_SERVER = 'sanic'
 EVENT_LOOP = 'uvloop'
-WORKER = 'omnic.worker.AioWorker'
+WORKER = 'omnic.worker.aioworker.AioWorker'
 
 # Set up logging format
 # LOGGING = {

@@ -1,10 +1,9 @@
 from urllib.parse import urlencode
 
-import pytest
 import os
 import tempfile
 
-from omnic.worker import Task
+from omnic.worker.enums import Task
 from omnic.worker.testing import RunOnceWorker
 from omnic import singletons
 
@@ -49,11 +48,12 @@ class BaseRoutes:
     def teardown_class(cls):
         singletons.settings.use_previous_settings()
 
+
 class TestBuiltinTestRoutes(BaseRoutes):
     def test_images(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
-        await_async = event_loop.run_until_complete
+        event_loop.run_until_complete
         response = self._get('/test/test.jpg')
         assert response.status == 200
         value = event_loop.run_until_complete(response.read())
@@ -127,4 +127,3 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         # ensure nothing more was added to queue
         q = self.worker.next_queue
         assert not q
-

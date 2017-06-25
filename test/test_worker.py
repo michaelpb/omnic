@@ -1,13 +1,11 @@
 """
 Tests for `worker` module.
 """
-import asyncio
 
 import pytest
 
 from omnic.worker.aioworker import AioWorker
 from omnic.worker.enums import Task
-from omnic.worker.base import BaseWorker
 from omnic import singletons
 
 from .testing_utils import MockWorker, MockAioQueue

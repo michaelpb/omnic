@@ -12,6 +12,7 @@ log = logging.getLogger()
 DOWNLOAD_TIMEOUT = 20
 DOWNLOAD_CHUNK_SIZE = 1024
 
+
 class BaseWorker:
     '''
     Worker base class
@@ -98,4 +99,3 @@ class BaseWorker:
             converter.convert_sync(in_resource, out_resource)
         else:
             raise ValueError('Invalid converter: %s' % repr(converter))
-

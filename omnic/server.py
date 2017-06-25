@@ -1,10 +1,9 @@
-import asyncio
 
-from omnic.worker import AioWorker
 from omnic import singletons
 
+
 def runserver(host, port, debug=False, just_setup_app=False):
-    singletons.settings # ensure settings gets loaded
+    singletons.settings  # ensure settings gets loaded
 
     singletons.eventloop.reconfigure()
 

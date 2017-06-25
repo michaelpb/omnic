@@ -1,7 +1,7 @@
-import logging
 
 from omnic import singletons
 from .base import BaseWorker
+
 
 class AioWorker(BaseWorker):
     '''
@@ -45,4 +45,3 @@ class AioWorker(BaseWorker):
             return False
         self.converting_resources.add(key)
         return True
-

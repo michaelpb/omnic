@@ -1,5 +1,6 @@
 from omnic import singletons
 
+
 class TestBuiltinDefaults:
     '''
     High-level sanity tests for built-ins
