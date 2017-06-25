@@ -1,22 +1,21 @@
 '''
 Core media conversion service.
 '''
-from sanic import Blueprint
-from sanic import response
-
 from omnic.types.typestring import TypeString
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.conversion.utils import enqueue_conversion_path
 from omnic import singletons
 
-
 # Required interface for service module
 SERVICE_NAME = 'media'
-blueprint = Blueprint(SERVICE_NAME)
+urls = {
+    '<ts>/': 'media_route',
+}
 
 
-@blueprint.get('/<ts>/')
 async def media_route(request, ts):
+    response = singletons.server.response
+
     url_suffix = request.args['url'][0]
     url_string = 'http://' + url_suffix
 

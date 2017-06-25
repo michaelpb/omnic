@@ -15,13 +15,23 @@ class WebServer:
 
     def _setup_sanic(self):
         from sanic import Sanic
+        from sanic import response as sanic_response
+        from sanic.response import redirect as sanic_redirect
+
         singletons.register('sanic_app', lambda: Sanic('omnic'))
         self.app = singletons.sanic_app
+        self.response = sanic_response
+        self.redirect = sanic_redirect
 
         # Set up all routes for all services
         for service in singletons.settings.load_all('SERVICES'):
-            name = service.SERVICE_NAME
-            self.app.blueprint(service.blueprint, url_prefix='/%s' % name)
+            service_name = service.SERVICE_NAME
+            for partial_url, view in service.urls.items():
+                if isinstance(view, str):
+                    view = getattr(service, view)
+                url = '%s/%s' % (service_name, partial_url)
+                print(url)
+                self.app.add_route(view, url)
 
     def create_server_coro(self, host, port, debug=False):
         self.configure()

@@ -1,4 +1,4 @@
-from .views import blueprint
+from .urls import urls
 SERVICE_NAME = 'admin'
 
-__all__ = ('SERVICE_NAME', 'blueprint')
+__all__ = ('SERVICE_NAME', 'urls')

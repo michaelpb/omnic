@@ -6,17 +6,11 @@ import json
 
 from urllib.parse import urlencode
 
-from sanic import Blueprint
-from sanic.response import redirect
-
 from omnic.responses.template import Jinja2TemplateHelper
-from omnic import singletons
 from omnic.types.resource import ForeignResource
+from omnic import singletons
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
-
-blueprint = Blueprint('admin')
-
 
 FORM_DEFAULT = {
     'res_url': 'unsplash.it/500/500',
@@ -112,12 +106,11 @@ def get_nodes_edges_ids(ext=None):
     return nodes, edges, id_to_ext
 
 
-@blueprint.get('/')
 async def conversion_tester_root(request):
-    return redirect('/admin/conversion/')
+    singletons.server.response
+    return singletons.server.response.redirect('/admin/conversion/')
 
 
-@blueprint.get('/conversion/')
 async def conversion_tester(request):
     singletons.settings
     workers = await get_worker_info()
@@ -150,12 +143,10 @@ async def conversion_tester(request):
     })
 
 
-@blueprint.get('/graph/')
-async def conversion_graph(request):
+async def conversion_graph_root(request):
     return await conversion_graph(request, None)
 
 
-@blueprint.get('/graph/<ext>/')
 async def conversion_graph(request, ext):
     nodes, edges, id_to_ext = get_nodes_edges_ids(ext)
 
@@ -168,7 +159,6 @@ async def conversion_graph(request, ext):
     })
 
 
-@blueprint.get('/ajax/workers/')
 async def poll_worker_queue(request):
     workers = await get_worker_info()
     return templates.render(request, 'workers.html', {

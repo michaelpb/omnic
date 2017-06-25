@@ -1,4 +1,4 @@
-.PHONY: help clean clean-pyc clean-build list test test-all coverage docs release sdist
+.PHONY: help clean clean-pyc clean-build clean-coverage list test test-all coverage docs release sdist
 
 help:
 	@echo "clean-build - remove build artifacts"
@@ -12,7 +12,7 @@ help:
 	@echo "sdist - package"
 	@echo "cleanup-pep8 - automatical clean up some linting violations"
 
-clean: clean-build clean-pyc
+clean: clean-build clean-pyc clean-coverage
 
 clean-build:
 	rm -fr build/
@@ -23,6 +23,9 @@ clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
+
+clean-coverage:
+	rm -fr htmlcov/
 
 lint:
 	flake8 omnic test
