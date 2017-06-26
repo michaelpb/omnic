@@ -45,17 +45,26 @@ class Resource:
             return group_by(self.md5, 8)
         return ['']
 
-    def cache_makedirs(self):
+    def cache_makedirs(self, is_dir=False):
         '''
         Make necessary directories to hold cache value
         '''
-        dirname = os.path.dirname(self.cache_path)
+        if is_dir:
+            dirname = self.cache_path
+        else:
+            dirname = os.path.dirname(self.cache_path)
         os.makedirs(dirname, exist_ok=True)
 
     def cache_open(self, mode='rb'):
-        if mode == 'wb':
+        if 'w' in mode:
             self.cache_makedirs()
         return open(self.cache_path, mode=mode)
+
+    def cache_open_as_dir(self, filepath, mode='rb'):
+        if 'w' in mode:
+            self.cache_makedirs(is_dir=True)
+        path = os.path.join(self.cache_path, filepath)
+        return open(path, mode=mode)
 
     def cache_exists(self):
         return os.path.exists(self.cache_path)

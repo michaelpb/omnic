@@ -1,10 +1,14 @@
 from urllib.parse import urlencode
 
 import os
+import pytest
 import tempfile
 
 from omnic.worker.enums import Task
 from omnic.worker.testing import RunOnceWorker
+from omnic.builtin.converters.manifest import ManifestDownloader
+from omnic.types.detectors import DIRECTORY
+from omnic.types.resource import ForeignResource, TypedResource
 from omnic import singletons
 
 from .testing_utils import Magic
@@ -77,6 +81,69 @@ class TestBuiltinTestRoutes(BaseRoutes):
         assert response.status == 200
         response = self._get('/test/test.3ds')
         assert response.status == 200
+
+    def test_manifest_json(self, event_loop):
+        await_async = event_loop.run_until_complete
+        response = self._get('/test/manifest.json')
+        assert response.status == 200
+        value = await_async(response.read())
+        assert value[:7] == b'{"files'
+
+    def test_manifest_json_download(self, event_loop):
+        await_async = event_loop.run_until_complete
+
+        # Download the manifest.json file from test server
+        url = 'http://%s/test/manifest.json' % self.host
+        f_res = ForeignResource(url)
+        response = self._get('/test/manifest.json')
+        assert response.status == 200
+        value = await_async(response.read())
+        with f_res.cache_open('wb') as fd:
+            fd.write(value)
+
+        # Set up resources
+        in_resource = f_res.guess_typed()
+        in_resource.symlink_from(f_res)
+        out_resource = TypedResource(url, DIRECTORY)
+
+        # Do actual convert (which should entail downloads)
+        downloader = ManifestDownloader()
+        await_async(downloader.convert(in_resource, out_resource))
+
+        # Ensure everything got created
+        files = set(os.listdir(out_resource.cache_path))
+        assert files == {'some_zip.zip', 'test.3ds', 'test.jpg', 'test.png'}
+
+    @pytest.mark.skip(':(')
+    def test_manifest_json_download_with_testserver(self, event_loop):
+        await_async = event_loop.run_until_complete
+
+        # Download the manifest.json file from test server
+        url = 'http://%s/test/manifest.json' % self.host
+        singletons.server.fork_testing_server()
+        f_res = ForeignResource(url)
+        f_res.download()
+        #response = self._get('/test/manifest.json')
+        #assert response.status == 200
+        #value = await_async(response.read())
+        # with f_res.cache_open('wb') as fd:
+        #    fd.write(value)
+
+        # Set up resources
+        in_resource = f_res.guess_typed()
+        in_resource.symlink_from(f_res)
+        out_resource = TypedResource(url, DIRECTORY)
+
+        # Do actual convert (which should entail downloads)
+        downloader = ManifestDownloader()
+        await_async(downloader.convert(in_resource, out_resource))
+        singletons.server.kill_testing_server()
+
+        # Ensure everything got downloaded
+        files = set(os.listdir(out_resource.cache_path))
+        assert files == {'some_zip.zip', 'test.3ds', 'test.jpg', 'test.png'}
+        with open(os.path.join(out_resource.cache_path, 'test.jpg'), 'rb') as f:
+            assert f.read() == Magic.JPEG  # check its magic JPEG bytes
 
 
 class TestAdmin(BaseRoutes):

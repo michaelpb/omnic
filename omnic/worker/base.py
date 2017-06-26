@@ -1,6 +1,5 @@
 import logging
 
-import async_timeout
 import aiohttp
 
 from omnic import singletons
@@ -10,7 +9,7 @@ from .enums import Task
 log = logging.getLogger()
 
 DOWNLOAD_TIMEOUT = 20
-DOWNLOAD_CHUNK_SIZE = 1024
+DOWNLOAD_CHUNK_SIZE = 8124
 
 
 class BaseWorker:
@@ -19,14 +18,15 @@ class BaseWorker:
     '''
 
     def __init__(self):
-        loop = singletons.eventloop.loop
-        self.aiohttp = aiohttp.ClientSession(loop=loop)
         self.stats_dequeued = 0
         self.stats_began = 0
         self.stats_success = 0
         self.stats_error = 0
 
     def __del__(self):
+        self._close()
+
+    def _close(self):
         if hasattr(self, 'aiohttp'):
             if not self.aiohttp.closed:
                 self.aiohttp.close()
@@ -79,13 +79,16 @@ class BaseWorker:
             await self._download_async(url, f_handle)
 
     async def _download_async(self, url, f_handle):
-        with async_timeout.timeout(DOWNLOAD_TIMEOUT):
+        loop = singletons.eventloop.loop
+        self.aiohttp = aiohttp.ClientSession(loop=loop)
+        with aiohttp.Timeout(DOWNLOAD_TIMEOUT):
             async with self.aiohttp.get(url) as response:
                 while True:
                     chunk = await response.content.read(DOWNLOAD_CHUNK_SIZE)
                     if not chunk:
                         break
                     f_handle.write(chunk)
+                self._close()
                 return await response.release()
 
     async def run_convert(self, converter, in_resource, out_resource):

@@ -61,6 +61,7 @@ CONVERTERS = [
     'omnic.builtin.converters.chemical.OpenBabelConverter',
     'omnic.builtin.converters.vector.InkscapeConverter',
     'omnic.builtin.converters.vector.InkscapeRasterizer',
+    'omnic.builtin.converters.manifest.ManifestDownloader',
 ]
 
 
