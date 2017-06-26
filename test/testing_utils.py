@@ -1,4 +1,7 @@
+import os
+from os.path import join, exists
 from base64 import b64decode
+
 from omnic.worker.base import BaseWorker
 from omnic.types.detectors import Detector
 
@@ -58,3 +61,51 @@ class AgreeableDetector(Detector):
 
     def detect(self, path):
         return 'something'
+
+def rm_tmp_file(path):
+    # Utility function for completely removing a temp file and any superfluous
+    # dirs used to contain it
+    try:
+        os.remove(path)
+    except OSError:
+        pass
+    try:
+        os.removedirs(os.path.dirname(path))
+    except OSError:
+        pass
+
+def rm_tmp_files(*paths, prefixes=[]):
+    # For a group of paths that could be in multiple locations
+    for path in paths:
+        if prefixes:
+            for prefix in prefixes:
+                rm_tmp_file(os.path.join(prefix, path))
+        else:
+            rm_tmp_file(path)
+
+
+
+# Some testing utilities borrowed from another python package (stowage)
+# TODO: refactor these into above
+def write_tmp_file(path):
+    try:
+        os.makedirs(os.path.dirname(path))
+    except OSError:
+        pass
+    open(path, 'w+').write('%s contents' % path)
+
+
+def gen_tmp_files(root, files):
+    for fn in files:
+        write_tmp_file(join(root, fn))
+
+
+def clear_tmp_files(root, files):
+    for fn in files:
+        path = join(root, fn)
+        if exists(path):
+            os.remove(path)
+        try:
+            os.removedirs(os.path.dirname(path))
+        except OSError:
+            pass

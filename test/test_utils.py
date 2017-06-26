@@ -2,10 +2,14 @@
 Tests for `utils` module.
 """
 import pytest
+import tempfile
+from os.path import join, exists
 
 from omnic.utils import iters
 from omnic.utils import graph
+from omnic.utils import filesystem
 
+from .testing_utils import gen_tmp_files, clear_tmp_files
 
 class TestDirectedGraph:
     #  ,-> F ,-> E
@@ -156,3 +160,42 @@ class TestIterUtils:
     def test_group_by(self):
         group_by = iters.group_by
         assert list(group_by('asdf', 2)) == ['as', 'df']
+
+
+
+class TestFilesystemUtils:
+    FILES = [
+        'testfile',
+        'config/thing/thing.xml',
+    ]
+
+    @classmethod
+    def setup_class(cls):
+        cls.dir = tempfile.mkdtemp(prefix='tmp_omnic_test_')
+        cls.out = tempfile.mkdtemp(prefix='tmp_omnic_test_out_')
+        gen_tmp_files(cls.dir, cls.FILES)
+        cls.results = set([
+            (join(cls.dir, 'testfile'),
+                join(cls.out, 'testfile')),
+            (join(cls.dir, 'config/thing/thing.xml'),
+                join(cls.out, 'config/thing/thing.xml')),
+        ])
+
+    @classmethod
+    def teardown_class(cls):
+        clear_tmp_files(cls.dir, cls.FILES)
+        clear_tmp_files(cls.out, cls.FILES)
+
+    def test_directory_walk(self):
+        results = list(filesystem.directory_walk(self.dir, self.out))
+        results_set = set(results)
+        assert len(results_set) == len(results)  # ensure no dupes
+        assert results_set == self.results
+
+    def test_recursive_symlinks(self):
+        filesystem.recursive_symlink_dirs(self.dir, self.out)
+
+        # Now use walk to check that we did it successfully
+        results = set(filesystem.directory_walk(self.out, self.out))
+        assert len(results) == len(self.results)  # ensure right number
+

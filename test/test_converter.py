@@ -10,9 +10,10 @@ from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource
 from omnic.conversion import converter
-from .testing_utils import Magic, DummyDetector, AgreeableDetector
+from .testing_utils import Magic, DummyDetector, AgreeableDetector, rm_tmp_files
 
 URL = 'http://mocksite.local/file.png'
+DIR_URL = 'http://mocksite.local/my_files'
 
 # TODO: Fix these tests to be less integrate-y, mock out subprocess
 # calls
@@ -104,29 +105,37 @@ class ConverterTestBase:
 
     def teardown_method(self, method):
         singletons.settings.use_previous_settings()
-        try:
-            os.remove(self.res.cache_path)
-        except OSError:
-            pass
-        if self.res2:
-            try:
-                os.remove(self.res2.cache_path)
-            except OSError:
-                pass
-        try:
-            os.removedirs(os.path.dirname(self.res.cache_path))
-        except OSError:
-            pass
-        try:
-            os.removedirs(os.path.dirname(self.res2.cache_path))
-        except OSError:
-            pass
+        rm_tmp_files(
+            self.res.cache_path,
+            self.res2.cache_path,
+        )
 
     def _check_convert(self):
         self.converter.convert_sync(self.res, self.res2)
         assert self.res2.cache_exists()
         with self.res2.cache_open() as f:
             assert f.read() == Magic.JPEG
+
+
+class DirectoryConverterTestBase:
+    def setup_method(self, method):
+        MockConfig.PATH_PREFIX = tempfile.mkdtemp()
+        singletons.settings.use_settings(MockConfig)
+        self.res = TypedResource(DIR_URL, TypeString('nodepackage'))
+        self.res2 = TypedResource(DIR_URL, TypeString('installed_nodepackage'))
+        with self.res.cache_open_as_dir('package.json', 'wb') as f:
+            f.write(b'{}\n')
+        with self.res.cache_open_as_dir('lib/main.js', 'wb') as f:
+            f.write(b'console.log("test stuff");\n')
+
+    def teardown_method(self, method):
+        singletons.settings.use_previous_settings()
+        # Remove all the 
+        rm_tmp_files(
+            'package.json',
+            'lib/main.js',
+            prefixes=[self.res.cache_path, self.res2.cache_path],
+        )
 
 
 class TestHardLinkConverter(ConverterTestBase):
@@ -153,6 +162,10 @@ class TestDetectorConverter(ConverterTestBase):
         self.converter = converter.DetectorConverter()
         self.converter.detector = AgreeableDetector
         self._check_convert() # valid conversion
+
+
+class TestDirectoryConverter(DirectoryConverterTestBase):
+    pass
 
 
 class TestExecConverter(ConverterTestBase):

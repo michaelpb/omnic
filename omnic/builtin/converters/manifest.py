@@ -4,7 +4,6 @@ import aiohttp
 import asyncio
 
 from omnic.builtin.types.core import DIRECTORY, MANIFEST_JSON
-from omnic.builtin.types.nodejs import NodePackageDetector, NODE_PACKAGE
 from omnic.conversion import converter
 from omnic import singletons
 
@@ -18,7 +17,7 @@ class ManifestDownloader(converter.Converter):
     ]
 
     async def convert(self, in_resource, out_resource):
-        # TODO: Create Manifest JSON helper util
+        # TODO: Create Manifest JSON helper util, support TXT format too
         with in_resource.cache_open('r') as fd:
             parsed = json.load(fd)
         files = parsed['files'].items()
@@ -61,14 +60,4 @@ class ManifestDownloader(converter.Converter):
                         break
                     f_handle.write(chunk)
                 return await response.release()
-
-
-class NodePackageDetector(converter.DetectorConverter):
-    detector = NodePackageDetector
-    inputs = [
-        str(DIRECTORY),
-    ]
-    outputs = [
-        str(NODE_PACKAGE),
-    ]
 

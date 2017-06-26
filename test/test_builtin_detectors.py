@@ -63,6 +63,7 @@ class TestNodePackageDetector:
     def _write_pjson(self):
         self.fd = open(self.pjson_path, 'w+')
         self.fd.write('{}')
+        self.fd.close()
 
     def test_can_improve(self):
         assert not self.d.can_improve(TypeString('PNG'))
@@ -74,13 +75,18 @@ class TestNodePackageDetector:
         assert self.d.can_detect(self.path)
 
     def test_detect_empty(self):
-        return
         assert self.d.detect(self.path) == None
 
     def test_detect_json(self):
-        return
         self._write_pjson()
-        assert self.d.detect(self.path) == 'nodepackage'
+        assert str(self.d.detect(self.path)) == 'nodepackage'
+
+    def test_detect_node_modules(self):
+        self._write_pjson()
+        _nm_path = os.path.join(self.path, 'node_modules')
+        os.mkdir(_nm_path)
+        assert str(self.d.detect(self.path)) == 'installed_nodepackage'
+        os.rmdir(_nm_path)  # clean up
 
 
 class TestBuiltinDetectorsForImages:
