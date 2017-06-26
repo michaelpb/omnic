@@ -10,6 +10,7 @@ from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource
 from omnic.conversion import converter
+from omnic.conversion.graph import ConverterGraph
 from .testing_utils import Magic, DummyDetector, AgreeableDetector, rm_tmp_files
 
 URL = 'http://mocksite.local/file.png'
@@ -130,7 +131,7 @@ class DirectoryConverterTestBase:
 
     def teardown_method(self, method):
         singletons.settings.use_previous_settings()
-        # Remove all the 
+        # Remove all the
         rm_tmp_files(
             'package.json',
             'lib/main.js',
@@ -161,7 +162,7 @@ class TestDetectorConverter(ConverterTestBase):
     def test_convert_success(self):
         self.converter = converter.DetectorConverter()
         self.converter.detector = AgreeableDetector
-        self._check_convert() # valid conversion
+        self._check_convert()  # valid conversion
 
 
 class TestDirectoryConverter(DirectoryConverterTestBase):
@@ -189,7 +190,7 @@ class TestExecConverter(ConverterTestBase):
 class TestBasicConverterGraph(ConverterTestBase):
     @classmethod
     def setup_class(cls):
-        cls.cgraph = converter.ConverterGraph(MockConfig.CONVERTERS)
+        cls.cgraph = ConverterGraph(MockConfig.CONVERTERS)
 
     def _path(self, in_str, out_str):
         return self.cgraph.find_path(TypeString(in_str), TypeString(out_str))

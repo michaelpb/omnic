@@ -3,13 +3,14 @@ Tests for `utils` module.
 """
 import pytest
 import tempfile
-from os.path import join, exists
+from os.path import join
 
 from omnic.utils import iters
 from omnic.utils import graph
 from omnic.utils import filesystem
 
 from .testing_utils import gen_tmp_files, clear_tmp_files
+
 
 class TestDirectedGraph:
     #  ,-> F ,-> E
@@ -162,7 +163,6 @@ class TestIterUtils:
         assert list(group_by('asdf', 2)) == ['as', 'df']
 
 
-
 class TestFilesystemUtils:
     FILES = [
         'testfile',
@@ -198,4 +198,3 @@ class TestFilesystemUtils:
         # Now use walk to check that we did it successfully
         results = set(filesystem.directory_walk(self.out, self.out))
         assert len(results) == len(self.results)  # ensure right number
-

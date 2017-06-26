@@ -1,7 +1,7 @@
 # Modules which are automatically loaded as soon as settings is loaded, to
 # ensure singletons etc get hooked up correctly
 AUTOLOAD = [
-    'omnic.conversion.converter',
+    'omnic.conversion.graph',
     'omnic.responses.placeholder',
     'omnic.web.server',
     'omnic.web.eventloop',

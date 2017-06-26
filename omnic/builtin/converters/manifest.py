@@ -60,4 +60,3 @@ class ManifestDownloader(converter.Converter):
                         break
                     f_handle.write(chunk)
                 return await response.release()
-

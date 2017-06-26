@@ -2,6 +2,7 @@ from omnic.builtin.types.nodejs import NodePackageDetector, NODE_PACKAGE, INSTAL
 from omnic.builtin.types.core import DIRECTORY
 from omnic.conversion import converter
 
+
 class NodePackageDetector(converter.DetectorConverter):
     detector = NodePackageDetector
     inputs = [
@@ -20,4 +21,3 @@ class NPMInstalledDirectoryConverter(converter.Converter):
     outputs = [
         str(INSTALLED_NODE_PACKAGE),
     ]
-

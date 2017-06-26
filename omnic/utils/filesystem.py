@@ -1,5 +1,6 @@
 import os
 
+
 def directory_walk(source_d, destination_d):
     '''
     Walk a directory structure and yield full parallel source and destination
@@ -17,6 +18,7 @@ def directory_walk(source_d, destination_d):
             full_destination_path = os.path.join(destination_d, suffix)
             yield full_source_path, full_destination_path
 
+
 def recursive_symlink_dirs(source_d, destination_d):
     '''
     Symlink all files recursively from source_d, ignoring errors (e.g. existing
@@ -31,4 +33,3 @@ def recursive_symlink_dirs(source_d, destination_d):
             os.symlink(source, destination)
         except OSError:
             pass
-

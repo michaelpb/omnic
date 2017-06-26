@@ -3,6 +3,7 @@ from omnic.utils.graph import DirectedGraph
 from omnic.utils.iters import pair_looper
 from omnic import singletons
 
+
 class ConverterGraph:
     def __init__(self, converter_list=None):
         self.converter_list = converter_list

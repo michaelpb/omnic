@@ -62,6 +62,7 @@ class AgreeableDetector(Detector):
     def detect(self, path):
         return 'something'
 
+
 def rm_tmp_file(path):
     # Utility function for completely removing a temp file and any superfluous
     # dirs used to contain it
@@ -74,6 +75,7 @@ def rm_tmp_file(path):
     except OSError:
         pass
 
+
 def rm_tmp_files(*paths, prefixes=[]):
     # For a group of paths that could be in multiple locations
     for path in paths:
@@ -82,7 +84,6 @@ def rm_tmp_files(*paths, prefixes=[]):
                 rm_tmp_file(os.path.join(prefix, path))
         else:
             rm_tmp_file(path)
-
 
 
 # Some testing utilities borrowed from another python package (stowage)

@@ -1,10 +1,7 @@
 import os
 import subprocess
 
-from omnic.types.typestring import TypeString
-from omnic.conversion.graph import ConverterGraph
 from omnic.conversion.exceptions import ConversionInputError
-from omnic import singletons
 
 
 class Converter:
@@ -15,7 +12,9 @@ class Converter:
 
     def convert_sync(self, in_resource, out_resource):
         # TODO: Make both optional (run_until_complete here)
-        raise Exception('Converter subclass must override at least convert_sync.')
+        raise Exception(
+            'Converter subclass must override at least convert_sync.')
+
 
 class ExecConverter(Converter):
     def get_arguments(self, resource):
@@ -80,4 +79,3 @@ class DetectorConverter(SymLinkConverter):
         if not detector.detect(path):
             raise ConversionInputError('Invalid: %s' % str(path))
         super().convert_sync(in_resource, out_resource)
-
