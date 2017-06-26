@@ -1,18 +1,21 @@
 import os
 import subprocess
 
-from omnic.utils.graph import DirectedGraph
-from omnic.utils.iters import pair_looper
 from omnic.types.typestring import TypeString
+from omnic.conversion.graph import ConverterGraph
+from omnic.conversion.exceptions import ConversionInputError
 from omnic import singletons
 
 
 class Converter:
     cost = 1
 
-    def __init__(self):
-        self.config = singletons.settings
+    async def convert(self, in_resource, out_resource):
+        return self.convert_sync(in_resource, out_resource)
 
+    def convert_sync(self, in_resource, out_resource):
+        # TODO: Make both optional (run_until_complete here)
+        raise Exception('Converter subclass must override at least convert_sync.')
 
 class ExecConverter(Converter):
     def get_arguments(self, resource):
@@ -61,33 +64,20 @@ class HardLinkConverter(Converter):
         os.link(in_resource.cache_path, out_resource.cache_path)
 
 
-class ConverterGraph:
-    def __init__(self, converter_list=None):
-        self.converter_list = converter_list
-        if self.converter_list is None:
-            self.converter_list = singletons.settings.load_all('CONVERTERS')
-            #self.converter_list = singletons.settings.CONVERTERS
-        self.dgraph = DirectedGraph()
-        self.converters = {}
-        for converter in self.converter_list:
-            for in_ in converter.inputs:
-                for out in converter.outputs:
-                    self.dgraph.add_edge(in_, out, converter.cost)
-                    self.converters[(in_, out)] = converter
-
-    def find_path(self, in_, out):
-        in_f = in_.ts_format
-        out_f = out.ts_format
-        path = self.dgraph.shortest_path(in_f, out_f)
-        results = []
-        # Loop through each edge traversal, adding converters and type
-        # string pairs as we go along
-        for left, right in pair_looper(path):
-            converter = self.converters.get((left, right))
-            ts_left = TypeString(left)
-            ts_right = out if out.ts_format == right else TypeString(right)
-            results.append((converter, ts_left, ts_right))
-        return results
+class SymLinkConverter(Converter):
+    def convert_sync(self, in_resource, out_resource):
+        os.symlink(in_resource.cache_path, out_resource.cache_path)
 
 
-singletons.register('converter_graph', ConverterGraph)
+class DetectorConverter(SymLinkConverter):
+    def convert_sync(self, in_resource, out_resource):
+        path = in_resource.cache_path
+        detector = self.detector()
+        if not os.path.exists(path):
+            raise ConversionInputError('Does not exist: %s' % str(path))
+        if not detector.can_detect(path):
+            raise ConversionInputError('Cannot detect: %s' % str(path))
+        if not detector.detect(path):
+            raise ConversionInputError('Invalid: %s' % str(path))
+        super().convert_sync(in_resource, out_resource)
+

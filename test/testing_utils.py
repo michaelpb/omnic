@@ -1,5 +1,6 @@
 from base64 import b64decode
 from omnic.worker.base import BaseWorker
+from omnic.types.detectors import Detector
 
 
 class Magic:
@@ -45,3 +46,15 @@ class MockAioQueue(list):
 
     async def get(self):
         return self.pop(0)
+
+
+class DummyDetector(Detector):
+    pass
+
+
+class AgreeableDetector(Detector):
+    def can_detect(self, path):
+        return True
+
+    def detect(self, path):
+        return 'something'

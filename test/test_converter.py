@@ -4,12 +4,13 @@ Tests for `resource` module.
 
 import tempfile
 import os
+import pytest
 
 from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.types.resource import TypedResource
 from omnic.conversion import converter
-from .testing_utils import Magic
+from .testing_utils import Magic, DummyDetector, AgreeableDetector
 
 URL = 'http://mocksite.local/file.png'
 
@@ -132,6 +133,26 @@ class TestHardLinkConverter(ConverterTestBase):
     def test_convert(self):
         self.converter = HardLinkConverter()
         self._check_convert()
+
+
+class TestDetectorConverter(ConverterTestBase):
+    def test_convert_nothing(self):
+        self.converter = converter.DetectorConverter()
+        self.converter.detector = AgreeableDetector
+        with pytest.raises(converter.ConversionInputError):
+            # Wrong direction (from nonexistent to existent)
+            self.converter.convert_sync(self.res2, self.res)
+
+    def test_convert_invalid(self):
+        self.converter = converter.DetectorConverter()
+        self.converter.detector = DummyDetector
+        with pytest.raises(converter.ConversionInputError):
+            self.converter.convert_sync(self.res, self.res2)
+
+    def test_convert_success(self):
+        self.converter = converter.DetectorConverter()
+        self.converter.detector = AgreeableDetector
+        self._check_convert() # valid conversion
 
 
 class TestExecConverter(ConverterTestBase):
