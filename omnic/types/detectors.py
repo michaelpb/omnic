@@ -1,5 +1,4 @@
 import os
-import mimetypes
 import magic
 
 from omnic.types.typestring import TypeString
@@ -13,6 +12,9 @@ UNKNOWN_MIMETYPE = (
 
 UNKNOWN = TypeString('unknown')
 DIRECTORY = TypeString('directory')
+MANIFEST_JSON = TypeString('manifest.json')
+NODE_PACKAGE = TypeString('nodepackage')
+
 
 class Detector:
     def can_improve(self, typestring):
@@ -22,7 +24,7 @@ class Detector:
         return False
 
     def detect(self, path):
-        return UNKNOWN
+        return None
 
 
 class MagicDetector(Detector):
@@ -36,7 +38,6 @@ class MagicDetector(Detector):
             mimetype = magic.from_buffer(fd.read(128), mime=True)
             if mimetype and mimetype not in UNKNOWN_MIMETYPE:
                 return TypeString(mimetype)
-        return UNKNOWN
 
 
 class ExtensionDetector(Detector):
@@ -48,8 +49,35 @@ class ExtensionDetector(Detector):
         _, ext = os.path.splitext(path)
         ext = ext.strip('.').upper()
         if not ext:
-            return UNKNOWN
+            return
         return TypeString(ext)
+
+
+class ManifestDetector(Detector):
+    def can_improve(self, typestring):
+        return typestring.extension == 'JSON'
+
+    def can_detect(self, path):
+        return os.path.basename(path).endswith('manifest.json')
+
+    def detect(self, path):
+        with open(path, 'rb') as fd:
+            if b'{' in fd.read(128):
+                return MANIFEST_JSON
+
+
+class NodePackageDetector(Detector):
+    def can_improve(self, typestring):
+        return typestring == DIRECTORY
+
+    def can_detect(self, path):
+        return os.path.isdir(path) and 'package.json' in os.listdir(path)
+
+    def detect(self, path):
+        package_path = os.path.join(path, 'package.json')
+        with open(package_path, 'rb') as fd:
+            if b'{' in fd.read(128):  # resembles a package.json
+                return NODE_PACKAGE
 
 
 class DetectorManager:
@@ -58,6 +86,8 @@ class DetectorManager:
         self.detectors = [
             MagicDetector(),
             ExtensionDetector(),
+            ManifestDetector(),
+            NodePackageDetector(),
         ]
 
     def detect(self, path):
@@ -70,7 +100,10 @@ class DetectorManager:
                 continue
             if not detector.can_detect(path):
                 continue
-            typestring = detector.detect(path)
+            detected = detector.detect(path)
+            if detected:
+                typestring = detected
         return typestring
+
 
 singletons.register('detectors', DetectorManager)

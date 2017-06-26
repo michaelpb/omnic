@@ -110,6 +110,7 @@ async def conversion_tester_root(request):
     redirect = singletons.server.response.redirect
     return redirect('/admin/conversion/')
 
+
 async def conversion_tester(request):
     singletons.settings
     workers = await get_worker_info()

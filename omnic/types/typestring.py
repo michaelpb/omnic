@@ -1,10 +1,8 @@
 '''
 TypeString is a core class that extends mimetypes 
 '''
-import os
 import mimetypes
 
-from omnic import singletons
 
 class TypeString:
     '''
@@ -17,6 +15,7 @@ class TypeString:
     might signify the process by which a file of that type might be derived
     (example: thumb dimensions).
     '''
+
     def __init__(self, s):
         self.str = s
 
@@ -58,6 +57,16 @@ class TypeString:
     def __str__(self):
         return self.str
 
+    def __eq__(self, other):
+        return all((
+            self.is_qualifier == other.is_qualifier,
+            self.mimetype == other.mimetype,
+            self.extension == other.extension,
+            self.arguments == other.arguments,
+        ))
+
+    def __ne__(self, other):
+        return not self == other
+
     def __repr__(self):
         return "TypeString(%s)" % repr(str(self))
-
