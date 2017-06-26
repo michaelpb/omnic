@@ -38,6 +38,13 @@ LOGGING = {
 }
 
 
+DETECTORS = [
+    'omnic.builtin.types.core.MagicDetector',
+    'omnic.builtin.types.core.ExtensionDetector',
+    'omnic.builtin.types.core.ManifestDetector',
+    'omnic.builtin.types.nodejs.NodePackageDetector',
+]
+
 SERVICES = [
     'omnic.builtin.services.media',
     'omnic.builtin.services.test',

@@ -6,7 +6,9 @@ import tempfile
 import os
 
 from omnic.types.typestring import TypeString
-from omnic.types.detectors import DetectorManager, ManifestDetector, NodePackageDetector, DIRECTORY
+from omnic.types.detectors import DetectorManager
+from omnic.builtin.types.core import ManifestDetector
+from omnic.builtin.types.nodejs import NodePackageDetector
 
 from .testing_utils import Magic
 
@@ -64,7 +66,7 @@ class TestNodePackageDetector:
 
     def test_can_improve(self):
         assert not self.d.can_improve(TypeString('PNG'))
-        assert self.d.can_improve(DIRECTORY)
+        assert self.d.can_improve(TypeString('directory'))
 
     def test_can_detect(self):
         assert not self.d.can_detect(self.path)
