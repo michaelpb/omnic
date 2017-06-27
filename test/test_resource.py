@@ -96,15 +96,15 @@ class TestForeignResourceDirectory:
     def teardown_method(self, method):
         singletons.settings.use_previous_settings()
         try:
-            os.remove(os.path.join(self.res.cache_path, 'testfile'))
+            os.remove(os.path.join(self.res.cache_path, 'thing', 'testfile'))
         except OSError:
             pass
-        os.removedirs(self.res.cache_path)
+        os.removedirs(os.path.join(self.res.cache_path, 'thing'))
 
     def test_cache_open_as_dir(self):
-        with self.res.cache_open_as_dir('testfile', 'wb') as f:
+        with self.res.cache_open_as_dir('thing/testfile', 'wb') as f:
             f.write(b'test')
-        with self.res.cache_open_as_dir('testfile') as f:
+        with self.res.cache_open_as_dir('thing/testfile') as f:
             assert f.read() == b'test'
 
 

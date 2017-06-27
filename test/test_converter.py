@@ -55,6 +55,12 @@ class ExecConverterWithOutputFilename(ExecConverter):
         return '_tmp_output_file'
 
 
+class MockNpmConverter(converter.AdditiveDirectoryExecConverter):
+    inputs = ['nodepackage']
+    outputs = ['installed_nodepackage']
+    command = ['mkdir', 'node_modules']  # Mock npm install
+
+
 # Set up system of dummy converters
 class ConvertMovieToImage(converter.HardLinkConverter):
     inputs = ['MOV', 'AVI', 'MP4']
@@ -131,12 +137,31 @@ class DirectoryConverterTestBase:
 
     def teardown_method(self, method):
         singletons.settings.use_previous_settings()
-        # Remove all the
         rm_tmp_files(
             'package.json',
             'lib/main.js',
             prefixes=[self.res.cache_path, self.res2.cache_path],
         )
+
+
+class TestAdditiveDirectoryExecConverter(DirectoryConverterTestBase):
+    def test_convert(self):
+        self.converter = MockNpmConverter()
+        self.converter.convert_sync(self.res, self.res2)
+        j = os.path.join
+        assert self.res2.cache_exists()
+
+        # ensure only new directory has the 'node_modules'
+        assert os.path.isdir(j(self.res2.cache_path, 'node_modules'))
+        assert not os.path.isdir(j(self.res.cache_path, 'node_modules'))
+        assert not os.path.islink(j(self.res2.cache_path, 'lib'))
+        assert not os.path.islink(j(self.res2.cache_path, 'node_modules'))
+        assert os.path.islink(j(self.res2.cache_path, 'package.json'))
+
+        with self.res2.cache_open_as_dir('package.json') as f:
+            assert f.read() == b'{}\n'
+        with self.res2.cache_open_as_dir('lib/main.js') as f:
+            assert f.read() == b'console.log("test stuff");\n'
 
 
 class TestHardLinkConverter(ConverterTestBase):

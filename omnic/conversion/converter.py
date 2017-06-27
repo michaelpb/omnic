@@ -2,6 +2,7 @@ import os
 import subprocess
 
 from omnic.conversion.exceptions import ConversionInputError
+from omnic.utils import filesystem
 
 
 class Converter:
@@ -19,6 +20,9 @@ class Converter:
 class ExecConverter(Converter):
     def get_arguments(self, resource):
         return resource.typestring.arguments
+
+    def get_cwd(self, in_resource, out_resource):
+        return os.path.dirname(in_resource.cache_path)
 
     def get_command(self, in_resource, out_resource):
         args = self.get_arguments(out_resource)
@@ -48,12 +52,20 @@ class ExecConverter(Converter):
         in_resource.cache_makedirs()
         out_resource.cache_makedirs()
 
-        # Run the command itself
-        result = subprocess.run(cmd)
+        # Compute working directory
+        working_dir = self.get_cwd(in_resource, out_resource)
 
-        # If the command uses a non-standard path, fix by renaming it
+        # Run the command itself
+        result = subprocess.run(cmd, cwd=working_dir)
+
+        # Some conversion programs don't allow specifying output path. If the
+        # command outputs to a non-standard path, fix by renaming it.
         if hasattr(self, 'get_output_filename'):
             output_fn = self.get_output_filename(in_resource, out_resource)
+            if not output_fn.startswith('/'):
+                # Non absolute path, guess that its next to in_resource
+                base_path = os.path.dirname(in_resource.cache_path)
+                output_fn = os.path.join(base_path, output_fn)
             os.rename(output_fn, out_resource.cache_path)
         return result
 
@@ -78,4 +90,28 @@ class DetectorConverter(SymLinkConverter):
             raise ConversionInputError('Cannot detect: %s' % str(path))
         if not detector.detect(path):
             raise ConversionInputError('Invalid: %s' % str(path))
+        super().convert_sync(in_resource, out_resource)
+
+
+class AdditiveDirectoryExecConverter(ExecConverter):
+    '''
+    Similar to exec converter, except it first recursively symlinks all files,
+    thus useful for non-destructive directory-level actions
+    '''
+
+    def get_cwd(self, in_resource, out_resource):
+        return out_resource.cache_path  # change to output dir by default
+
+    def recursive_symlink(self, in_resource, out_resource):
+        filesystem.recursive_symlink_dirs(
+            in_resource.cache_path,
+            out_resource.cache_path,
+        )
+
+    async def convert(self, in_resource, out_resource):
+        self.recursive_symlink(in_resource, out_resource)
+        super().convert_sync(in_resource, out_resource)
+
+    def convert_sync(self, in_resource, out_resource):
+        self.recursive_symlink(in_resource, out_resource)
         super().convert_sync(in_resource, out_resource)

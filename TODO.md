@@ -54,8 +54,8 @@
       doing subprocess calls
 
 - [ ] QoL conversion grid improvements:
-    - [ ] Think more about how to make extension "supersede" mimetype
-      in a reliable way
+    - [X] ~Think more about how to make extension "supersede" mimetype
+      in a reliable way~ The detector system generally takes care of this
     - [ ] Add "configure" check to base Converter, which should ensure
       correct Python and system packages installed for the converter to
       be functoinal
@@ -65,6 +65,15 @@
         {
             ('STL', 'JPG'): ['STL', 'PNG', 'add_background.png', 'JPG:1000x1000'],
         }
+
+    - [ ] Locking + sanity check process:
+        1. Before, optionally (based on conf) do sanity Detector check
+        2. After, optionally (based on conf) do sanity Detector check
+        3. After, (required) make output all exclusively readonly, recursively
+        in the case of a directory
+        4. Resources should treat writable caches as non-existent, thus making
+        "in progress" files unusable to front-end services. This step is
+        essential for data integrity!
 
 - [ ] AsyncIO improvements
     - [ ] Replace all file system calls with aiofiles
@@ -149,11 +158,9 @@
       event that will embed the correct type of viewer for that element
 
 ## Queueing
-- [ ] Use: `aioredis` package
+- [X] Allow attachment of any arbitrary traditional task-queueing backend
 - [ ] Allow swapping out asyncio's gimmick-y queuing for a custom-made
-  Redis-based async queue (should be easy)
-- [X] Eventually allow attachment of any arbitrary traditional task-queueing
-  backend
+  Redis-based async queue (should be easy) e.g. using: `aioredis` package
 
 ## Rendering services
 - [ ] StringResource - A type of resource where the contents is a short string,
@@ -170,10 +177,13 @@
 
 
 ## Bundling service
+- NOTE: even with the manifest.json media type, this  still be useful,
+  for more convenient manifest format...?
 - [ ] zip, tar.gz, tar.bz2, 7z - all bundle formats
-- [ ] /bundle/ Service - A service that takes in an URL to a json manifest
-  file, which contains an array of files and conversion destinations to be
-  processed.
+- [ ] A more convenient manifest format that allows conversion, maybe a bundle
+  service to go along with it: /bundle/ Service - A service that takes in an
+  URL to a json manifest file, which contains an array of files and conversion
+  destinations to be processed.
     - Example: [
         {
             "url": "http://host.com/file.png",
@@ -234,6 +244,13 @@
   build of entire (e.g. static) site from a repo
 - Thus, omnic becomes "just in time deployment"
 - Obvs in real life, this would be triggered with a hook
+
+# Cron
+
+- [ ] CronWorker system, added to the main loop, that sleeps every 5 minutes
+  and checks a cron queue
+- [ ] Cron queue is for cache clean-up tasks, queue monitoring (could send
+  alerts somehow if queues get out of hand), etc
 
 # Production caching control improvements
 
