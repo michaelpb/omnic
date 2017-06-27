@@ -74,6 +74,7 @@
         4. Resources should treat writable caches as non-existent, thus making
         "in progress" files unusable to front-end services. This step is
         essential for data integrity!
+        5. This will obsolete Detector Converter types, I believe
 
 - [ ] AsyncIO improvements
     - [ ] Replace all file system calls with aiofiles

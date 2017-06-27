@@ -62,7 +62,12 @@ CONVERTERS = [
     'omnic.builtin.converters.vector.InkscapeConverter',
     'omnic.builtin.converters.vector.InkscapeRasterizer',
     'omnic.builtin.converters.manifest.ManifestDownloader',
+
     'omnic.builtin.converters.nodejs.NodePackageDetector',
+    'omnic.builtin.converters.nodejs.NPMInstalledDirectoryConverter',
+    'omnic.builtin.converters.nodejs.BrowserifyBundler',
+    'omnic.builtin.converters.nodejs.BabelES6Compiler',
+    'omnic.builtin.converters.nodejs.UglifyJSMinifier',
 ]
 
 

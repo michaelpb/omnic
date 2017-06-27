@@ -40,6 +40,11 @@ def convert(file, type):
     '''
     Converts a single file to a given type
     '''
+
+    # Ensure settings gets setup so everything is imported
+    from omnic import singletons
+    singletons.settings
+
     path = file
     to_type = TypeString(type)
     if not path.startswith('/'):
