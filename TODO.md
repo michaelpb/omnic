@@ -76,6 +76,13 @@
         essential for data integrity!
         5. This will obsolete Detector Converter types, I believe
 
+    - [ ] For JS, should have full input graph, e.g. can uglify plain JS files,
+      but rely on "preferred paths" to ensure that it gets es5ified first (can
+      configure in default settings this way)
+    - [ ] It's becoming increasingly clear I need to build a constant-based
+      TypeString hierarchy, such that a bundle.js or es5.js is a type of JS
+      file, and thus gets proper mimetypes, etc, while remaining more specific
+
 - [ ] AsyncIO improvements
     - [ ] Replace all file system calls with aiofiles
     - [ ] Replace all spawn system calls with asyncio equivalent
@@ -212,10 +219,17 @@
         - `> "downloaded", {url: "foo.com/bar.json"}`
 
 ## JS converter
-- [ ] Minifier and JSX / TypeScript compiler
-- [ ] Possibly a service dedicated to this, or just use /bundle/ wit ha
+- [X] Minifier and JSX / TypeScript compiler
+- [X] Possibly a service dedicated to this, or just use /bundle/ wit ha
   different target type ('js')
-- [ ] Eliminate build steps for web... stateless serving for all!
+- [X] Eliminate build steps for web... stateless serving for all!
+- [ ] Support more JS build systems
+    - [ ] Webpack based bundling + compilation
+        -  TODO For "full webpack packages", that is, ones with custom config
+           scripts that may require executing untrusted code.  Needs to somehow
+           guess where files will end up. This path SHOULD NOT be allowed in
+           normal confs.
+    - [ ] Babelrc based compilation
 
 ## Packaging build server Converters
 - [ ] Would play-well with /bundle/

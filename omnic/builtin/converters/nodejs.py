@@ -39,13 +39,6 @@ class NPMInstalledDirectoryConverter(converter.AdditiveDirectoryExecConverter):
         'install',
     ]
 
-# TODO For "full webpack packages", that is, ones with custom config
-# scripts that may require executing untrusted code.  Needs to somehow
-# guess where files will end up. This path SHOULD NOT be allowed in normal
-# confs.
-# class WebpackPackageBuilder(converter.AdditiveDirectoryExecConverter):
-#    pass
-
 
 class BrowserifyBundler(converter.ExecConverter):
     inputs = [
@@ -72,8 +65,9 @@ class BrowserifyBundler(converter.ExecConverter):
 class BabelES6Compiler(converter.ExecConverter):
     # NOTE: npm install -g babel babel-cli babel-preset-es2015
     # NOTE: It's a terrible hack to use es2015 globally, but it is the omnic
-    # way
+    # way, and will pay off once I build out precise containers
     inputs = [
+        'JS',
         'bundle.js',
     ]
     outputs = [

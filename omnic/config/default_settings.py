@@ -72,7 +72,9 @@ CONVERTERS = [
 
 
 PLACEHOLDERS = [
-    'omnic.builtin.responses.placeholders.PNGPixelAll',
+    'omnic.builtin.responses.placeholders.PNGPixel',
+    'omnic.builtin.responses.placeholders.JSGlobalVar',
+    'omnic.builtin.responses.placeholders.EmptyAll',
 ]
 
 PATH_PREFIX = '/tmp/omnic/'

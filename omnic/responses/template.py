@@ -1,3 +1,5 @@
+import random
+
 from jinja2 import Environment, PackageLoader, select_autoescape
 from sanic import response
 
@@ -13,6 +15,7 @@ class Jinja2TemplateHelper:
         return {
             'TEMPLATE_TOP': 'lol',
             'TEMPLATE_BOTTOM': 'otherlol',
+            'RANDOM': random.randint(0, 10**18),
         }
 
     def render_to_string(self, request, template_filename, extra_context={}):
