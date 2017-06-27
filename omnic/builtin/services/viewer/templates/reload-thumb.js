@@ -1,9 +1,6 @@
 {% extends "iffy.js" %}
 
 {% block body %}
-console.log('its a test');
-console.log('its a test');
-
 var TIMEOUT = 2000; // check after 2 seconds
 
 var placeholders = [];
