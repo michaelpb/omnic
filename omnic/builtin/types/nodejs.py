@@ -12,6 +12,7 @@ PACKAGE_JSON = 'package.json'
 NODE_MODULES = 'node_modules'
 WEBPACK_CONFIG_JS = 'webpack_config_js'
 
+
 class NodePackageDetector(Detector):
     def can_improve(self, typestring):
         return typestring == DIRECTORY

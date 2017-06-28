@@ -100,6 +100,7 @@ class BabelES6Compiler(converter.ExecConverter):
             *extra_args,
         ]
 
+
 class UglifyJSMinifier(converter.ExecConverter):
     # NOTE: npm install -g uglify-js
     inputs = [
@@ -115,4 +116,3 @@ class UglifyJSMinifier(converter.ExecConverter):
         '-o',
         '$OUT',
     ]
-

@@ -70,6 +70,9 @@ CONVERTERS = [
     'omnic.builtin.converters.nodejs.UglifyJSMinifier',
 ]
 
+VIEWERS = [
+    'omnic.builtin.viewers.document.PDFViewer',
+]
 
 PLACEHOLDERS = [
     'omnic.builtin.responses.placeholders.PNGPixel',

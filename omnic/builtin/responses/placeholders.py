@@ -30,6 +30,7 @@ class PNGPixel(placeholder.BytesPlaceholder):
     content_type = 'image/png'
     bytes = TRANSPARENT_PNG_PIXEL_BYTES
 
+
 class JSGlobalVar(placeholder.BytesPlaceholder):
     types = [
         'JS',
@@ -41,6 +42,7 @@ class JSGlobalVar(placeholder.BytesPlaceholder):
     ]
     content_type = 'application/javascript'
     bytes = b'window._OMNIC_EMPTY = true;\n'
+
 
 class EmptyAll(placeholder.BytesPlaceholder):
     types = all

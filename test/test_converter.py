@@ -1,5 +1,5 @@
 """
-Tests for `resource` module.
+Tests for `converter` module.
 """
 
 import tempfile

@@ -17,6 +17,13 @@ class TestBuiltinDefaults:
 
     def test_default_settings_exist(self):
         s = singletons.settings
+        assert hasattr(s, 'PATH_PREFIX') and s.PATH_PREFIX
+        assert hasattr(s, 'PATH_GROUPING') and s.PATH_GROUPING
+        assert hasattr(s, 'WEB_SERVER') and s.WEB_SERVER
+        assert hasattr(s, 'EVENT_LOOP') and s.EVENT_LOOP
+
+    def test_default_modules_exist(self):
+        s = singletons.settings
         assert hasattr(s, 'CONVERTERS')
         assert len(s.CONVERTERS) > 7  # shouldn't drop below this
         assert hasattr(s, 'SERVICES')
@@ -29,7 +36,8 @@ class TestBuiltinDefaults:
 
     def test_default_settings_are_importable(self):
         s = singletons.settings
-        assert len(s.load_all('PLACEHOLDERS')) > 0
+        assert len(s.load_all('PLACEHOLDERS')) > 1
+        assert len(s.load_all('VIEWERS')) > 0
         assert len(s.load_all('AUTOLOAD')) > 3
         assert len(s.load_all('CONVERTERS')) > 7
         assert len(s.load_all('SERVICES')) > 3
@@ -38,4 +46,5 @@ class TestBuiltinDefaults:
     def test_singletons(self):
         cg = singletons.converter_graph
         assert len(cg.converters) > 7
-        singletons.placeholders
+        v = singletons.viewers
+        assert len(v.viewers) > 0
