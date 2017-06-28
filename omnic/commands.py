@@ -2,14 +2,14 @@
 Contains main entrypoint of all things Omni Converter
 '''
 
+import asyncio
 import os
+
 import click
 
-import asyncio
-
 from omnic.conversion.utils import convert_local
-from omnic.utils.graph import DirectedGraph
 from omnic.types.typestring import TypeString
+from omnic.utils.graph import DirectedGraph
 
 
 @click.group()

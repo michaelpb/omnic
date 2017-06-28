@@ -1,7 +1,7 @@
 import os
 
-from omnic.types.typestring import TypeString
 from omnic.types.detectors import DIRECTORY, Detector
+from omnic.types.typestring import TypeString
 
 NODE_PACKAGE = TypeString('nodepackage')
 INSTALLED_NODE_PACKAGE = TypeString('installed_nodepackage')

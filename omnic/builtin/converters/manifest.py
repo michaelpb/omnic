@@ -1,11 +1,11 @@
+import asyncio
 import json
 
 import aiohttp
-import asyncio
 
+from omnic import singletons
 from omnic.builtin.types.core import DIRECTORY, MANIFEST_JSON
 from omnic.conversion import converter
-from omnic import singletons
 
 
 class ManifestDownloader(converter.Converter):

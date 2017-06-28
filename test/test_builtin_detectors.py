@@ -1,14 +1,13 @@
 """
 Tests for `detectors` module.
 """
+import os
 import tempfile
 
-import os
-
-from omnic.types.typestring import TypeString
-from omnic.types.detectors import DetectorManager
 from omnic.builtin.types.core import ManifestDetector
 from omnic.builtin.types.nodejs import NodePackageDetector
+from omnic.types.detectors import DetectorManager
+from omnic.types.typestring import TypeString
 
 from .testing_utils import Magic
 

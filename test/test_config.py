@@ -1,10 +1,12 @@
 """
 Tests for `config` module.
 """
-import pytest
 import os
-from omnic.config.settingsmanager import SettingsManager
+
+import pytest
+
 from omnic.config.exceptions import ConfigurationError
+from omnic.config.settingsmanager import SettingsManager
 
 TEST_SETTING = 123
 

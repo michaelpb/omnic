@@ -4,11 +4,11 @@ Tests for `worker` module.
 
 import pytest
 
+from omnic import singletons
 from omnic.worker.aioworker import AioWorker
 from omnic.worker.enums import Task
-from omnic import singletons
 
-from .testing_utils import MockWorker, MockAioQueue
+from .testing_utils import MockAioQueue, MockWorker
 
 
 class WorkerTestBase:

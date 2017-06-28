@@ -1,5 +1,6 @@
 
 from omnic import singletons
+
 from .base import BaseWorker
 
 

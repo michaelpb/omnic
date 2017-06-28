@@ -1,6 +1,6 @@
-from omnic.responses import placeholder
-
 from base64 import b64decode
+
+from omnic.responses import placeholder
 
 TRANSPARENT_PNG_PIXEL_B64 = '''
     iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=

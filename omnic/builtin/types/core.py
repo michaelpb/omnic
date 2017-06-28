@@ -1,8 +1,9 @@
 import os
+
 import magic
 
-from omnic.types.typestring import TypeString
 from omnic.types.detectors import DIRECTORY, Detector
+from omnic.types.typestring import TypeString
 
 UNKNOWN_MIMETYPE = (
     'application/x-empty',

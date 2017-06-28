@@ -1,10 +1,9 @@
 import pytest
+import requests
 
 from omnic import singletons
 
 from .testing_utils import Magic
-
-import requests
 
 
 class TestForkedTestingServer:

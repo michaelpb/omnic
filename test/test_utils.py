@@ -1,15 +1,14 @@
 """
 Tests for `utils` module.
 """
-import pytest
 import tempfile
 from os.path import join
 
-from omnic.utils import iters
-from omnic.utils import graph
-from omnic.utils import filesystem
+import pytest
 
-from .testing_utils import gen_tmp_files, clear_tmp_files
+from omnic.utils import filesystem, graph, iters
+
+from .testing_utils import clear_tmp_files, gen_tmp_files
 
 
 class TestDirectedGraph:

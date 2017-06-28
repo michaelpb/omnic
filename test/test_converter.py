@@ -2,16 +2,19 @@
 Tests for `converter` module.
 """
 
-import tempfile
 import os
+import tempfile
+
 import pytest
 
 from omnic import singletons
-from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource
 from omnic.conversion import converter
 from omnic.conversion.graph import ConverterGraph
-from .testing_utils import Magic, DummyDetector, AgreeableDetector, rm_tmp_files
+from omnic.types.resource import TypedResource
+from omnic.types.typestring import TypeString
+
+from .testing_utils import (AgreeableDetector, DummyDetector, Magic,
+                            rm_tmp_files)
 
 URL = 'http://mocksite.local/file.png'
 DIR_URL = 'http://mocksite.local/my_files'

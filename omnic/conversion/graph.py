@@ -1,7 +1,7 @@
+from omnic import singletons
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 from omnic.utils.iters import pair_looper
-from omnic import singletons
 
 
 class ConverterGraph:

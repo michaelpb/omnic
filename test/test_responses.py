@@ -3,8 +3,8 @@ Tests for `responses` module.
 """
 
 
-from omnic.types.typestring import TypeString
 from omnic.responses import placeholder
+from omnic.types.typestring import TypeString
 
 from .testing_utils import Magic
 

@@ -1,18 +1,19 @@
 """
 Tests for `resource` module.
 """
-import tempfile
 import hashlib
 import os
+import tempfile
 
 import pytest
 import requests_mock
 
-from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource, ForeignResource, URLError, CacheError, ForeignBytesResource
 from omnic import singletons
-from .testing_utils import Magic, rm_tmp_files
+from omnic.types.resource import (CacheError, ForeignBytesResource,
+                                  ForeignResource, TypedResource, URLError)
+from omnic.types.typestring import TypeString
 
+from .testing_utils import Magic, rm_tmp_files
 
 URL = 'http://mocksite.local/file.png'
 URL1 = 'http://mocksite.local/otherthing/file.png'

@@ -2,9 +2,9 @@
 Tests for `viewer` module.
 '''
 from omnic import singletons
-from omnic.web import viewer
 from omnic.types.resource import TypedResource
 from omnic.types.typestring import TypeString
+from omnic.web import viewer
 
 URL = 'http://mocksite.local/file.pdf'
 

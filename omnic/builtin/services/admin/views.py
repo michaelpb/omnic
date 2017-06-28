@@ -3,12 +3,11 @@ A read-only admin interface that is useful for monitoring broad server stats
 and testing conversions.
 '''
 import json
-
 from urllib.parse import urlencode
 
+from omnic import singletons
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic.types.resource import ForeignResource
-from omnic import singletons
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
@@ -25,12 +24,14 @@ def _gen_thumb_src(form):
     ts = 'thumb.jpg:%sx%s' % (form['thumb_width'], form['thumb_height'])
     return 'http://localhost:8080/media/%s/?%s' % (ts, qs)
 
+
 def _gen_viewer_src(form):
     viewer_type = form['viewer_type'].strip()
     if not viewer_type:
         return ''
     qs = urlencode({'url': form['res_url']})
     return 'http://localhost:8080/media/%s/?%s' % (viewer_type, qs)
+
 
 def _depluralize_query_dict(dct):
     return {key: value[0] for key, value in dct.items()}

@@ -1,14 +1,10 @@
 
-from omnic.types.resource import (
-    ForeignResource,
-    TypedResource,
-    TypedLocalResource,
-    TypedPathedLocalResource,
-    TypedForeignResource,
-)
+from omnic import singletons
+from omnic.types.resource import (ForeignResource, TypedForeignResource,
+                                  TypedLocalResource, TypedPathedLocalResource,
+                                  TypedResource)
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
-from omnic import singletons
 
 
 async def convert_local(path, to_type):

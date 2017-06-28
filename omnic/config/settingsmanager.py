@@ -1,6 +1,6 @@
-import os
 import importlib
 import logging
+import os
 from logging import config
 
 from omnic.config import default_settings

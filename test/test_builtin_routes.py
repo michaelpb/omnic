@@ -1,15 +1,15 @@
+import os
+import tempfile
 from urllib.parse import urlencode
 
-import os
 import pytest
-import tempfile
 
-from omnic.worker.enums import Task
-from omnic.worker.testing import RunOnceWorker
+from omnic import singletons
 from omnic.builtin.converters.manifest import ManifestDownloader
 from omnic.types.detectors import DIRECTORY
 from omnic.types.resource import ForeignResource, TypedResource
-from omnic import singletons
+from omnic.worker.enums import Task
+from omnic.worker.testing import RunOnceWorker
 
 from .testing_utils import Magic
 

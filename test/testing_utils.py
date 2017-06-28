@@ -1,9 +1,9 @@
 import os
-from os.path import join, exists
 from base64 import b64decode
+from os.path import exists, join
 
-from omnic.worker.base import BaseWorker
 from omnic.types.detectors import Detector
+from omnic.worker.base import BaseWorker
 
 
 class Magic:

@@ -1,10 +1,10 @@
 '''
 Core media conversion service.
 '''
-from omnic.types.typestring import TypeString
-from omnic.types.resource import ForeignResource, TypedResource
-from omnic.conversion.utils import enqueue_conversion_path
 from omnic import singletons
+from omnic.conversion.utils import enqueue_conversion_path
+from omnic.types.resource import ForeignResource, TypedResource
+from omnic.types.typestring import TypeString
 
 # Required interface for service module
 SERVICE_NAME = 'media'

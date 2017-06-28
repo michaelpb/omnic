@@ -1,5 +1,5 @@
-from omnic.types.typestring import TypeString
 from omnic import singletons
+from omnic.types.typestring import TypeString
 
 UNKNOWN = TypeString('unknown')
 DIRECTORY = TypeString('directory')

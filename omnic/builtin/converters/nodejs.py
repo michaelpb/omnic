@@ -1,14 +1,11 @@
 import json
 import os
 
-from omnic.builtin.types.nodejs import (
-    NodePackageDetector,
-    NODE_PACKAGE,
-    WEBPACK_NODE_PACKAGE,
-    INSTALLED_NODE_PACKAGE,
-    INSTALLED_WEBPACK_NODE_PACKAGE,
-)
 from omnic.builtin.types.core import DIRECTORY
+from omnic.builtin.types.nodejs import (INSTALLED_NODE_PACKAGE,
+                                        INSTALLED_WEBPACK_NODE_PACKAGE,
+                                        NODE_PACKAGE, WEBPACK_NODE_PACKAGE,
+                                        NodePackageDetector)
 from omnic.conversion import converter
 
 
