@@ -2,15 +2,16 @@
 Tests for `resource` module.
 """
 import tempfile
+import hashlib
 import os
 
 import pytest
 import requests_mock
 
 from omnic.types.typestring import TypeString
-from omnic.types.resource import TypedResource, ForeignResource, URLError, CacheError
+from omnic.types.resource import TypedResource, ForeignResource, URLError, CacheError, ForeignBytesResource
 from omnic import singletons
-from .testing_utils import Magic
+from .testing_utils import Magic, rm_tmp_files
 
 
 URL = 'http://mocksite.local/file.png'
@@ -158,3 +159,52 @@ class TestTypedResource:
                 'image/gif')).cache_path,
         ])
         assert len(paths) == 5
+
+
+class TestForeignBytesResource:
+    def setup_method(self, method):
+        MockConfig.PATH_PREFIX = tempfile.mkdtemp(prefix='omnic_test_')
+        singletons.settings.use_settings(MockConfig)
+
+    def teardown_method(self, method):
+        singletons.settings.use_previous_settings()
+        rm_tmp_files(self.res.cache_path)
+
+    def _check_md5(self, res, data):
+        md5 = hashlib.md5(data).hexdigest()
+        assert not res.cache_exists()
+        assert md5 in res.url_string
+        assert res.url_string.startswith('file://')
+        with pytest.raises(CacheError):
+            res.guess_typed()
+
+    def test_without_any_hints(self):
+        data = b'      '  # strange data
+        res = ForeignBytesResource(data)
+        self.res = res
+        self._check_md5(res, data)
+        assert 'source' in res.url_string
+        self.res.save()
+        typed = res.guess_typed()
+        assert str(typed.typestring) == 'unknown'
+
+    def test_basename(self):
+        self.res = ForeignBytesResource(b'', basename='input')
+        assert 'input' in self.res.url_string
+
+    def test_extension(self):
+        data = b'      '  # strange data
+        self.res = ForeignBytesResource(data, extension='txt')
+        self._check_md5(self.res, data)
+        self.res.download()
+        typed = self.res.guess_typed()
+        assert str(typed.typestring) == 'TXT'
+
+    def test_guess_type(self):
+        data = Magic.JPEG
+        self.res = ForeignBytesResource(data)
+        self._check_md5(self.res, data)
+        assert 'source' in self.res.url_string
+        self.res.download()
+        typed = self.res.guess_typed()
+        assert str(typed.typestring) == 'image/jpeg'

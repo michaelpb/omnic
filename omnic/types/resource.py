@@ -14,11 +14,12 @@ class Resource:
     Abstract base class for Resources
     '''
 
-    def __init__(self, url):
+    def __init__(self, url, is_url=True):
         # Setup props
-        self.url_string = url
+        self.url = url
 
         # Parse and process URL
+        self.url_string = url
         self.url = urlparse(url)
         self.url_path_split = self.url.path.split('/')
         self.url_path_basename = self.url_path_split[-1]
@@ -38,7 +39,7 @@ class Resource:
         )
 
     def _get_basename(self):
-        NotImplemented
+        raise NotImplementedError()
 
     def path_grouping(self):
         if singletons.settings.PATH_GROUPING == 'MD5':
@@ -70,6 +71,9 @@ class Resource:
 
     def cache_exists(self):
         return os.path.exists(self.cache_path)
+
+    def __repr__(self):
+        return '%s(%s)' % (type(self).__name__, repr(self.url_string))
 
     def __hash__(self):
         return hash(self.url_string)
@@ -109,6 +113,12 @@ class TypedForeignResource(Resource):
     def __init__(self, url, typestring):
         self.typestring = typestring
         super().__init__(url)
+
+    def __repr__(self):
+        return '%s%s' % (
+            type(self).__name__,
+            repr((self.url_string, self.typestring))
+        )
 
     def _get_basename(self):
         # Ignores URL basename
@@ -171,6 +181,30 @@ class TypedPathedLocalResource(TypedLocalResource):
     def _get_basename(self):
         base, _ = os.path.splitext(self.path)
         return self.typestring.modify_basename(base)
+
+
+class ForeignBytesResource(ForeignResource):
+    def __init__(self, data, extension=None, basename='source'):
+        self.data = data
+        ext = '.%s' % extension if extension else ''
+        md5 = hashlib.md5(data).hexdigest()
+        virtual_path = 'file://%s/%s%s' % (md5, basename, ext)
+        super().__init__(virtual_path)
+
+    def __repr__(self):
+        return '%s(%s)' % (type(self).__name__, repr(self.data))
+
+    def save(self):
+        with self.cache_open('wb') as f:
+            f.write(self.data)
+
+    def download(self):
+        self.save()
+
+    def validate(self):
+        # For now, validate all foreign string resources (should eventually add
+        # security measures here)
+        pass
 
 
 class URLError(ValueError):

@@ -171,10 +171,10 @@
   Redis-based async queue (should be easy) e.g. using: `aioredis` package
 
 ## Rendering services
-- [ ] StringResource - A type of resource where the contents is a short string,
-  already in memory
+- [X] ByteResource - A type of resource where the contents is a short
+  string, already in memory
 
-- [ ] /render/ Service - A service that takes in StringResources and outputs
+- [ ] /render/ Service - A service that takes in ByteResources and outputs
   other things.
     - Example: `/render/osm-geo:79.1239,32.231345,12/thumb.png:200x300/` --- This
       would render Open Street Map into an image, and then use the PNG -> Thumb
@@ -185,7 +185,7 @@
 
 
 ## Bundling service
-- NOTE: even with the manifest.json media type, this  still be useful,
+- NOTE: Even with the manifest.json media type, this  still be useful,
   for more convenient manifest format...?
 - [ ] zip, tar.gz, tar.bz2, 7z - all bundle formats
 - [ ] A more convenient manifest format that allows conversion, maybe a bundle

@@ -50,6 +50,8 @@ cleanup-pep8:
 	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r test
 	autopep8 --in-place -r omnic
 	autopep8 --in-place -r test
+	isort -rc --atomic omnic
+	isort -rc --atomic test
 
 coverage:
 	coverage run --source omnic `which py.test`

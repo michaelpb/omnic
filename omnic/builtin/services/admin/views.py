@@ -16,6 +16,7 @@ FORM_DEFAULT = {
     'res_url': 'unsplash.it/500/500',
     'thumb_width': 200,
     'thumb_height': 200,
+    'viewer_type': '',
 }
 
 
@@ -24,6 +25,12 @@ def _gen_thumb_src(form):
     ts = 'thumb.jpg:%sx%s' % (form['thumb_width'], form['thumb_height'])
     return 'http://localhost:8080/media/%s/?%s' % (ts, qs)
 
+def _gen_viewer_src(form):
+    viewer_type = form['viewer_type'].strip()
+    if not viewer_type:
+        return ''
+    qs = urlencode({'url': form['res_url']})
+    return 'http://localhost:8080/media/%s/?%s' % (viewer_type, qs)
 
 def _depluralize_query_dict(dct):
     return {key: value[0] for key, value in dct.items()}
@@ -119,6 +126,7 @@ async def conversion_tester(request):
     form.update(FORM_DEFAULT)
     form.update(_depluralize_query_dict(request.args))
     thumb_src = _gen_thumb_src(form)
+    viewer_src = _gen_viewer_src(form)
 
     # Determine type
     ext = None
@@ -132,12 +140,12 @@ async def conversion_tester(request):
             # Determine the file type of the foreign resource
             typed_foreign_res = foreign_res.guess_typed()
             ext = typed_foreign_res.typestring.extension
-            #nodes, edges, id_to_ext = get_nodes_edges_ids(ext)
 
     return templates.render(request, 'index.html', {
         'is_conversion': True,
         'workers': workers,
         'thumb_src': thumb_src,
+        'viewer_src': viewer_src,
         'form': form,
         'ext': ext,
     })

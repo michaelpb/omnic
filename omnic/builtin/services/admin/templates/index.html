@@ -6,23 +6,28 @@
         <div class="col-md-12">
             <h1>Conversion</h1>
             <div class="row">
-                <p>Test conversion to thumbnail.</p>
+                <p>Paste in a permitted link to test conversion to thumbnail, and optionally a JavaScript viewer for a relevant type.</p>
                 <form action="" method="GET">
                     <div class="col-sm-7 col-md-7">
                         <div class="input-group input-group-lg">
                             <span class="input-group-addon" id="sizing-addon1">Foreign resource</span>
                             <input type="text" value="{{ form.res_url }}" name="res_url" class="form-control" placeholder="http://url.to/resource" aria-describedby="sizing-addon1">
                         </div>
+
                     </div>
                     <div class="col-sm-4 col-md-4">
                         <div class="input-group input-group-lg">
-                            <input value="{{ form.thumb_width }}" name="thumb_width" type="text" class="form-control" placeholder="200" aria-describedby="sizing-addon1">
-                            <span class="input-group-addon" id="sizing-addon1">x</span>
-                            <input value="{{ form.thumb_height }}" name="thumb_height" type="text" class="form-control" placeholder="200" aria-describedby="sizing-addon1">
+                            <input value="{{ form.thumb_width }}" name="thumb_width" type="text" class="form-control">
+                            <span class="input-group-addon">x</span>
+                            <input value="{{ form.thumb_height }}" name="thumb_height" type="text" class="form-control" placeholder="200">
+                        </div>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon" id="sizing-viewer_type">Viewer</span>
+                            <input type="text" value="{{ form.viewer_type }}" name="viewer_type" class="form-control" placeholder="optional: one of PDF, OBJ etc" aria-describedby="sizing-viewer_type">
                         </div>
                     </div>
                     <div class="col-sm-1 col-md-1">
-                        <button type="submit" class="btn btn-default btn-lg">&rarr;</button>
+                        <button style="height: 6em" type="submit" class="btn btn-default btn-lg">&rarr;</button>
                     </div>
                 </form>
             </div>
@@ -34,14 +39,20 @@
                         width="{{ form.thumb_width }}"
                         height="{{ form.thumb_height }}"
                         omnic-thumb
+                        {% if viewer_src %}
+                            omnic-viewer="{{ viewer_src}}"
+                        {% endif %}
                     />
                 </div>
                 <div class="col-sm-6">
                     <h3>Code</h3>
 <pre>
-&lt;img omnic-thumb
+&lt;img
     src="{{ thumb_src }}"
-    width="{{ form.thumb_width }}" height="{{ form.thumb_height }}" /&gt;
+    width="{{ form.thumb_width }}" height="{{ form.thumb_height }}"
+    omnic-thumb {% if viewer_src %}
+    omnic-viewer="{{ viewer_src}}" {% endif %}
+/&gt;
 </pre>
 
 
@@ -62,9 +73,11 @@
 </div>
 
 <script src="/viewer/js/reload-thumb.js"></script>
+<script src="/viewer/js/reload-viewers.js"></script>
 
 <script>
     $(document).ready(function () {
+        return; // XXX REMOVEME
         // Auto-reload workers every 1 second
         var reloadWorkers = function () {
             $('#workers').load('/admin/ajax/workers/', function () {
