@@ -2,11 +2,13 @@
 Tests for `config` module.
 """
 import os
+import tempfile
 
 import pytest
 
 from omnic.config.exceptions import ConfigurationError
 from omnic.config.settingsmanager import SettingsManager
+from .testing_utils import Magic, rm_tmp_files
 
 TEST_SETTING = 123
 
@@ -19,11 +21,7 @@ class ExampleClassB:
     pass
 
 
-class TestForeignResource:
-    def test_default(self):
-        settings = SettingsManager()
-        assert settings.SERVICES
-
+class TestSettings:
     def test_overriding(self):
         settings = SettingsManager()
         assert settings.SERVICES
@@ -42,12 +40,37 @@ class TestForeignResource:
         with pytest.raises(AttributeError):
             settings.private_thing
 
-    def test_custom(self):
+class TestSettingsCustom:
+    def setup_method(self, method):
+        self._original = os.environ.get('OMNIC_SETTINGS', None)
+        self._original_cwd = os.getcwd()
+        if self._original:
+            del os.environ['OMNIC_SETTINGS']
+
+    def teardown_method(self, method):
+        if not self._original:
+            if 'OMNIC_SETTINGS' in os.environ:
+                del os.environ['OMNIC_SETTINGS']
+        else:
+            os.environ['OMNIC_SETTINGS'] = self._original
+        os.chdir(self._original_cwd)
+
+    def test_custom_with_environ(self):
         # Simply use self as a test settings
         os.environ['OMNIC_SETTINGS'] = 'test.test_config'
         settings = SettingsManager()
         assert settings.TEST_SETTING == 123
 
+    def test_custom_with_settings_py(self):
+        with tempfile.TemporaryDirectory() as tempdir:
+            os.chdir(tempdir)
+            with open(os.path.join(tempdir, 'settings.py'), 'w+') as f:
+                f.write('SOME_TEST_VALUE = 1337')
+            settings = SettingsManager()
+            assert settings.SOME_TEST_VALUE == 1337
+
+
+class TestSettingsLoading:
     def test_loading_modules(self):
         # Simply use self as a test settings
         settings = SettingsManager()

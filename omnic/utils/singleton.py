@@ -1,5 +1,6 @@
 '''
-Singleton related utilities
+SingletonManager is what provides the 'omnic.singletons' functionality,
+instantiating singletons as needed.
 '''
 
 

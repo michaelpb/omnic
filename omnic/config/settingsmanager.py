@@ -1,6 +1,7 @@
 import importlib
 import logging
 import os
+import sys
 from logging import config
 
 from omnic.config import default_settings
@@ -14,16 +15,31 @@ class SettingsManager:
     '''
 
     def __init__(self):
+        # Initialize main two properties
         self.default_settings_module = default_settings
+        self.settings_module = None
+
+        # Now we figure out which (if any) settings module to use
+        files = os.listdir(os.getcwd())
         path = os.environ.get('OMNIC_SETTINGS')
-        self.settings_module = object()
         if path:
             try:
-                self.settings_module = importlib.import_module(path)
+                settings_module = importlib.import_module(path)
             except ImportError as e:
                 msg = 'Cannot load OMNIC_SETTINGS path: "%s"' % str(e)
                 raise ConfigurationError(msg)
+        elif 'settings.py' in files:
+            # Sometimes current dir is not in path, add it in
+            current_dir_set = set(['', os.getcwd(), os.path.curdir])
+            if not set(sys.path) & current_dir_set:
+                sys.path.append(os.getcwd())
 
+            # Let import errors propagate naturally
+            import settings as settings_module
+        else:
+            # By default, custom settings is an empty object
+            settings_module = object()
+        self.use_settings(settings_module)
         self.reconfigure()
 
     def __getattr__(self, key):
@@ -89,7 +105,7 @@ class SettingsManager:
                 imported_obj = getattr(imported_obj, last_item)
             except:
                 msg = 'Cannot import "%s". ' \
-                      '(Hint: CamelCase is only for classes)' % last_item
+                     '(Hint: CamelCase is only for classes)' % last_item
                 raise ConfigurationError(msg)
         return imported_obj
 
