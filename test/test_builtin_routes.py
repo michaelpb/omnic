@@ -14,6 +14,28 @@ from omnic.worker.testing import RunOnceWorker
 from .testing_utils import Magic
 
 
+class BaseUnitTest:
+    @classmethod
+    def setup_class(cls):
+        cls.host = '127.0.0.1:42101'
+        cls.tmp_path_prefix = tempfile.mkdtemp(prefix='omnic_tests_')
+
+        class FakeSettings:
+            PATH_PREFIX = cls.tmp_path_prefix
+            PATH_GROUPING = None
+            ALLOWED_LOCATIONS = {cls.host}
+            LOGGING = None
+        singletons.settings.use_settings(FakeSettings)
+
+        singletons.workers.clear()
+        cls.worker = RunOnceWorker()
+        singletons.workers.append(cls.worker)
+
+    @classmethod
+    def teardown_class(cls):
+        singletons.settings.use_previous_settings()
+
+
 class BaseRoutes:
     @classmethod
     def setup_class(cls):
@@ -235,3 +257,34 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         # ensure nothing more was added to queue
         q = self.worker.next_queue
         assert not q
+
+
+class TestViewerViews(BaseUnitTest):
+    def setup_method(self, method):
+        from omnic.builtin.services.viewer import views
+        singletons.server.configure()
+        self.v = views
+
+    @pytest.mark.asyncio
+    async def test_viewers_js(self):
+        # Get raw response of view
+        r = (await self.v.viewers_js(None)).output()
+        assert b'200 OK' in r
+        assert b'application/javascript' in r
+        assert b'window._OMNIC_VIEWER_BUNDLE_IS_LOADED = false' in r
+
+        # Inspect whats been enqueued, ensure as expected
+        q = self.worker.next_queue
+        assert len(q) == 1
+        assert q
+        assert q[0]
+        assert q[0][0] == Task.FUNC
+        assert q[0][1][2] == 'min.js'
+
+        # Run through queue... this should download the resource, and in
+        # turn enqueue the remaining steps
+        await self.worker.run_once()
+        q = self.worker.queue
+        assert len(q) == 0
+
+

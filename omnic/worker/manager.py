@@ -32,29 +32,59 @@ class WorkerManager(list):
     def enqueue_sync(self, func, *func_args):
         '''
         Enqueue an arbitrary synchronous function.
+
+        Deprecated: Use async version instead
         '''
         worker = self.pick_sticky(0)  # just pick first always
         args = (func,) + func_args
         coro = worker.enqueue(enums.Task.FUNC, args)
         asyncio.ensure_future(coro)
 
+    async def async_enqueue_sync(self, func, *func_args):
+        '''
+        Enqueue an arbitrary synchronous function.
+        '''
+        worker = self.pick_sticky(0)  # just pick first always
+        args = (func,) + func_args
+        await worker.enqueue(enums.Task.FUNC, args)
+
     def enqueue_download(self, resource):
         '''
         Enqueue the download of the given foreign resource.
+
+        Deprecated: Use async version instead
         '''
         worker = self.pick_sticky(resource.url_string)
         coro = worker.enqueue(enums.Task.DOWNLOAD, (resource,))
         asyncio.ensure_future(coro)
 
+    async def async_enqueue_download(self, resource):
+        '''
+        Enqueue the download of the given foreign resource.
+        '''
+        worker = self.pick_sticky(resource.url_string)
+        await worker.enqueue(enums.Task.DOWNLOAD, (resource,))
+
     def enqueue_convert(self, converter, from_resource, to_resource):
+        '''
+        Enqueue use of the given converter to convert to given
+        resources.
+
+        Deprecated: Use async version instead
+        '''
+        worker = self.pick_sticky(from_resource.url_string)
+        args = (converter, from_resource, to_resource)
+        coro = worker.enqueue(enums.Task.CONVERT, args)
+        asyncio.ensure_future(coro)
+
+    async def async_enqueue_convert(self, converter, from_resource, to_resource):
         '''
         Enqueue use of the given converter to convert to given
         resources.
         '''
         worker = self.pick_sticky(from_resource.url_string)
         args = (converter, from_resource, to_resource)
-        coro = worker.enqueue(enums.Task.CONVERT, args)
-        asyncio.ensure_future(coro)
+        await worker.enqueue(enums.Task.CONVERT, args)
 
 
 singletons.register('workers', WorkerManager)

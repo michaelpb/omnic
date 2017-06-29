@@ -10,8 +10,10 @@ URL = 'http://mocksite.local/file.pdf'
 
 
 class MockPDFViewer(viewer.Viewer):
+    name = 'document_viewer'
     views = ['PDF']
     asset_dir = '/path/to/assets'
+    node_package = 'file:/path/to/module'
     assets = [
         'example/asset.js',
         'example/asset.css',
@@ -41,3 +43,8 @@ class TestViewerManager:
             '/path/to/assets/example/asset.js',
             '/path/to/assets/example/asset.css',
         ])
+
+    def test_get_node_packages(self):
+        assert self.viewers.get_node_packages() == {
+            'document_viewer': 'file:/path/to/module',
+        }

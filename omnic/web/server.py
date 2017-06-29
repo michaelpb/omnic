@@ -39,7 +39,6 @@ class WebServer:
                 if isinstance(view, str):
                     view = getattr(service, view)
                 url = '%s/%s' % (service_name, partial_url)
-                print(url)
                 self.app.add_route(view, url)
 
     def create_server_coro(self, host, port, debug=False):

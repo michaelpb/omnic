@@ -68,6 +68,8 @@ CONVERTERS = [
     'omnic.builtin.converters.nodejs.BrowserifyBundler',
     'omnic.builtin.converters.nodejs.BabelES6Compiler',
     'omnic.builtin.converters.nodejs.UglifyJSMinifier',
+
+    'omnic.builtin.services.viewer.converters.ViewerNodePackageBuilder',
 ]
 
 VIEWERS = [

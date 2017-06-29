@@ -22,6 +22,16 @@ class ViewerManager:
             for viewer in self.viewers
         ], [])
 
+    def get_node_packages(self):
+        '''
+        Return a flat list of absolute paths to all node modules required by
+        this viewer
+        '''
+        return {
+            viewer.name: viewer.node_package
+            for viewer in self.viewers
+        }
+
 
 class Viewer:
     pass

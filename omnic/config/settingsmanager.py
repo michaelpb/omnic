@@ -121,3 +121,13 @@ class SettingsManager:
         Useful for tests for restoring previous state of singleton
         '''
         self.settings_module = self._previous_settings
+
+    def get_cache_string(self):
+        '''
+        Return a software version string that is useful for caching based on
+        OmniConverter software version number, or a random number in the case
+        of intentional cache busting scenarios
+        '''
+        if hasattr(self, 'CACHE_STRING'):
+            return self.CACHE_STRING
+        return 'no_cache_%i' % random.randint(0, 1000000000)
