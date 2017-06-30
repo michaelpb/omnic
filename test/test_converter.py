@@ -159,7 +159,10 @@ class TestAdditiveDirectoryExecConverter(DirectoryConverterTestBase):
         assert not os.path.isdir(j(self.res.cache_path, 'node_modules'))
         assert not os.path.islink(j(self.res2.cache_path, 'lib'))
         assert not os.path.islink(j(self.res2.cache_path, 'node_modules'))
-        assert os.path.islink(j(self.res2.cache_path, 'package.json'))
+
+        # Ensure its just hardlinked and not copied
+        assert not os.path.islink(j(self.res2.cache_path, 'package.json'))
+        assert os.stat(j(self.res2.cache_path, 'package.json')).st_nlink == 2
 
         with self.res2.cache_open_as_dir('package.json') as f:
             assert f.read() == b'{}\n'

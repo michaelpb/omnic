@@ -102,16 +102,16 @@ class AdditiveDirectoryExecConverter(ExecConverter):
     def get_cwd(self, in_resource, out_resource):
         return out_resource.cache_path  # change to output dir by default
 
-    def recursive_symlink(self, in_resource, out_resource):
-        filesystem.recursive_symlink_dirs(
+    def recursive_hardlink(self, in_resource, out_resource):
+        filesystem.recursive_hardlink_dirs(
             in_resource.cache_path,
             out_resource.cache_path,
         )
 
     async def convert(self, in_resource, out_resource):
-        self.recursive_symlink(in_resource, out_resource)
+        self.recursive_hardlink(in_resource, out_resource)
         super().convert_sync(in_resource, out_resource)
 
     def convert_sync(self, in_resource, out_resource):
-        self.recursive_symlink(in_resource, out_resource)
+        self.recursive_hardlink(in_resource, out_resource)
         super().convert_sync(in_resource, out_resource)
