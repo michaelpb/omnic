@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "description": "Wrapper JS component to view PDFs",
   "main": "index.js",
+  "dependencies": {
+  },
   "scripts": {
     "test": "node tests.js"
   },

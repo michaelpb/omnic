@@ -54,7 +54,7 @@ class TestViewerNodePackageBuilder(BaseUnitTest):
         assert generate_index_js([
             'viewer_3d',
             'pdf_viewer',
-        ]) == 'require("viewer_3d");\nrequire("pdf_viewer");'
+        ]).startswith('require("viewer_3d");\nrequire("pdf_viewer");')
 
     @pytest.mark.asyncio
     async def test_convert(self):

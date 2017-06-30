@@ -1,22 +1,30 @@
 {% extends "iffy.js" %}
 
 {% block body %}
+
+if (!window.OMNIC) window.OMNIC = {};
+if (!window.OMNIC.viewers) window.OMNIC.viewers = {};
+
 var TIMEOUT = 15000; // check after 15 seconds
 var BUNDLE_URL = '{{ viewer_bundle_url }}';
 
+function prepElement(element) {
+    var viewerType = element.getAttribute('omnic-viewer');
+    var activateViewer = window.OMNIC.viewers[viewerType];
+    element.addEventListener('click', function () {
+        activateViewer(element);
+    });
+}
+
 function attachClickEventsToViewers() {
-    var viewers = document.querySelectorAll('img[omnic-viewer]');
-    if (viewers.length < 1) {
+    var elements = document.querySelectorAll('img[omnic-viewer]');
+    if (elements.length < 1) {
         return false;
     }
 
-    for (var i=0; i < viewers.length; i++) {
-        var viewer = viewers[i];
-        (function (viewer) {
-            viewer.addEventListener('click', function () {
-                activateViewer(viewer);
-            });
-        })(viewer)
+    for (var i=0; i < elements.length; i++) {
+        var element = elements[i];
+        prepElement(element);
     }
     return true;
 }

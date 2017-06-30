@@ -69,7 +69,9 @@ async def viewers_js(request):
 
 
 async def reload_viewers_js(request):
-    return templates.render(request, 'reload-viewers.js', {})
+    return templates.render(request, 'reload-viewers.js', {
+        'viewer_bundle_url': '/viewer/js/viewers.js',
+    })
 
 
 async def reload_thumb_js(request):
