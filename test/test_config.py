@@ -8,7 +8,6 @@ import pytest
 
 from omnic.config.exceptions import ConfigurationError
 from omnic.config.settingsmanager import SettingsManager
-from .testing_utils import Magic, rm_tmp_files
 
 TEST_SETTING = 123
 
@@ -39,6 +38,7 @@ class TestSettings:
         settings.use_settings(MockSettings)
         with pytest.raises(AttributeError):
             settings.private_thing
+
 
 class TestSettingsCustom:
     def setup_method(self, method):

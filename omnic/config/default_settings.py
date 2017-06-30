@@ -5,6 +5,7 @@ AUTOLOAD = [
     'omnic.responses.placeholder',
     'omnic.web.server',
     'omnic.web.eventloop',
+    'omnic.web.viewer',
     'omnic.worker.manager',
     'omnic.types.detectors',
 ]

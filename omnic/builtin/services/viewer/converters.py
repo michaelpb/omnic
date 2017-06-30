@@ -1,10 +1,5 @@
 import json
-import shutil
-import os
 
-import aiohttp
-
-from omnic import singletons
 from omnic.builtin.types.nodejs import NODE_PACKAGE
 from omnic.conversion import converter
 
@@ -20,8 +15,10 @@ PACKAGE_JSON_TEMPLATE = {
     "license": "GPL-3.0"
 }
 
+
 def generate_index_js(viewer_names):
     return '\n'.join('require("%s");' % name for name in viewer_names)
+
 
 class ViewerNodePackageBuilder(converter.Converter):
     inputs = [
@@ -47,4 +44,3 @@ class ViewerNodePackageBuilder(converter.Converter):
         # all viewers
         with out_resource.cache_open_as_dir('index.js', 'w') as fd:
             fd.write(generate_index_js(dependencies.keys()))
-

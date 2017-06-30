@@ -105,7 +105,7 @@ class SettingsManager:
                 imported_obj = getattr(imported_obj, last_item)
             except:
                 msg = 'Cannot import "%s". ' \
-                     '(Hint: CamelCase is only for classes)' % last_item
+                    '(Hint: CamelCase is only for classes)' % last_item
                 raise ConfigurationError(msg)
         return imported_obj
 

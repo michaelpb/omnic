@@ -3,11 +3,12 @@ Serves JavaScript necessary to refresh and display viewers and thumbs.
 '''
 import json
 
+from omnic import singletons
 from omnic.conversion.utils import enqueue_conversion_path
-from omnic.types.typestring import TypeString
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic.types.resource import ForeignBytesResource, TypedResource
-from omnic import singletons
+from omnic.types.typestring import TypeString
+
 from .converters import VIEWER_EXT
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.viewer', 'templates')
@@ -16,6 +17,7 @@ NOT_LOADED_JS = '''
     window._OMNIC_VIEWER_BUNDLE_IS_LOADED = false;
 '''
 
+
 async def viewers_js(request):
     '''
     Viewers determines the viewers installed based on settings, then uses the
@@ -23,19 +25,8 @@ async def viewers_js(request):
     bundle, that is then served. As with media, it will simply serve a cached
     version if necessary.
     '''
-    # TODO: Generate single bundle as such:
-    # 1. StringResource(list of JS files) -> OmnicViewerBuilder -> nodepackage
-    # 2. nodepackage -> ... -> min.js
-    # The package.json would look something like this:
-    #   {
-    #      "OV_document": "file:/path/to/omnic/builtin/viewer/document/js/"
-    #   }
-    # The index.js would look like:
-    #   const {viewer_names} = require('viewerinfo.json')
-    #   for (const viewer_name of viewer_names) {
-    #      const viewer = require('OV_' + viewer_name);
-    #      window.OMNIC_VIEWERS.register(viewer_name, viewer);
-    #   }
+    # Generates single bundle as such:
+    # BytesResource -> ViewerNodePackageBuilder -> nodepackage -> ... -> min.js
     response = singletons.server.response
 
     # Create a viewers resource, which is simply a JSON encoded description of
@@ -75,7 +66,6 @@ async def viewers_js(request):
     return response.text(NOT_LOADED_JS, headers={
         'Content-Type': 'application/javascript',
     })
-
 
 
 async def reload_viewers_js(request):

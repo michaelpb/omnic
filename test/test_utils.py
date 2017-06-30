@@ -2,7 +2,7 @@
 Tests for `utils` module.
 """
 import tempfile
-from os.path import join
+from os.path import islink, join
 
 import pytest
 
@@ -168,22 +168,20 @@ class TestFilesystemUtils:
         'config/thing/thing.xml',
     ]
 
-    @classmethod
-    def setup_class(cls):
-        cls.dir = tempfile.mkdtemp(prefix='tmp_omnic_test_')
-        cls.out = tempfile.mkdtemp(prefix='tmp_omnic_test_out_')
-        gen_tmp_files(cls.dir, cls.FILES)
-        cls.results = set([
-            (join(cls.dir, 'testfile'),
-                join(cls.out, 'testfile')),
-            (join(cls.dir, 'config/thing/thing.xml'),
-                join(cls.out, 'config/thing/thing.xml')),
+    def setup_method(self, method):
+        self.dir = tempfile.mkdtemp(prefix='tmp_omnic_test_')
+        self.out = tempfile.mkdtemp(prefix='tmp_omnic_test_out_')
+        gen_tmp_files(self.dir, self.FILES)
+        self.results = set([
+            (join(self.dir, 'testfile'),
+                join(self.out, 'testfile')),
+            (join(self.dir, 'config/thing/thing.xml'),
+                join(self.out, 'config/thing/thing.xml')),
         ])
 
-    @classmethod
-    def teardown_class(cls):
-        clear_tmp_files(cls.dir, cls.FILES)
-        clear_tmp_files(cls.out, cls.FILES)
+    def teardown_method(self, method):
+        clear_tmp_files(self.dir, self.FILES)
+        clear_tmp_files(self.out, self.FILES)
 
     def test_directory_walk(self):
         results = list(filesystem.directory_walk(self.dir, self.out))
@@ -197,3 +195,14 @@ class TestFilesystemUtils:
         # Now use walk to check that we did it successfully
         results = set(filesystem.directory_walk(self.out, self.out))
         assert len(results) == len(self.results)  # ensure right number
+        for path, _ in results:
+            assert islink(path)
+
+    def test_recursive_hardlinks(self):
+        filesystem.recursive_hardlink_dirs(self.dir, self.out)
+
+        # Now use walk to check that we did it successfully
+        results = set(filesystem.directory_walk(self.out, self.out))
+        assert len(results) == len(self.results)  # ensure right number
+        for path, _ in results:
+            assert not islink(path)  # ensure hardlinks

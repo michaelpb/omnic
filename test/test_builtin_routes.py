@@ -281,7 +281,7 @@ class TestViewerViews(BaseUnitTest):
         assert q[0][0] == Task.FUNC
         assert q[0][1][2] == 'min.js'
         await self.worker.run_once()
-        return # TODO finish this crap
+        return  # TODO finish this crap
 
         # Run through appending coros... this should turn enqueue the remaining
         # steps
@@ -294,5 +294,4 @@ class TestViewerViews(BaseUnitTest):
         assert len(self.worker.queue) == 0
 
         q = self.worker.next_queue
-        assert len(q) == 5 # five steps?
-
+        assert len(q) == 5  # five steps?

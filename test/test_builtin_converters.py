@@ -1,20 +1,14 @@
-import os
 import json
 import tempfile
-from urllib.parse import urlencode
 
 import pytest
 
 from omnic import singletons
-from omnic.builtin.services.viewer.converters import ViewerNodePackageBuilder, generate_index_js
-from omnic.types.detectors import DIRECTORY
-from omnic.types.typestring import TypeString
-from omnic.types.resource import ForeignResource, TypedResource
+from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
+                                                      generate_index_js)
 from omnic.types.resource import ForeignBytesResource, TypedResource
-from omnic.worker.enums import Task
+from omnic.types.typestring import TypeString
 from omnic.worker.testing import RunOnceWorker
-
-from .testing_utils import Magic
 
 
 class BaseUnitTest:
@@ -36,6 +30,7 @@ class BaseUnitTest:
     @classmethod
     def teardown_class(cls):
         singletons.settings.use_previous_settings()
+
 
 class TestViewerNodePackageBuilder(BaseUnitTest):
     def _get_resources(self):

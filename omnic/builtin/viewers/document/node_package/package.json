@@ -1,5 +1,5 @@
 {
-  "name": "omnic-document-viewer",
+  "name": "pdf_viewer",
   "version": "0.1.0",
   "description": "Wrapper JS component to view PDFs",
   "main": "index.js",

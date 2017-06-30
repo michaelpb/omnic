@@ -1,4 +1,5 @@
 import os
+import shutil
 
 
 def directory_walk(source_d, destination_d):
@@ -21,15 +22,26 @@ def directory_walk(source_d, destination_d):
 
 def recursive_symlink_dirs(source_d, destination_d):
     '''
-    Symlink all files recursively from source_d, ignoring errors (e.g. existing
-    files)
+    Create dirs and symlink all files recursively from source_d, ignoring
+    errors (e.g. existing files)
     '''
-    for source, destination in directory_walk(source_d, destination_d):
-        try:
-            os.makedirs(os.path.dirname(destination))
-        except OSError:
-            pass
-        try:
-            os.symlink(source, destination)
-        except OSError:
-            pass
+    func = os.symlink
+    if os.name == 'nt':
+        # NOTE: need to verify that default perms only allow admins to create
+        # symlinks on Windows
+        func = shutil.copy
+    if os.path.exists(destination_d):
+        os.rmdir(destination_d)
+    shutil.copytree(source_d, destination_d, copy_function=func)
+
+
+def recursive_hardlink_dirs(source_d, destination_d):
+    '''
+    Same as above, except creating hardlinks for all files
+    '''
+    func = os.link
+    if os.name == 'nt':
+        func = shutil.copy
+    if os.path.exists(destination_d):
+        os.rmdir(destination_d)
+    shutil.copytree(source_d, destination_d, copy_function=func)
