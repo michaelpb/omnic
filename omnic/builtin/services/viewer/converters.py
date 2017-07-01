@@ -17,11 +17,16 @@ PACKAGE_JSON_TEMPLATE = {
 
 
 LOADED_JS = '''
+    if (!window.OMNIC) window.OMNIC = {};
+    if (!window.OMNIC.viewers) window.OMNIC.viewers = {};
+
     window._OMNIC_VIEWER_BUNDLE_IS_LOADED = true;
 '''
+
+
 def generate_index_js(viewer_names):
     requires = '\n'.join('require("%s");' % name for name in viewer_names)
-    return '%s\n%s' % (requires, LOADED_JS);
+    return '%s\n%s' % (requires, LOADED_JS)
 
 
 class ViewerNodePackageBuilder(converter.Converter):

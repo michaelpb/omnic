@@ -40,7 +40,8 @@
                         height="{{ form.thumb_height }}"
                         omnic-thumb
                         {% if viewer_src %}
-                            omnic-viewer="{{ viewer_src}}"
+                            omnic-viewer="{{ form.viewer_type }}"
+                            omnic-viewer-src="{{ viewer_src }}"
                         {% endif %}
                     />
                 </div>
@@ -51,7 +52,8 @@
     src="{{ thumb_src }}"
     width="{{ form.thumb_width }}" height="{{ form.thumb_height }}"
     omnic-thumb {% if viewer_src %}
-    omnic-viewer="{{ viewer_src}}" {% endif %}
+    omnic-viewer="{{ form.viewer_type }}"
+    omnic-viewer-src="{{ viewer_src }}" {% endif %}
 /&gt;
 </pre>
 

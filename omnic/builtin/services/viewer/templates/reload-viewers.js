@@ -9,9 +9,9 @@ var TIMEOUT = 15000; // check after 15 seconds
 var BUNDLE_URL = '{{ viewer_bundle_url }}';
 
 function prepElement(element) {
-    var viewerType = element.getAttribute('omnic-viewer');
-    var activateViewer = window.OMNIC.viewers[viewerType];
     element.addEventListener('click', function () {
+        var viewerType = element.getAttribute('omnic-viewer');
+        var activateViewer = window.OMNIC.viewers[viewerType];
         activateViewer(element);
     });
 }
