@@ -154,13 +154,13 @@
       will activate the appropriate viewer
     - [X] If possible / cheap computationally, avoid API calls by
       checking if the image is a 1x1 placeholder image (?)
-- [ ] New Viewer system: Each type can have a Viewer, that serves up JS
+- [X] New Viewer system: Each type can have a Viewer, that serves up JS
   that mounts a viewer on a particular element (given a URL). E.g. the
   STL, OBJ etc viewer, when clicked on, will enable JSC3D.
-    - [ ] All registered viewers get served up on page load in one
+    - [X] All registered viewers get served up on page load in one
       minified JS bundle
-    - [ ] They only get "activated" as needed
-- [ ] Embed in page components
+    - [X] They only get "activated" as needed
+- [X] Embed in page components
     - `<img src="...omnic/media/thumb.jpg..." omnic-viewer="PDF" />`
     - The JS looks for all tags with `[omnic-viewer]` and adds a click
       event that will embed the correct type of viewer for that element

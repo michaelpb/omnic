@@ -75,6 +75,7 @@ CONVERTERS = [
 
 VIEWERS = [
     'omnic.builtin.viewers.document.PDFViewer',
+    'omnic.builtin.viewers.mesh.Jsc3dMeshViewer',
 ]
 
 PLACEHOLDERS = [

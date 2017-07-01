@@ -28,7 +28,6 @@ class MeshLabConverter(converter.ExecConverter):
         'model/x3d+vrml',
         'model/x3d+xml',
         'model/x3d+binary',
-        'application/postscript',
     ]
 
     outputs = [
