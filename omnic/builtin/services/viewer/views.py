@@ -78,6 +78,10 @@ async def reload_thumb_js(request):
     return templates.render(request, 'reload-thumb.js', {})
 
 
+async def playbutton_svg(request):
+    return templates.render(request, 'playbutton.svg', {})
+
+
 async def all_js(request):
     # TODO:
     # 1. Check if built cache is ready, if it is, include cached JS in the mix

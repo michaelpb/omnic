@@ -1,3 +1,5 @@
+import io
+import json
 import os
 import tempfile
 from urllib.parse import urlencode
@@ -37,25 +39,24 @@ class BaseUnitTest:
 
 
 class BaseRoutes:
-    @classmethod
-    def setup_class(cls):
+    def setup_method(self, method):
         from omnic.server import runserver
 
-        cls.host = '127.0.0.1:42101'
-        cls.tmp_path_prefix = tempfile.mkdtemp()
+        self.host = '127.0.0.1:42101'
+        self.tmp_path_prefix = tempfile.mkdtemp()
 
         class FakeSettings:
-            PATH_PREFIX = cls.tmp_path_prefix
+            PATH_PREFIX = self.tmp_path_prefix
             PATH_GROUPING = None
-            ALLOWED_LOCATIONS = {cls.host}
+            ALLOWED_LOCATIONS = {self.host}
             LOGGING = None
         singletons.settings.use_settings(FakeSettings)
 
-        cls.app = runserver('ignored', 0, just_setup_app=True)
+        self.app = runserver('ignored', 0, just_setup_app=True)
 
         singletons.workers.clear()
-        cls.worker = RunOnceWorker()
-        singletons.workers.append(cls.worker)
+        self.worker = RunOnceWorker()
+        singletons.workers.append(self.worker)
 
         # Disable all HTTP logging for sanic since it leaves open FDs and
         # causes warnings galore
@@ -70,8 +71,7 @@ class BaseRoutes:
         })
         return self.app.test_client.get(*args, **kwargs)
 
-    @classmethod
-    def teardown_class(cls):
+    def teardown_method(self, method):
         singletons.settings.use_previous_settings()
 
 
@@ -209,8 +209,8 @@ class TestAdmin(BaseRoutes):
         assert b'Graph Explorer' in value
 
 
-class TestBuiltinMediaRoutes(BaseRoutes):
-    def test_media_placeholder(self, event_loop):
+class TestBuiltinMediaServer(BaseRoutes):
+    def test_media(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
         await_async = event_loop.run_until_complete
@@ -224,7 +224,29 @@ class TestBuiltinMediaRoutes(BaseRoutes):
         assert response.status == 200
         assert response.headers['Content-Type'] == 'image/png'
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
+        self._do_check_enqueued(await_async)
 
+    def test_media_just_checking_api(self, event_loop):
+        # NOTE: For some reason due to incorrect event loops, etc, one can't
+        # use pytest.mark.asyncio, making the tests themselves async
+        await_async = event_loop.run_until_complete
+
+        # reverse test.png route
+        url = '%s/test.png' % self.host
+        qs = '?%s' % urlencode({
+            'url': url,
+            'just_checking': 'y',
+        })
+
+        # ensure that it correctly gets a ready = false
+        response = self._get('/media/thumb.jpg:200x200/%s' % qs)
+        value = await_async(response.read()).decode('utf-8')
+        assert response.status == 200
+        assert response.headers['Content-Type'] == 'application/json'
+        assert json.loads(value) == {'url': 'http://%s' % url, 'ready': False}
+        self._do_check_enqueued(await_async)
+
+    def _do_check_enqueued(self, await_async):
         # Inspect whats been enqueued, ensure as expected
         q = self.worker.next_queue
         assert q
@@ -295,3 +317,38 @@ class TestViewerViews(BaseUnitTest):
 
         q = self.worker.next_queue
         assert len(q) == 5  # five steps?
+
+
+class TestMediaViews(BaseUnitTest):
+    def setup_method(self, method):
+        from omnic.builtin.services import media
+        singletons.server.configure()
+        self.v = media
+        self.url = '%s/test.png' % self.host
+
+        class MockRequest:
+            args = {'url': [self.url]}
+        self.request = MockRequest
+        self.ts = 'thumb.png:200x200'
+
+    @pytest.mark.asyncio
+    async def test_media_view_placeholder(self):
+        # Check that we get a placeholder
+        response = await self.v.media_route(self.request, self.ts)
+        response.transport = io.BytesIO()
+        await response.stream()
+        response.transport.seek(0)
+        r = response.transport.read()
+        assert b'200 OK' in r
+        assert b'image/png' in r
+        assert Magic.PNG in r
+
+    @pytest.mark.asyncio
+    async def test_media_view_just_checking(self):
+        # Check that we get a json
+        self.request.args['just_checking'] = ['y']
+        response = await self.v.media_route(self.request, self.ts)
+        r = response.output()
+        assert b'200 OK' in r
+        assert b'application/json' in r
+        assert b'false' in r
