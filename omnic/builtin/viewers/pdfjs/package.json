@@ -5,6 +5,12 @@
   "main": "index.js",
   "dependencies": {
   },
+  "omnic": {
+    "types": [
+        "PDF",
+        "application/pdf"
+    ]
+  },
   "scripts": {
     "test": "node tests.js"
   },

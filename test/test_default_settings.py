@@ -37,7 +37,7 @@ class TestBuiltinDefaults:
     def test_default_settings_are_importable(self):
         s = singletons.settings
         assert len(s.load_all('PLACEHOLDERS')) > 1
-        assert len(s.load_all('VIEWERS')) > 0
+        assert len(s.load_all('VIEWERS')) > 1
         assert len(s.load_all('AUTOLOAD')) > 3
         assert len(s.load_all('CONVERTERS')) > 7
         assert len(s.load_all('SERVICES')) > 3
@@ -47,4 +47,4 @@ class TestBuiltinDefaults:
         cg = singletons.converter_graph
         assert len(cg.converters) > 7
         v = singletons.viewers
-        assert len(v.viewers) > 0
+        assert len(v.viewers) > 1

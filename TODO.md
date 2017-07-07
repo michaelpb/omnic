@@ -1,6 +1,37 @@
 # Next steps:
 
 ## Top priority
+- [ ] Get viewer demo running
+    - [X] Add `just_checking` media API
+    - [ ] Create new viewer format that is just a bare npm repo with
+      `__init__.py` (later could mix in Python metadata)
+    - [ ] Create omnic base viewer
+    - [ ] Add testing utilities in JS, using node (jasmine? or something more
+      trendy?)
+    - [ ] Add in the following viewers:
+        - [ ] Image (lightbox style pop-up, see whats most popular)
+        - [ ] 3D with JSC3D
+    - [ ] Possibly add in web-worker hook system to base viewer (?) so I can
+      add PDF.js to the demo
+        - [ ] Possibly build 1 JS package, but detect if in web worker or not,
+          and execute different code path for each, if that is possible
+    - [ ] If viewer infrastructure is robust enough to add a bunch more
+      viewers, then add in
+        - [ ] SVG pan
+        - [ ] Video player
+        - [ ] Audio player
+        - [ ] Markdown
+        - [ ] Syntax highlighting
+        - [ ] Various data viz stuff (CSV -> graph)
+        - [ ] Molecule (2D)
+        - [ ] Molecule (3D)
+    - [ ] Mindblowing ideas:
+        - [ ] One viewer be DRAGGABLE MAPS. Yes you heard me right
+        - [ ] Git tree viewer -- essentially embeddable github -- with ALL THE
+          OTHER viewer types hooked in
+            - [ ] This would make a stupendous demo on the omnic site
+            - [ ] Types with multiple viewers (e.g. CSV) can be swapped with a
+              tab interface
 
 - [ ] Fix setup.py packaging, set up pypi
     - [ ] Add to setup.py only the minimum needed packages

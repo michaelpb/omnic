@@ -120,3 +120,25 @@ class TestSettingsLoading:
         assert len(settings.load_all('SERVICES')) == 2
         assert settings.load_all('SERVICES')['a'] is ExampleClassA
         assert settings.load_all('SERVICES')['b'] is ExampleClassB
+
+
+    def test_loading_with_default(self):
+        # Simply use self as a test settings
+        settings = SettingsManager()
+
+        class MockSettings:
+            SERVICES = [
+                'test.test_config.ExampleClassA',
+                'test.test_config.DoesntExist',
+            ]
+
+        class MockLoader(str):
+            pass
+
+        settings.use_settings(MockSettings)
+        results = settings.load_all('SERVICES', default=MockLoader)
+        assert len(results) == 2
+        assert results[0] is ExampleClassA
+        assert isinstance(results[1], MockLoader)
+        assert str(results[1]) == str(MockSettings.SERVICES[1])
+

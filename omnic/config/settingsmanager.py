@@ -79,15 +79,21 @@ class SettingsManager:
         '''
         return self.load_path(getattr(self, key))
 
-    def load_all(self, key):
+    def load_all(self, key, default=None):
         '''
         Import settings key as a dict or list with values of importable paths
+        If a default constructor is specified, and a path is not importable, it
+        falls back to running the given constructor.
         '''
         value = getattr(self, key)
+        if default is not None:
+            loader = lambda path: self.load_path_with_default(path, default)
+        else:
+            loader = self.load_path
         if isinstance(value, dict):
-            return {key: self.load_path(value) for key, value in value.items()}
+            return {key: loader(value) for key, value in value.items()}
         elif isinstance(value, list):
-            return [self.load_path(value) for value in value]
+            return [loader(value) for value in value]
         else:
             raise ValueError('load_all must be list or dict')
 
@@ -103,10 +109,21 @@ class SettingsManager:
         if last_item[0].isupper():
             try:
                 imported_obj = getattr(imported_obj, last_item)
-            except:
+            except AttributeError:
                 msg = 'Cannot import "%s". ' \
                     '(Hint: CamelCase is only for classes)' % last_item
                 raise ConfigurationError(msg)
+        return imported_obj
+
+    def load_path_with_default(self, path, default_constructor):
+        '''
+        Same as `load_path(path)', except uses default_constructor on import
+        errors
+        '''
+        try:
+            imported_obj = self.load_path(path)
+        except (ImportError, ConfigurationError):
+            imported_obj = default_constructor(path)
         return imported_obj
 
     def use_settings(self, settings_module):
