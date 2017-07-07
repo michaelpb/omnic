@@ -1,10 +1,16 @@
 {
-  "name": "pdf_viewer",
+  "name": "jsc3d_mesh_viewer",
   "version": "0.1.0",
   "description": "Wrapper JS component to view PDFs",
   "main": "index.js",
   "dependencies": {
     "jsc3d": "0.1.8"
+  },
+  "omnic": {
+    "types": [
+        "STL",
+        "OBJ"
+    ]
   },
   "scripts": {
     "test": "node tests.js"

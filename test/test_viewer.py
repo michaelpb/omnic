@@ -53,6 +53,7 @@ class TestViewerManager:
             'document_viewer': 'file:/path/to/module',
         }
 
+
 class TestDefaultViewer:
     JSON_DATA = json.dumps({
         'name': 'pdf_viewer',
@@ -65,7 +66,8 @@ class TestDefaultViewer:
     def setup_method(self, method):
         singletons.settings.use_settings(MockConfig)
         mocked_file = mock.mock_open(read_data=self.JSON_DATA)
-        mocked_exists = lambda path: path == self.JSON_PATH
+
+        def mocked_exists(path): return path == self.JSON_PATH
         self.open_patch = mock.patch('omnic.web.viewer.open', mocked_file)
         self.exists_patch = mock.patch('os.path.exists', mocked_exists)
         self.open_patch.start()

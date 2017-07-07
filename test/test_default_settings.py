@@ -1,7 +1,7 @@
 from omnic import singletons
 
 
-class TestBuiltinDefaults:
+class TestSettingsBuiltinDefaults:
     '''
     High-level sanity tests for built-ins
     '''
@@ -51,7 +51,7 @@ class TestBuiltinDefaults:
 
     def test_certain_viewers_exist(self):
         viewers_list = singletons.viewers.viewers
+        print('this si viewer list', viewers_list)
         viewer_types = sum([viewer.types for viewer in viewers_list], [])
         assert 'PDF' in viewer_types
         assert 'STL' in viewer_types
-

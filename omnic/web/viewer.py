@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 from omnic import singletons
 
@@ -49,5 +49,6 @@ class DefaultViewer:
         self.asset_dir = _package_dir
         self.assets = []
         self.node_package = 'file:%s' % _package_dir
+
 
 singletons.register('viewers', ViewerManager)
