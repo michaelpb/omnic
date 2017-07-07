@@ -48,3 +48,10 @@ class TestBuiltinDefaults:
         assert len(cg.converters) > 7
         v = singletons.viewers
         assert len(v.viewers) > 1
+
+    def test_certain_viewers_exist(self):
+        viewers_list = singletons.viewers.viewers
+        viewer_types = sum([viewer.types for viewer in viewers_list], [])
+        assert 'PDF' in viewer_types
+        assert 'STL' in viewer_types
+

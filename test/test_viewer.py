@@ -9,7 +9,7 @@ from omnic.web import viewer
 URL = 'http://mocksite.local/file.pdf'
 
 
-class MockPDFViewer(viewer.Viewer):
+class MockPDFViewer:
     name = 'document_viewer'
     views = ['PDF']
     asset_dir = '/path/to/assets'
@@ -48,3 +48,7 @@ class TestViewerManager:
         assert self.viewers.get_node_packages() == {
             'document_viewer': 'file:/path/to/module',
         }
+
+
+class TestDefaultViewer:
+    pass

@@ -1,13 +1,15 @@
 import os
+import json
 
 from omnic import singletons
 
 
 class ViewerManager:
     def __init__(self, viewer_list=None):
+        settings = singletons.settings
         self.viewers = viewer_list
         if self.viewers is None:
-            self.viewers = singletons.settings.load_all('VIEWERS')
+            self.viewers = settings.load_all('VIEWERS', default=DefaultViewer)
 
     def prefix_asset(self, viewer, relpath):
         return os.path.join(viewer.asset_dir, relpath)
@@ -33,8 +35,19 @@ class ViewerManager:
         }
 
 
-class Viewer:
-    pass
+class DefaultViewer:
+    def __init__(self, import_path):
+        _package_dir = singletons.settings \
+            .import_path_to_absolute_path(import_path, 'package.json')
+        _package_json_path = os.path.join(_package_dir, 'package.json')
 
+        with open(_package_json_path) as fd:
+            package_json = json.load(fd)
+
+        self.types = package_json['omnic']['types']
+        self.name = package_json['name']
+        self.asset_dir = _package_dir
+        self.assets = []
+        self.node_package = 'file:%s' % _package_dir
 
 singletons.register('viewers', ViewerManager)

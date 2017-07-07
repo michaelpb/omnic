@@ -121,7 +121,6 @@ class TestSettingsLoading:
         assert settings.load_all('SERVICES')['a'] is ExampleClassA
         assert settings.load_all('SERVICES')['b'] is ExampleClassB
 
-
     def test_loading_with_default(self):
         # Simply use self as a test settings
         settings = SettingsManager()
@@ -142,3 +141,22 @@ class TestSettingsLoading:
         assert isinstance(results[1], MockLoader)
         assert str(results[1]) == str(MockSettings.SERVICES[1])
 
+    def test_path_search(self):
+        settings = SettingsManager()
+        results = settings.import_path_to_absolute_path(
+            'omnic.config',
+            '__init__.py',
+        )
+        assert results == os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            'omnic',
+            'config',
+        )
+
+    def test_path_search_exception(self):
+        settings = SettingsManager()
+        with pytest.raises(ConfigurationError):
+            settings.import_path_to_absolute_path(
+                'omnic.config',
+                'doesnotexist.txt',
+            )
