@@ -3,8 +3,11 @@
 ## Top priority
 - [ ] Get viewer demo running
     - [X] Add `just_checking` media API
-    - [ ] Create new viewer format that is just a bare npm repo with
+    - [X] Create new viewer format that is just a bare npm repo with
       `__init__.py` (later could mix in Python metadata)
+    - [ ] Think about and improve dev environ for JS
+        - [ ] Explicit foreground build-step that clears cache every time JS
+          changes
     - [ ] Create omnic base viewer
     - [ ] Add testing utilities in JS, using node (jasmine? or something more
       trendy?)
@@ -13,8 +16,8 @@
         - [ ] 3D with JSC3D
     - [ ] Possibly add in web-worker hook system to base viewer (?) so I can
       add PDF.js to the demo
-        - [ ] Possibly build 1 JS package, but detect if in web worker or not,
-          and execute different code path for each, if that is possible
+        - [ ] Build 1 JS package, but detect if in web worker or not, and
+          execute different code path for each
     - [ ] If viewer infrastructure is robust enough to add a bunch more
       viewers, then add in
         - [ ] SVG pan
@@ -26,7 +29,8 @@
         - [ ] Molecule (2D)
         - [ ] Molecule (3D)
     - [ ] Mindblowing ideas:
-        - [ ] One viewer be DRAGGABLE MAPS. Yes you heard me right
+        - [ ] One viewer be DRAGGABLE MAPS. Yes you heard me right. Use mapnik
+          + render from BytesResource service
         - [ ] Git tree viewer -- essentially embeddable github -- with ALL THE
           OTHER viewer types hooked in
             - [ ] This would make a stupendous demo on the omnic site

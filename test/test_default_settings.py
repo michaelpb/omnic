@@ -37,7 +37,7 @@ class TestSettingsBuiltinDefaults:
     def test_default_settings_are_importable(self):
         s = singletons.settings
         assert len(s.load_all('PLACEHOLDERS')) > 1
-        assert len(s.load_all('VIEWERS')) > 1
+        assert len(s.load_all('VIEWERS')) > 2
         assert len(s.load_all('AUTOLOAD')) > 3
         assert len(s.load_all('CONVERTERS')) > 7
         assert len(s.load_all('SERVICES')) > 3
@@ -47,11 +47,10 @@ class TestSettingsBuiltinDefaults:
         cg = singletons.converter_graph
         assert len(cg.converters) > 7
         v = singletons.viewers
-        assert len(v.viewers) > 1
+        assert len(v.viewers) > 2
 
     def test_certain_viewers_exist(self):
         viewers_list = singletons.viewers.viewers
-        print('this si viewer list', viewers_list)
         viewer_types = sum([viewer.types for viewer in viewers_list], [])
         assert 'PDF' in viewer_types
         assert 'STL' in viewer_types

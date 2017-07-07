@@ -74,6 +74,7 @@ CONVERTERS = [
 ]
 
 VIEWERS = [
+    'omnic.builtin.viewers.core',
     'omnic.builtin.viewers.pdfjs',
     'omnic.builtin.viewers.jsc3d',
 ]
