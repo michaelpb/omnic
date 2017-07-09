@@ -73,6 +73,9 @@ CONVERTERS = [
     'omnic.builtin.services.viewer.converters.ViewerNodePackageBuilder',
 ]
 
+CONVERSIONS = [
+]
+
 VIEWERS = [
     'omnic.builtin.viewers.core',
     'omnic.builtin.viewers.pdfjs',

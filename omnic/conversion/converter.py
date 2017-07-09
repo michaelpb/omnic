@@ -1,23 +1,34 @@
 import os
+import shutil
 import subprocess
 
-from omnic.conversion.exceptions import ConversionInputError
+from omnic.conversion.exceptions import ConversionInputError, ConverterUnavailable
 from omnic.utils import filesystem
 
 
 class Converter:
     cost = 1
 
+    @staticmethod
+    def configure():
+        pass
+
     async def convert(self, in_resource, out_resource):
         return self.convert_sync(in_resource, out_resource)
 
     def convert_sync(self, in_resource, out_resource):
         # TODO: Make both optional (run_until_complete here)
-        raise Exception(
-            'Converter subclass must override at least convert_sync.')
+        msg = 'Converter subclass must override at least convert_sync.'
+        raise NotImplementedError(msg)
 
 
 class ExecConverter(Converter):
+    @staticmethod
+    def configure():
+        binary_path = shutil.which(self.command[0])
+        if not binary_path:
+            raise ConverterUnavailable()
+
     def get_arguments(self, resource):
         return resource.typestring.arguments
 
@@ -39,11 +50,8 @@ class ExecConverter(Converter):
         return [replacements.get(arg, arg) for arg in self.command]
 
     async def convert(self, in_resource, out_resource):
-        return self.convert_sync(in_resource, out_resource)
-
         # TODO: make async
-        cmd = self.get_command(in_resource, out_resource)
-        return subprocess.run(cmd)
+        return self.convert_sync(in_resource, out_resource)
 
     def convert_sync(self, in_resource, out_resource):
         cmd = self.get_command(in_resource, out_resource)

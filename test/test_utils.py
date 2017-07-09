@@ -23,6 +23,9 @@ class TestDirectedGraph:
         self.dg.add_edge('B', 'C', 1)
         self.dg.add_edge('B', 'D', 1)
 
+    def _add_preferred_path(self):
+        self.dg.add_preferred_path('A', 'Z', 'B')
+
     #  ,-> F - - - -.
     # '    v         v
     # A -> B -> G -> C
@@ -86,6 +89,14 @@ class TestDirectedGraph:
         assert path == ('A', 'B', 'D')
         path = self.dg.shortest_path('B', 'C')
         assert path == ('B', 'C')
+
+    def test_special_paths(self):
+        self._simple_tree()
+        self._add_preferred_path()
+        path = self.dg.shortest_path('A', 'B')
+        assert path == ('A', 'Z', 'B')
+        path = self.dg.shortest_path('A', 'C')
+        assert path == ('A', 'B', 'C')
 
     def test_raises_on_invalid_path(self):
         self._simple_tree()

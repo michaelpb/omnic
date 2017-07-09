@@ -6,6 +6,9 @@ class DirectedGraph:
     '''
     Simple weighted directed graph implementation with memoized naive algorithm
     for shortest path.
+
+    It also supports magically preferred paths, which "supersede" all other
+    paths, and can include nodes and edges not previously mentioned.
     '''
 
     class NoPath(ValueError):
@@ -13,6 +16,15 @@ class DirectedGraph:
 
     def __init__(self):
         self.edges = {}
+        self.preferred_paths = {}
+
+    def add_preferred_path(self, *nodes, cost=1):
+        if len(nodes) < 2:
+            raise ValueError('Path must have at least 2 nodes')
+        start = nodes[0]
+        end = nodes[-1]
+        self.preferred_paths[(start, end)] = (cost, nodes)
+        self._clear_cache()
 
     def add_edge(self, a, b, cost=1):
         if cost <= 0:
@@ -21,6 +33,9 @@ class DirectedGraph:
             raise ValueError('DirectedGraph prohibits edges to self')
         self.edges.setdefault(a, {})
         self.edges[a][b] = cost
+        self._clear_cache()
+
+    def _clear_cache(self):
         self.get_all_paths_from.cache_clear()
         self.get_shortest_paths.cache_clear()
 
@@ -59,6 +74,9 @@ class DirectedGraph:
                     (start, end), (math.inf, None))
                 if weight < shortest:
                     shortest_paths[(start, end)] = (weight, path)
+
+        # Overlay preferred paths
+        shortest_paths.update(self.preferred_paths)
         return shortest_paths
 
     def shortest_path(self, start, end):

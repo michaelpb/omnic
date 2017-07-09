@@ -12,3 +12,8 @@ class ConversionProcessError(ConversionError):
 
 class ConversionOutputError(ConversionError):
     pass
+
+
+class ConverterUnavailable(Exception):
+    pass
+

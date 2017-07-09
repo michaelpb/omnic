@@ -58,6 +58,19 @@ class ExecConverterWithOutputFilename(ExecConverter):
         return '_tmp_output_file'
 
 
+class UnavailableConverter(converter.Converter):
+    inputs = ['in2']
+    outputs = ['out2']
+    @staticmethod
+    def configure():
+        raise converter.ConverterUnavailable()
+
+
+class AvailableConverter(converter.Converter):
+    inputs = ['in']
+    outputs = ['out']
+
+
 class MockNpmConverter(converter.AdditiveDirectoryExecConverter):
     inputs = ['nodepackage']
     outputs = ['installed_nodepackage']
@@ -241,3 +254,13 @@ class TestBasicConverterGraph(ConverterTestBase):
         assert all(len(step) == 3 for step in results)  # each step should be 3
         assert results[0][0] is Convert3DGraphicsToImage
         assert results[1][0] is ConvertImageToThumb
+
+
+class TestPruneConverterGraph(ConverterTestBase):
+    def test_find_path(self):
+        cgraph = ConverterGraph([
+            AvailableConverter,
+            UnavailableConverter,
+        ], prune_converters=True)
+        assert len(cgraph.converters) == 1
+

@@ -91,9 +91,8 @@
 - [ ] QoL conversion grid improvements:
     - [X] ~Think more about how to make extension "supersede" mimetype
       in a reliable way~ The detector system generally takes care of this
-    - [ ] Add "configure" check to base Converter, which should ensure
-      correct Python and system packages installed for the converter to
-      be functoinal
+    - [X] Add "configure" check to base Converter, which should ensure correct
+      Python and system packages installed for the converter to be functoinal
     - [ ] Allow conversions to self
     - [ ] Allow preferred conversion paths in settings, which are
       picked first if available, e.g. like the following:
@@ -295,13 +294,6 @@
 - Thus, omnic becomes "just in time deployment"
 - Obvs in real life, this would be triggered with a hook
 
-# Cron
-
-- [ ] CronWorker system, added to the main loop, that sleeps every 5 minutes
-  and checks a cron queue
-- [ ] Cron queue is for cache clean-up tasks, queue monitoring (could send
-  alerts somehow if queues get out of hand), etc
-
 # Production caching control improvements
 
 These commands are necessary before production ready.
@@ -316,6 +308,12 @@ These commands are necessary before production ready.
   application that would hook into any upstream proxies AND all siblings, fully
   wiping the cache for a certain foreign resource
 
+## Cron
+
+- [ ] CronWorker system, added to the main loop, that asyncio sleeps every 5
+  minutes and checks a cron queue
+- [ ] Cron queue is for cache clean-up tasks, queue monitoring (could send
+  alerts somehow if queues get out of hand), etc
 
 
 # QoL improvements
