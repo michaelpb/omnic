@@ -1,6 +1,8 @@
 import functools
 import math
 
+class NoPath(ValueError):
+    pass
 
 class DirectedGraph:
     '''
@@ -11,8 +13,7 @@ class DirectedGraph:
     paths, and can include nodes and edges not previously mentioned.
     '''
 
-    class NoPath(ValueError):
-        pass
+    NoPath = NoPath
 
     def __init__(self):
         self.edges = {}

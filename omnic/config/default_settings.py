@@ -73,8 +73,8 @@ CONVERTERS = [
     'omnic.builtin.services.viewer.converters.ViewerNodePackageBuilder',
 ]
 
-CONVERSIONS = [
-]
+PREFERRED_CONVERSION_PATHS = []
+CONVERSION_PROFILES = {}
 
 VIEWERS = [
     'omnic.builtin.viewers.core',

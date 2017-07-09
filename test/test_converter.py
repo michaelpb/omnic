@@ -10,6 +10,7 @@ import pytest
 from omnic import singletons
 from omnic.conversion import converter
 from omnic.conversion.graph import ConverterGraph
+from omnic.utils.graph import NoPath
 from omnic.types.resource import TypedResource
 from omnic.types.typestring import TypeString
 
@@ -133,6 +134,9 @@ class ConverterTestBase:
             self.res2.cache_path,
         )
 
+    def _path(self, in_str, out_str):
+        return self.cgraph.find_path(TypeString(in_str), TypeString(out_str))
+
     def _check_convert(self):
         self.converter.convert_sync(self.res, self.res2)
         assert self.res2.cache_exists()
@@ -236,14 +240,15 @@ class TestBasicConverterGraph(ConverterTestBase):
     def setup_class(cls):
         cls.cgraph = ConverterGraph(MockConfig.CONVERTERS)
 
-    def _path(self, in_str, out_str):
-        return self.cgraph.find_path(TypeString(in_str), TypeString(out_str))
-
     def test_find_path(self):
         # Test typical case
         results = self._path('AVI', 'thumb.png:200x200')
         assert len(results) == 2  # should be 2 steps
         assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert all(
+            isinstance(step[1], TypeString) and isinstance(step[2], TypeString)
+            for step in results # Ensure we are getting typestrings
+        )
         assert results[0][0] is ConvertMovieToImage
         assert results[1][0] is ConvertImageToThumb
 
@@ -256,11 +261,86 @@ class TestBasicConverterGraph(ConverterTestBase):
         assert results[1][0] is ConvertImageToThumb
 
 
-class TestPruneConverterGraph(ConverterTestBase):
-    def test_find_path(self):
+class TestConverterGraphCustomPaths:
+    def teardown_method(self, method):
+        singletons.settings.use_previous_settings()
+
+    def _path(self, in_str, out_str):
+        return self.cgraph.find_path(TypeString(in_str), TypeString(out_str))
+
+    def test_pruned_converters(self):
         cgraph = ConverterGraph([
             AvailableConverter,
             UnavailableConverter,
         ], prune_converters=True)
         assert len(cgraph.converters) == 1
+
+    def test_preferred_conversions(self):
+        class config:
+            PREFERRED_CONVERSION_PATHS = [
+                ('STL', 'AVI', 'JPG', 'thumb.png')
+            ]
+        singletons.settings.use_settings(config)
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('STL', 'thumb.png')
+        assert len(results) == 3  # Forcing it to 1 extra step
+
+    def test_simple_conversion_profile(self):
+        class config:
+            CONVERSION_PROFILES = {
+                'thumb': 'thumb.png:123x456',
+            }
+        singletons.settings.use_settings(config)
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('STL', 'thumb')
+        assert len(results) == 2  # should be 2 steps
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is Convert3DGraphicsToImage
+        assert results[1][0] is ConvertImageToThumb
+        assert results[1][2].arguments == ('123x456', )
+
+    def test_conversion_profile_path(self):
+        class config:
+            CONVERSION_PROFILES = {
+                'avithumb': ('AVI', 'JPG', 'thumb.png'),
+            }
+        singletons.settings.use_settings(config)
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('STL', 'avithumb')
+        assert len(results) == 3  # Ensure it is 1 "extra" step
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is Convert3DGraphicsToMovie
+        assert results[1][0] is ConvertMovieToImage
+        assert results[2][0] is ConvertImageToThumb
+
+    def test_invalid_conversion_profile(self):
+        class config:
+            CONVERSION_PROFILES = {
+                'avithumb': ('AVI', 'OBJ'),
+            }
+        singletons.settings.use_settings(config)
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+        assert not self.cgraph.conversion_profiles.keys()
+        with pytest.raises(NoPath):
+            self._path('STL', 'avithumb')
+
+    def test_conversion_profile_path_with_internal_args(self):
+        class config:
+            CONVERSION_PROFILES = {
+                'avithumb': ('AVI', 'JPG:frame=2', 'thumb.png:123x456')
+            }
+        singletons.settings.use_settings(config)
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('STL', 'avithumb')
+        assert len(results) == 3  # Ensure it is 1 "extra" step
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is Convert3DGraphicsToMovie
+        assert results[1][0] is ConvertMovieToImage
+        assert results[2][0] is ConvertImageToThumb
+        assert results[1][2].arguments == ('frame=2', )
+        assert results[2][2].arguments == ('123x456', )
 
