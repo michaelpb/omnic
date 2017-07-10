@@ -48,9 +48,8 @@ Blocking order:
         - [ ] Various data viz stuff (CSV -> graph)
         - [ ] Molecule (2D)
         - [ ] Molecule (3D)
-    - [ ] Mindblowing ideas:
-        - [ ] One viewer be DRAGGABLE MAPS. Yes you heard me right. Use mapnik
-          + render from BytesResource service
+    - [ ] Ambitious viewer ideas:
+        - [ ] One viewer be draggable maps. Render tiles from BytesResource service
         - [ ] Git tree viewer -- essentially embeddable github -- with ALL THE
           OTHER viewer types hooked in
             - [ ] This would make a stupendous demo on the omnic site
@@ -105,10 +104,10 @@ Blocking order:
 - [X] Work on some very simple refresh javascript to integrate
 
 - [ ] BUG: Fix running unoconv within venv
-    - [ ] Check if in virtualenv and ensure environments Python is used when
-      doing subprocess calls
+    - [ ] Check if in virtualenv and ensure system Python is used when doing
+      subprocess calls
 
-- [ ] QoL conversion grid improvements:
+- [ ] QoL conversion grid improvements
     - [X] ~Think more about how to make extension "supersede" mimetype
       in a reliable way~ The detector system generally takes care of this
     - [X] Add "configure" check to base Converter, which should ensure correct
@@ -120,18 +119,19 @@ Blocking order:
       partial conversion path
 
     - [ ] Locking + sanity check process:
-        1. Before, optionally (based on conf) do sanity Detector check
-        2. After, optionally (based on conf) do sanity Detector check
-        3. After, (required) make output all exclusively readonly, recursively
-        in the case of a directory
-        4. Resources should treat writable caches as non-existent, thus making
-        "in progress" files unusable to front-end services. This step is
-        essential for data integrity!
-        5. This will obsolete Detector Converter types, I believe
+        - [ ] 1. Before, optionally (based on conf) do sanity Detector check
+        - [ ] 2. After, optionally (based on conf) do sanity Detector check
+        - [ ] 3. After, (required) make output all exclusively readonly,
+          recursively in the case of a directory
+        - [ ] 4. `Resource` base class should treat writable caches as
+          non-existent, thus making "in progress" files unusable to front-end
+          services. This step is essential for data integrity.
+        - [ ] Obsolete Detector Converter types, I believe
 
     - [ ] For JS, should have full input graph, e.g. can uglify plain JS files,
       but rely on "preferred paths" to ensure that it gets es5ified first (can
       configure in default settings this way)
+
     - [ ] It's becoming increasingly clear I need to build a constant-based
       TypeString hierarchy, such that a bundle.js or es5.js is a type of JS
       file, and thus gets proper mimetypes, etc, while remaining more specific
@@ -275,7 +275,6 @@ Blocking order:
 - [X] Minifier and JSX / TypeScript compiler
 - [X] Possibly a service dedicated to this, or just use /bundle/ wit ha
   different target type ('js')
-- [X] Eliminate build steps for web... stateless serving for all!
 - [ ] Support more JS build systems
     - [ ] Webpack based bundling + compilation
         -  TODO For "full webpack packages", that is, ones with custom config
@@ -285,13 +284,9 @@ Blocking order:
     - [ ] Babelrc based compilation
 
 ## Packaging build server Converters
-- [ ] Would play-well with /bundle/
 - [ ] Convert "tar.gz" -> rpm, deb, appimage, flatpak etc
 - [ ] Convert "python-project.git" -> rpm, deb, appimage, flatpak etc
 - [ ] Convert "electron-project.git" -> rpm, deb, appimage, flatpak etc
-- [ ] Maybe even EXE generator o.O
-- [ ] Maybe loop in game stuff..?
-
 
 ## Mesh
 - Blender integration
@@ -315,17 +310,26 @@ Blocking order:
 
 # Production caching control improvements
 
-These commands are necessary before production ready.
+## Commands
 
 - [ ] 'precache' command - triggers conversion / whatever, and blocks until
   finished. Useful for adding as a build step.
-- [ ] 'mutable' concept - some foreign URLs might be mutable. All media
-  generated from them should have much more cautious client-side cache headers.
 - [ ] 'clear-cache' command - delete a single foreign resource from cache,
-  removing all generated media from that foreign resource
+  removing all generated media from that foreign resource. Also support
+  date-range.
 - [ ] 'omnic-clear-cache-cascade' application - special separate (?)
   application that would hook into any upstream proxies AND all siblings, fully
   wiping the cache for a certain foreign resource
+
+## Resource system improvements
+
+- [ ] 'mutable' concept - some foreign URLs might be mutable. All media
+generated from them should have much more cautious client-side cache headers.
+- [ ] Time-based grouper: In addition to MD5 structure, have
+    `/var/tmp/omnic/date-cache/2017/08/01/ae08/`. This will allow cron to
+    aggressively purge older cache, e.g. only maintain a couple days in prod.
+    This is good because IRL it won't be serving media anyway, the cache is
+    only good for conversion.
 
 ## Cron
 
@@ -345,8 +349,6 @@ These commands are necessary before production ready.
 
 - [ ] Built-in lists of common formats to be used, along with common
   placeholder pixels
-
-- [ ] Built-in regexp for TypeString
 
 # Performance and stability improvements
 
