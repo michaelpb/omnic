@@ -1,6 +1,26 @@
 # Next steps:
 
+Blocking order:
+1. Build better testing infrastructure
+2. Fix packaging + docs
+3. Make scaffolding
+4. Write containers for a few builtin setting-sets, such as 'kitchen sink',
+'image', and 'empty', allowing to lock down specs
+5. Build CLI-level tests that include mini-scaffold test apps for full e2e
+(rendering all tests in tests/ directory merely unit and integration tests)
+6. Create "zoo" repo of specimen and include full e2e tests on all zoo specimen
+
 ## Top priority
+- [ ] Testing infrastructure
+    - [ ] @settings decorator (useful in general)
+    - [ ] Fully wrap around all Sanic with custom code, that can be mocked for
+    - [ ] @localserver context manager (?)
+        - [ ] Allows "mini local server" that has can make fake queries via
+          custom routing
+        - [ ] Something like: await f.client.get('/media/?qs=abc')
+        - [ ] General merger of client convert code (should actually spin up
+          workers) + server routes
+
 - [ ] Get viewer demo running
     - [X] Add `just_checking` media API
     - [X] Create new viewer format that is just a bare npm repo with
@@ -18,8 +38,8 @@
       add PDF.js to the demo
         - [ ] Build 1 JS package, but detect if in web worker or not, and
           execute different code path for each
-    - [ ] If viewer infrastructure is robust enough to add a bunch more
-      viewers, then add in
+    - [ ] If viewer infrastructure is as robust as I intend, add a bunch more
+      viewers:
         - [ ] SVG pan
         - [ ] Video player
         - [ ] Audio player
@@ -94,11 +114,10 @@
     - [X] Add "configure" check to base Converter, which should ensure correct
       Python and system packages installed for the converter to be functoinal
     - [ ] Allow conversions to self
-    - [ ] Allow preferred conversion paths in settings, which are
-      picked first if available, e.g. like the following:
-        {
-            ('STL', 'JPG'): ['STL', 'PNG', 'add_background.png', 'JPG:1000x1000'],
-        }
+    - [X] Allow full conversion paths in settings, which are picked first if
+      available (useful for locking down)
+    - [X] Allow 'conversion profile' system, which ranges from aliases, to
+      partial conversion path
 
     - [ ] Locking + sanity check process:
         1. Before, optionally (based on conf) do sanity Detector check
