@@ -12,7 +12,7 @@ from omnic.config.exceptions import ConfigurationError
 class SettingsManager:
     '''
     The `settings' singleton, used to house project settings, including logic
-    to default to default setings for unset settings.
+    to default to default settings for unset settings.
     '''
 
     def __init__(self):
@@ -140,6 +140,18 @@ class SettingsManager:
         '''
         self._previous_settings = self.settings_module
         self.settings_module = settings_module
+
+    def use_settings_dict(self, settings_dict):
+        '''
+        Slightly cleaner interface to override settings that autogenerates a
+        settings module based on a given dict.
+        '''
+        class SettingsDictModule:
+            __slots__ = tuple(key.upper() for key in settings_dict.keys())
+        settings_obj = SettingsDictModule()
+        for key, value in settings_dict.items():
+            setattr(settings_obj, key.upper(), value)
+        self.use_settings(settings_obj)
 
     def use_previous_settings(self):
         '''

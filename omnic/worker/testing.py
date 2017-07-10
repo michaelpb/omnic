@@ -40,3 +40,38 @@ class RunOnceWorker(BaseWorker):
     async def check_convert(self, converter, in_r, out_r):
         self.check_convert_was_called = True
         return True
+
+
+class ForegroundWorker(BaseWorker):
+    '''
+    Useful for testing and local conversion, runs tasks as soon as enqueued
+    without any checks, or touching the queue, or catching exceptions
+
+    Useful for testing.
+    '''
+
+    def __init__(self, queue=None):
+        self.running = False
+        super().__init__()
+
+    async def queue_size(self):
+        return 0
+
+    async def enqueue(self, task_type, args):
+        '''
+        '''
+        method = {
+            Task.FUNC: self.run_func,
+            Task.DOWNLOAD: self.run_download,
+            Task.CONVERT: self.run_convert,
+        }[task_type]
+        await method(*args)
+
+    async def get_next(self):
+        return None
+
+    async def check_download(self, foreign_resource):
+        return True
+
+    async def check_convert(self, converter, in_r, out_r):
+        return True

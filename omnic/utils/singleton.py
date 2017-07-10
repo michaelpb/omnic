@@ -9,10 +9,6 @@ class SingletonManager(object):
         self.singletons = {}
         self.singleton_classes = {}
 
-    def register(self, name, cls):
-        self.singleton_classes[name] = cls
-        return cls
-
     def __getattr__(self, name):
         if name not in self.singleton_classes:
             raise AttributeError(name)
@@ -23,3 +19,7 @@ class SingletonManager(object):
         # New (and only) instance of this singleton
         self.singletons[name] = self.singleton_classes[name]()
         return self.singletons[name]
+
+    def register(self, name, cls):
+        self.singleton_classes[name] = cls
+        return cls

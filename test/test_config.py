@@ -8,6 +8,7 @@ import pytest
 
 from omnic.config.exceptions import ConfigurationError
 from omnic.config.settingsmanager import SettingsManager
+from omnic.config.utils import use_settings
 
 TEST_SETTING = 123
 
@@ -29,6 +30,16 @@ class TestSettings:
             SERVICES = []
         settings.use_settings(MockSettings)
         assert not settings.SERVICES
+        settings.use_previous_settings()
+        assert settings.SERVICES
+
+    def test_overriding_with_dict(self):
+        settings = SettingsManager()
+        assert settings.SERVICES
+        settings.use_settings_dict({'services': []})
+        assert not settings.SERVICES
+        settings.use_previous_settings()
+        assert settings.SERVICES
 
     def test_catching_lowercase_errors(self):
         settings = SettingsManager()
@@ -160,3 +171,18 @@ class TestSettingsLoading:
                 'omnic.config',
                 'doesnotexist.txt',
             )
+
+class TestSettingsUtils:
+    @use_settings(services=[])
+    def test_overriding_with_decorator(self):
+        from omnic import singletons
+        assert not singletons.settings.SERVICES
+
+    def test_overriding_with_context_manager(self):
+        from omnic import singletons
+        settings = singletons.settings
+        assert settings.SERVICES
+        with use_settings(services=[]):
+            assert not settings.SERVICES
+        assert settings.SERVICES
+
