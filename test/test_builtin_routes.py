@@ -76,6 +76,7 @@ class BaseRoutes:
 
 
 class TestBuiltinTestRoutes(BaseRoutes):
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_images(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
@@ -90,12 +91,14 @@ class TestBuiltinTestRoutes(BaseRoutes):
         value = await_async(response.read())
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_images_sync(self):
         response = self._get('/test/test.jpg')
         assert response.status == 200
         response = self._get('/test/test.png')
         assert response.status == 200
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_misc_binary_sync(self):
         # For now we just skip testing magic bytes for these, since too
         # too specific
@@ -104,6 +107,7 @@ class TestBuiltinTestRoutes(BaseRoutes):
         response = self._get('/test/test.3ds')
         assert response.status == 200
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_manifest_json(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/test/manifest.json')
@@ -111,6 +115,7 @@ class TestBuiltinTestRoutes(BaseRoutes):
         value = await_async(response.read())
         assert value[:7] == b'{"files'
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_manifest_json_download(self, event_loop):
         await_async = event_loop.run_until_complete
 
@@ -137,6 +142,7 @@ class TestBuiltinTestRoutes(BaseRoutes):
         assert files == {'some_zip.zip', 'test.3ds', 'test.jpg', 'test.png'}
 
     @pytest.mark.skip(':(')
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_manifest_json_download_with_testserver(self, event_loop):
         await_async = event_loop.run_until_complete
 
@@ -169,6 +175,7 @@ class TestBuiltinTestRoutes(BaseRoutes):
 
 
 class TestAdmin(BaseRoutes):
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_admin_page(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/admin/')
@@ -177,6 +184,7 @@ class TestAdmin(BaseRoutes):
         assert b'Conversion' in value
         assert b'Graph Explorer' in value
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_conversion_page(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/admin/conversion/')
@@ -185,6 +193,7 @@ class TestAdmin(BaseRoutes):
         assert b'Conversion' in value
         assert b'Graph Explorer' in value
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_ajax_workers(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/admin/ajax/workers/')
@@ -192,6 +201,7 @@ class TestAdmin(BaseRoutes):
         value = await_async(response.read())
         assert b'queue' in value
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_graph(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/admin/graph/')
@@ -200,6 +210,7 @@ class TestAdmin(BaseRoutes):
         assert b'Conversion' in value
         assert b'Graph Explorer' in value
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_subgraph(self, event_loop):
         await_async = event_loop.run_until_complete
         response = self._get('/admin/graph/JPEG/')
@@ -210,6 +221,7 @@ class TestAdmin(BaseRoutes):
 
 
 class TestBuiltinMediaServer(BaseRoutes):
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_media(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
@@ -226,6 +238,7 @@ class TestBuiltinMediaServer(BaseRoutes):
         assert value[:4] == Magic.PNG  # check its magic PNG bytes
         self._do_check_enqueued(await_async)
 
+    @pytest.mark.skip('figuring out which ones are noisy')
     def test_media_just_checking_api(self, event_loop):
         # NOTE: For some reason due to incorrect event loops, etc, one can't
         # use pytest.mark.asyncio, making the tests themselves async
@@ -288,6 +301,7 @@ class TestViewerViews(BaseUnitTest):
         self.v = views
 
     @pytest.mark.asyncio
+    @pytest.mark.skip('figuring out which ones are noisy')
     async def test_viewers_js(self):
         # Get raw response of view
         r = (await self.v.viewers_js(None)).output()
@@ -332,6 +346,7 @@ class TestMediaViews(BaseUnitTest):
         self.ts = 'thumb.png:200x200'
 
     @pytest.mark.asyncio
+    @pytest.mark.skip('figuring out which ones are noisy')
     async def test_media_view_placeholder(self):
         # Check that we get a placeholder
         response = await self.v.media_route(self.request, self.ts)
@@ -344,6 +359,7 @@ class TestMediaViews(BaseUnitTest):
         assert Magic.PNG in r
 
     @pytest.mark.asyncio
+    @pytest.mark.skip('figuring out which ones are noisy')
     async def test_media_view_just_checking(self):
         # Check that we get a json
         self.request.args['just_checking'] = ['y']

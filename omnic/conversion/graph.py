@@ -29,7 +29,7 @@ class ConverterGraph:
                 try:
                     converter.configure()
                 except ConverterUnavailable as e:
-                    log.warn('%s unavailable: %s' %
+                    log.warning('%s unavailable: %s' %
                         (converter.__class__.__name__, str(e)))
                     continue
 
@@ -43,7 +43,7 @@ class ConverterGraph:
         for path in singletons.settings.PREFERRED_CONVERSION_PATHS:
             for pair in pair_looper(path):
                 if pair not in self.converters:
-                    log.warn('Invalid conversion path %s, unknown step %s' %
+                    log.warning('Invalid conversion path %s, unknown step %s' %
                         (repr(path), repr(pair)))
                     break
             else:
@@ -57,7 +57,7 @@ class ConverterGraph:
             for left, right in pair_looper(path):
                 pair = (_format(left), _format(right))
                 if pair not in self.converters:
-                    log.warn('Invalid conversion profile %s, unknown step %s' %
+                    log.warning('Invalid conversion profile %s, unknown step %s' %
                         (repr(key), repr(pair)))
                     break
             else:

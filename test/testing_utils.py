@@ -93,7 +93,8 @@ def write_tmp_file(path):
         os.makedirs(os.path.dirname(path))
     except OSError:
         pass
-    open(path, 'w+').write('%s contents' % path)
+    with open(path, 'w+') as f:
+        f.write('%s contents' % path)
 
 
 def gen_tmp_files(root, files):
