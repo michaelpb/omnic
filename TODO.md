@@ -19,9 +19,11 @@ Blocking order:
       conversion pipeline in an expedient way so that tests can be written just
       as pytest.async
     - [X] Write tests for ForegroundWorker
+    - [X] Clean up ALL stray output when run with -s
+    - [ ] Fix tests on travis (likely an issue with the new system dependency
+      checks)
     - [ ] Fully wrap spawning / process stuff so ALL built-in converters can
       actually be tested against
-    - [ ] Clean up stray output when run with -s
 
 - [ ] Packaging + docs
     - [ ] Clean up packaging and README.md
@@ -357,6 +359,11 @@ generated from them should have much more cautious client-side cache headers.
 
 - [ ] Built-in lists of common formats to be used, along with common
   placeholder pixels
+
+# Code quality improvements
+
+- [ ] Turn on `_FORCE_PREVENT_LOGGING_DISABLE` and clean up warnings in tests
+  (since some indicate some messy stuff being left behind during the tests)
 
 # Performance and stability improvements
 

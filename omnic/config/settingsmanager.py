@@ -9,6 +9,10 @@ from omnic.config import default_settings
 from omnic.config.exceptions import ConfigurationError
 
 
+# Useful during debugging to force all logging enabled, even when tests silence
+# logging
+_FORCE_PREVENT_LOGGING_DISABLE = False
+
 class SettingsManager:
     '''
     The `settings' singleton, used to house project settings, including logic
@@ -70,7 +74,8 @@ class SettingsManager:
             config.dictConfig(self.LOGGING)
         elif isinstance(self.LOGGING, type(None)):
             # Disable all logging
-            logging.disable(logging.CRITICAL)
+            if not _FORCE_PREVENT_LOGGING_DISABLE:
+                logging.disable(logging.CRITICAL)
         else:
             raise ConfigurationError('Invalid LOGGING: must be string, dict')
 
@@ -88,7 +93,7 @@ class SettingsManager:
         '''
         value = getattr(self, key)
         if default is not None:
-            def loader(path): return self.load_path_with_default(path, default)
+            loader = lambda path: self.load_path_with_default(path, default)
         else:
             loader = self.load_path
         if isinstance(value, dict):
@@ -140,6 +145,7 @@ class SettingsManager:
         '''
         self._previous_settings = self.settings_module
         self.settings_module = settings_module
+        self.reconfigure()
 
     def use_settings_dict(self, settings_dict):
         '''
@@ -158,6 +164,7 @@ class SettingsManager:
         Useful for tests for restoring previous state of singleton
         '''
         self.settings_module = self._previous_settings
+        self.reconfigure()
 
     def get_cache_string(self):
         '''
