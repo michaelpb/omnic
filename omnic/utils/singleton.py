@@ -23,3 +23,6 @@ class SingletonManager(object):
     def register(self, name, cls):
         self.singleton_classes[name] = cls
         return cls
+
+    def clear(self, name):
+        del self.singleton_classes[name]

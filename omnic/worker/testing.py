@@ -1,5 +1,20 @@
 from omnic.worker.base import BaseWorker
+from contextlib import contextmanager
 
+@contextmanager
+def autodrain_worker():
+    '''
+    Context manager to temporarily override settings
+    '''
+    from omnic import singletons
+    singletons.workers.clear()
+    #worker = RunOnceWorker()
+    worker = ForegroundWorker()
+    singletons.workers.append(worker)
+    yield worker
+    #while worker.next_queue:
+    #    worker.
+    singletons.clear('workers')
 
 class RunOnceWorker(BaseWorker):
     '''
@@ -49,29 +64,12 @@ class ForegroundWorker(BaseWorker):
 
     Useful for testing.
     '''
-
-    def __init__(self, queue=None):
-        self.running = False
-        super().__init__()
-
-    async def queue_size(self):
-        return 0
+    async def run(self):
+        raise RuntimeError('Cannot run ForegroundWorker in event queue')
 
     async def enqueue(self, task_type, args):
-        '''
-        '''
-        method = {
-            Task.FUNC: self.run_func,
-            Task.DOWNLOAD: self.run_download,
-            Task.CONVERT: self.run_convert,
-        }[task_type]
+        method = self._get_method(task_type)
         await method(*args)
 
     async def get_next(self):
-        return None
-
-    async def check_download(self, foreign_resource):
-        return True
-
-    async def check_convert(self, converter, in_r, out_r):
-        return True
+        raise RuntimeError('Cannot run ForegroundWorker in event queue')

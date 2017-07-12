@@ -172,14 +172,19 @@ class TestAdmin(BaseUnitTest):
 
 class TestBuiltinMediaServer(BaseUnitTest):
     @pytest.mark.asyncio
-    async def test_media(self):
+    async def test_media_view_placeholder(self):
+        # Check that we get a placeholder
+        url = '%s/test.png' % self.host
+        data = await self._get('/media/thumb.png:200x200/', url=url)
+        assert b'200 OK' in data
+        assert b'image/png' in data
+        assert Magic.PNG in data
+
+    @pytest.mark.asyncio
+    async def test_media_enqueuing(self):
         # reverse test.png route
         url = '%s/test.png' % self.host
         data = await self._get('/media/thumb.jpg:200x200/', url=url)
-
-        # ensure that it gave back the placeholder
-        assert b'200 OK' in data
-        assert b'image/png' in data
         assert Magic.PNG in data  # check its magic PNG bytes
         await self._do_check_enqueued()
 
@@ -275,12 +280,3 @@ class TestViewerViews(BaseUnitTest):
         q = self.worker.next_queue
         assert len(q) == 5  # five steps?
 
-
-class TestMediaViews(BaseUnitTest):
-    @pytest.mark.asyncio
-    async def test_media_view_placeholder(self):
-        # Check that we get a placeholder
-        data = await self._get('/media/thumb.png:200x200/', url=self.url)
-        assert b'200 OK' in data
-        assert b'image/png' in data
-        assert Magic.PNG in data

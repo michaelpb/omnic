@@ -36,24 +36,22 @@ class BaseWorker:
             # Queue up consuming next item
             task_type, args = await self.get_next()
             self.stats_dequeued += 1
-            method = None
+            method = self._get_method(task_type)
 
             # Determine the type of task, and possibly skip if we have
             # it "locked" that we are already doing it
             if task_type == Task.FUNC:
-                method = self.run_func
+                pass
 
             elif task_type == Task.DOWNLOAD:
                 if not await self.check_download(*args):
                     log.debug('Already downloading %s' % repr(args))
                     continue
-                method = self.run_download
 
             elif task_type == Task.CONVERT:
                 if not await self.check_convert(*args):
                     log.debug('Already converting %s' % repr(args))
                     continue
-                method = self.run_convert
 
             # Queue it up and run it
             self.stats_began += 1
@@ -63,6 +61,13 @@ class BaseWorker:
             except Exception as e:
                 self.stats_error += 1
                 log.exception('Error in task: "%s"' % repr(e))
+
+    def _get_method(self, task_type):
+        return {
+            Task.FUNC: self.run_func,
+            Task.DOWNLOAD: self.run_download,
+            Task.CONVERT: self.run_convert,
+        }.get(task_type)
 
     async def run_func(self, func, *func_args):
         '''
