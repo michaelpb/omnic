@@ -2,9 +2,10 @@ import pytest
 import requests
 
 from omnic import singletons
+from omnic.config.utils import use_settings
 
 from .testing_utils import Magic
-from omnic.config.utils import use_settings
+
 
 class FakeService:
     SERVICE_NAME = 'testservice'
@@ -13,6 +14,7 @@ class FakeService:
         '<argument>/thing2': 'thing2_route',
         'thing1/many/things/path': 'thing3_route',
     }
+
     def thing1_route():
         pass
 
@@ -22,9 +24,11 @@ class FakeService:
     def thing3_route():
         pass
 
+
 FAKE_SERVICES = [
     'test.test_server.FakeService',
 ]
+
 
 class TestServer:
     @use_settings(services=FAKE_SERVICES)
@@ -32,15 +36,18 @@ class TestServer:
         matches, view = singletons.server.route_path('testservice/thing1')
         assert view == FakeService.thing1_route
         assert matches == []
-        matches, view = singletons.server.route_path('testservice/thing1/many/things/path')
+        matches, view = singletons.server.route_path(
+            'testservice/thing1/many/things/path')
         assert view == FakeService.thing3_route
         assert matches == []
 
     @use_settings(services=FAKE_SERVICES)
     def test_path_routing_with_arguments(self):
-        matches, view = singletons.server.route_path('testservice/matched/thing2')
+        matches, view = singletons.server.route_path(
+            'testservice/matched/thing2')
         assert view == FakeService.thing2_route
         assert matches == ['matched']
+
 
 class BrokenTestForForkingServer:
     # TODO Really should just remove this

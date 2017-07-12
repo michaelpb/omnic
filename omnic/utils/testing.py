@@ -1,9 +1,9 @@
 from contextlib import contextmanager
-from unittest import mock
 
 DEFAULT_TARGETS = (
     'omnic.converter',
 )
+
 
 @contextmanager
 def patch_system(*bins, targets=[]):
@@ -16,7 +16,3 @@ def patch_system(*bins, targets=[]):
         system[bin_name] = []
     # TODO finish this...
     yield system
-
-
-
-

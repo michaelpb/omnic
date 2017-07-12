@@ -16,4 +16,3 @@ class ConversionOutputError(ConversionError):
 
 class ConverterUnavailable(Exception):
     pass
-

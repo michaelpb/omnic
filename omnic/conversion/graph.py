@@ -1,16 +1,18 @@
 import logging
 
 from omnic import singletons
+from omnic.conversion.exceptions import ConverterUnavailable
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 from omnic.utils.iters import pair_looper
-from omnic.conversion.exceptions import ConverterUnavailable
 
 log = logging.getLogger()
+
 
 def _format(string):
     # Helper alias to easily extract the TypeString format from a string
     return TypeString(string).ts_format
+
 
 class ConverterGraph:
     def __init__(self, converter_list=None, prune_converters=False):
@@ -30,7 +32,7 @@ class ConverterGraph:
                     converter.configure()
                 except ConverterUnavailable as e:
                     log.warning('%s unavailable: %s' %
-                        (converter.__class__.__name__, str(e)))
+                                (converter.__class__.__name__, str(e)))
                     continue
 
             for in_ in converter.inputs:
@@ -38,13 +40,12 @@ class ConverterGraph:
                     self.dgraph.add_edge(in_, out, converter.cost)
                     self.converters[(in_, out)] = converter
 
-
         # Add all valid preferred conversions
         for path in singletons.settings.PREFERRED_CONVERSION_PATHS:
             for pair in pair_looper(path):
                 if pair not in self.converters:
                     log.warning('Invalid conversion path %s, unknown step %s' %
-                        (repr(path), repr(pair)))
+                                (repr(path), repr(pair)))
                     break
             else:
                 # If it did not break, then add to dgraph
@@ -58,7 +59,7 @@ class ConverterGraph:
                 pair = (_format(left), _format(right))
                 if pair not in self.converters:
                     log.warning('Invalid conversion profile %s, unknown step %s' %
-                        (repr(key), repr(pair)))
+                                (repr(key), repr(pair)))
                     break
             else:
                 # If it did not break, then add to conversion profiles

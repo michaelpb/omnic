@@ -2,7 +2,8 @@ import os
 import shutil
 import subprocess
 
-from omnic.conversion.exceptions import ConversionInputError, ConverterUnavailable
+from omnic.conversion.exceptions import (ConversionInputError,
+                                         ConverterUnavailable)
 from omnic.utils import filesystem
 
 

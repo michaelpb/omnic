@@ -172,6 +172,7 @@ class TestSettingsLoading:
                 'doesnotexist.txt',
             )
 
+
 class TestSettingsUtils:
     @use_settings(services=[])
     def test_overriding_with_decorator(self):
@@ -185,4 +186,3 @@ class TestSettingsUtils:
         with use_settings(services=[]):
             assert not settings.SERVICES
         assert settings.SERVICES
-

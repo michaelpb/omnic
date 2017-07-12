@@ -1,9 +1,7 @@
 import io
 import json
 import os
-import asyncio
 import tempfile
-from urllib.parse import urlencode
 
 import pytest
 
@@ -11,9 +9,9 @@ from omnic import singletons
 from omnic.builtin.converters.manifest import ManifestDownloader
 from omnic.types.detectors import DIRECTORY
 from omnic.types.resource import ForeignResource, TypedResource
+from omnic.utils import asynctools
 from omnic.worker.enums import Task
 from omnic.worker.testing import RunOnceWorker
-from omnic.utils import asynctools
 
 from .testing_utils import Magic
 
@@ -208,6 +206,7 @@ class TestAdmin(BaseUnitTest):
         assert b'Conversion' in data
         assert b'Graph Explorer' in data
 
+
 class TestBuiltinMediaServer(BaseUnitTest):
     @pytest.mark.asyncio
     async def test_media(self):
@@ -224,9 +223,9 @@ class TestBuiltinMediaServer(BaseUnitTest):
     @pytest.mark.asyncio
     async def test_media_just_checking_api(self, event_loop):
         # ensure that it correctly gets a ready = false
-        url='%s/test.png' % self.host
+        url = '%s/test.png' % self.host
         data = await self._get('/media/thumb.jpg:200x200/',
-            url=url, just_checking='true')
+                               url=url, just_checking='true')
         assert b'200 OK' in data
         assert b'application/json' in data
         data = b'{' + data.partition(b'{')[2]
@@ -273,6 +272,7 @@ class TestBuiltinMediaServer(BaseUnitTest):
         # ensure nothing more was added to queue
         q = self.worker.next_queue
         assert not q
+
 
 class TestViewerViews(BaseUnitTest):
     def setup_method(self, method):

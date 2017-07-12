@@ -1,8 +1,10 @@
 import functools
 import math
 
+
 class NoPath(ValueError):
     pass
+
 
 class DirectedGraph:
     '''

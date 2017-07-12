@@ -10,9 +10,9 @@ import pytest
 from omnic import singletons
 from omnic.conversion import converter
 from omnic.conversion.graph import ConverterGraph
-from omnic.utils.graph import NoPath
 from omnic.types.resource import TypedResource
 from omnic.types.typestring import TypeString
+from omnic.utils.graph import NoPath
 
 from .testing_utils import (AgreeableDetector, DummyDetector, Magic,
                             rm_tmp_files)
@@ -62,6 +62,7 @@ class ExecConverterWithOutputFilename(ExecConverter):
 class UnavailableConverter(converter.Converter):
     inputs = ['in2']
     outputs = ['out2']
+
     @staticmethod
     def configure():
         raise converter.ConverterUnavailable()
@@ -247,7 +248,7 @@ class TestBasicConverterGraph(ConverterTestBase):
         assert all(len(step) == 3 for step in results)  # each step should be 3
         assert all(
             isinstance(step[1], TypeString) and isinstance(step[2], TypeString)
-            for step in results # Ensure we are getting typestrings
+            for step in results  # Ensure we are getting typestrings
         )
         assert results[0][0] is ConvertMovieToImage
         assert results[1][0] is ConvertImageToThumb
@@ -343,4 +344,3 @@ class TestConverterGraphCustomPaths:
         assert results[2][0] is ConvertImageToThumb
         assert results[1][2].arguments == ('frame=2', )
         assert results[2][2].arguments == ('123x456', )
-
