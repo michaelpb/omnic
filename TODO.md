@@ -20,8 +20,7 @@ Blocking order:
       as pytest.async
     - [X] Write tests for ForegroundWorker
     - [X] Clean up ALL stray output when run with -s
-    - [ ] Fix tests on travis (likely an issue with the new system dependency
-      checks)
+    - [ ] Fix tests on travis: Weird issue with `await Task`
     - [ ] Fully wrap spawning / process stuff so ALL built-in converters can
       actually be tested against
 

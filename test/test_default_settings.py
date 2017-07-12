@@ -7,8 +7,10 @@ class TestSettingsBuiltinDefaults:
     '''
     @classmethod
     def setup_class(cls):
-        # Ensure no custom settings
-        singletons.settings.use_settings(object())
+        # Ensure no custom settings, except ignoring the system check
+        class config:
+            CONVERSION_SYSTEM_CHECK = False
+        singletons.settings.use_settings(config)
 
     @classmethod
     def teardown_class(cls):
@@ -17,6 +19,8 @@ class TestSettingsBuiltinDefaults:
 
     def test_default_settings_exist(self):
         s = singletons.settings
+        assert hasattr(s.default_settings_module, 'CONVERSION_SYSTEM_CHECK')
+        assert s.default_settings_module.CONVERSION_SYSTEM_CHECK
         assert hasattr(s, 'PATH_PREFIX') and s.PATH_PREFIX
         assert hasattr(s, 'PATH_GROUPING') and s.PATH_GROUPING
         assert hasattr(s, 'WEB_SERVER') and s.WEB_SERVER
