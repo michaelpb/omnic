@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import asyncio
 import tempfile
 from urllib.parse import urlencode
 
@@ -12,30 +13,48 @@ from omnic.types.detectors import DIRECTORY
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.worker.enums import Task
 from omnic.worker.testing import RunOnceWorker
+from omnic.utils import asynctools
 
 from .testing_utils import Magic
 
 
 class BaseUnitTest:
-    @classmethod
-    def setup_class(cls):
-        cls.host = '127.0.0.1:42101'
-        cls.tmp_path_prefix = tempfile.mkdtemp(prefix='omnic_tests_')
+    def setup_method(self, method):
+        self.host = '127.0.0.1:42101'
+        self.tmp_path_prefix = tempfile.mkdtemp(prefix='omnic_tests_')
 
         class FakeSettings:
-            PATH_PREFIX = cls.tmp_path_prefix
+            PATH_PREFIX = self.tmp_path_prefix
             PATH_GROUPING = None
-            ALLOWED_LOCATIONS = {cls.host}
+            ALLOWED_LOCATIONS = {self.host}
             LOGGING = None
         singletons.settings.use_settings(FakeSettings)
 
         singletons.workers.clear()
-        cls.worker = RunOnceWorker()
-        singletons.workers.append(cls.worker)
+        self.worker = RunOnceWorker()
+        singletons.workers.append(self.worker)
 
-    @classmethod
-    def teardown_class(cls):
+    def teardown_method(self, method):
+        try:
+            os.rmdir(self.tmp_path_prefix)
+        except OSError:
+            pass
         singletons.settings.use_previous_settings()
+
+    async def _get(self, path, **get_args):
+        class MockRequest:
+            args = {k: [v] for k, v in get_args.items()}
+        singletons.server.configure()
+        matches, view = singletons.server.route_path(path)
+        response = await view(MockRequest, *matches)
+        if hasattr(response, 'stream'):
+            response.transport = io.BytesIO()
+            await response.stream()
+            response.transport.seek(0)
+            data = response.transport.read()
+        else:
+            data = response.output()
+        return data
 
 
 class BaseRoutes:
@@ -75,58 +94,40 @@ class BaseRoutes:
         singletons.settings.use_previous_settings()
 
 
-class TestBuiltinTestRoutes(BaseRoutes):
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_images(self, event_loop):
-        # NOTE: For some reason due to incorrect event loops, etc, one can't
-        # use pytest.mark.asyncio, making the tests themselves async
-        await_async = event_loop.run_until_complete
-        response = self._get('/test/test.jpg')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert value == Magic.JPEG  # check its magic JPEG bytes
+class TestBuiltinTestRoutes(BaseUnitTest):
+    @pytest.mark.asyncio
+    async def test_images(self):
+        data = await self._get('/test/test.jpg')
+        assert b'200 OK' in data
+        assert Magic.JPEG in data
 
-        response = self._get('/test/test.png')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert value[:4] == Magic.PNG  # check its magic PNG bytes
+        data = await self._get('/test/test.png')
+        assert b'200 OK' in data
+        assert Magic.PNG in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_images_sync(self):
-        response = self._get('/test/test.jpg')
-        assert response.status == 200
-        response = self._get('/test/test.png')
-        assert response.status == 200
+    @pytest.mark.asyncio
+    async def test_misc_binary_sync(self):
+        data = await self._get('/test/empty.zip')
+        assert b'200 OK' in data
+        data = await self._get('/test/test.3ds')
+        assert b'200 OK' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_misc_binary_sync(self):
-        # For now we just skip testing magic bytes for these, since too
-        # too specific
-        response = self._get('/test/empty.zip')
-        assert response.status == 200
-        response = self._get('/test/test.3ds')
-        assert response.status == 200
+    @pytest.mark.asyncio
+    async def test_manifest_json(self):
+        data = await self._get('/test/manifest.json')
+        assert b'200 OK' in data
+        assert b'application/json' in data
+        assert b'{"files' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_manifest_json(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/test/manifest.json')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert value[:7] == b'{"files'
-
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_manifest_json_download(self, event_loop):
-        await_async = event_loop.run_until_complete
-
+    @pytest.mark.asyncio
+    async def test_manifest_json_download(self):
         # Download the manifest.json file from test server
         url = 'http://%s/test/manifest.json' % self.host
         f_res = ForeignResource(url)
-        response = self._get('/test/manifest.json')
-        assert response.status == 200
-        value = await_async(response.read())
+        data = await self._get('/test/manifest.json')
+        assert b'200 OK' in data
         with f_res.cache_open('wb') as fd:
-            fd.write(value)
+            fd.write(b'{' + data.partition(b'{')[2])
 
         # Set up resources
         in_resource = f_res.guess_typed()
@@ -135,14 +136,13 @@ class TestBuiltinTestRoutes(BaseRoutes):
 
         # Do actual convert (which should entail downloads)
         downloader = ManifestDownloader()
-        await_async(downloader.convert(in_resource, out_resource))
+        await downloader.convert(in_resource, out_resource)
 
         # Ensure everything got created
         files = set(os.listdir(out_resource.cache_path))
         assert files == {'some_zip.zip', 'test.3ds', 'test.jpg', 'test.png'}
 
     @pytest.mark.skip(':(')
-    @pytest.mark.skip('figuring out which ones are noisy')
     def test_manifest_json_download_with_testserver(self, event_loop):
         await_async = event_loop.run_until_complete
 
@@ -174,93 +174,71 @@ class TestBuiltinTestRoutes(BaseRoutes):
             assert f.read() == Magic.JPEG  # check its magic JPEG bytes
 
 
-class TestAdmin(BaseRoutes):
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_admin_page(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/admin/')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert b'Conversion' in value
-        assert b'Graph Explorer' in value
+class TestAdmin(BaseUnitTest):
+    @pytest.mark.asyncio
+    async def test_admin_page(self):
+        data = await self._get('/admin/')
+        assert b'302' in data
+        assert b'/conversion/' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_conversion_page(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/admin/conversion/')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert b'Conversion' in value
-        assert b'Graph Explorer' in value
+    @pytest.mark.asyncio
+    async def test_conversion_page(self):
+        data = await self._get('/admin/conversion/')
+        assert b'200 OK' in data
+        assert b'Conversion' in data
+        assert b'Graph Explorer' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_ajax_workers(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/admin/ajax/workers/')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert b'queue' in value
+    @pytest.mark.asyncio
+    async def test_ajax_workers(self):
+        data = await self._get('/admin/ajax/workers/')
+        assert b'200 OK' in data
+        assert b'queue' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_graph(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/admin/graph/')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert b'Conversion' in value
-        assert b'Graph Explorer' in value
+    @pytest.mark.asyncio
+    async def test_graph(self):
+        data = await self._get('/admin/graph/')
+        assert b'200 OK' in data
+        assert b'Conversion' in data
+        assert b'Graph Explorer' in data
 
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_subgraph(self, event_loop):
-        await_async = event_loop.run_until_complete
-        response = self._get('/admin/graph/JPEG/')
-        assert response.status == 200
-        value = await_async(response.read())
-        assert b'Conversion' in value
-        assert b'Graph Explorer' in value
+    @pytest.mark.asyncio
+    async def test_subgraph(self):
+        data = await self._get('/admin/graph/JPEG/')
+        assert b'200 OK' in data
+        assert b'Conversion' in data
+        assert b'Graph Explorer' in data
 
-
-class TestBuiltinMediaServer(BaseRoutes):
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_media(self, event_loop):
-        # NOTE: For some reason due to incorrect event loops, etc, one can't
-        # use pytest.mark.asyncio, making the tests themselves async
-        await_async = event_loop.run_until_complete
-
-        # reverse test.png route
-        qs = '?%s' % urlencode({'url': '%s/test.png' % self.host})
-        response = self._get('/media/thumb.jpg:200x200/%s' % qs)
-
-        # ensure that it gave back the placeholder
-        value = await_async(response.read())
-        assert response.status == 200
-        assert response.headers['Content-Type'] == 'image/png'
-        assert value[:4] == Magic.PNG  # check its magic PNG bytes
-        self._do_check_enqueued(await_async)
-
-    @pytest.mark.skip('figuring out which ones are noisy')
-    def test_media_just_checking_api(self, event_loop):
-        # NOTE: For some reason due to incorrect event loops, etc, one can't
-        # use pytest.mark.asyncio, making the tests themselves async
-        await_async = event_loop.run_until_complete
-
+class TestBuiltinMediaServer(BaseUnitTest):
+    @pytest.mark.asyncio
+    async def test_media(self):
         # reverse test.png route
         url = '%s/test.png' % self.host
-        qs = '?%s' % urlencode({
-            'url': url,
-            'just_checking': 'y',
-        })
+        data = await self._get('/media/thumb.jpg:200x200/', url=url)
 
+        # ensure that it gave back the placeholder
+        assert b'200 OK' in data
+        assert b'image/png' in data
+        assert Magic.PNG in data  # check its magic PNG bytes
+        await self._do_check_enqueued()
+
+    @pytest.mark.asyncio
+    async def test_media_just_checking_api(self, event_loop):
         # ensure that it correctly gets a ready = false
-        response = self._get('/media/thumb.jpg:200x200/%s' % qs)
-        value = await_async(response.read()).decode('utf-8')
-        assert response.status == 200
-        assert response.headers['Content-Type'] == 'application/json'
-        assert json.loads(value) == {'url': 'http://%s' % url, 'ready': False}
-        self._do_check_enqueued(await_async)
+        url='%s/test.png' % self.host
+        data = await self._get('/media/thumb.jpg:200x200/',
+            url=url, just_checking='true')
+        assert b'200 OK' in data
+        assert b'application/json' in data
+        data = b'{' + data.partition(b'{')[2]
+        assert json.loads(data.decode('utf8')) == {
+            'url': 'http://%s' % url,
+            'ready': False,
+        }
+        await self._do_check_enqueued()
 
-    def _do_check_enqueued(self, await_async):
+    async def _do_check_enqueued(self):
         # Inspect whats been enqueued, ensure as expected
+        await asynctools.await_all()
         q = self.worker.next_queue
         assert q
         assert q[0]
@@ -271,7 +249,7 @@ class TestBuiltinMediaServer(BaseRoutes):
 
         # Run through queue... this should download the resource, and in
         # turn enqueue the remaining steps
-        await_async(self.worker.run_once())
+        await self.worker.run_once()
         q = self.worker.queue
         assert len(q) == 0
 
@@ -280,6 +258,9 @@ class TestBuiltinMediaServer(BaseRoutes):
         path = os.path.join(self.tmp_path_prefix, 'test.png')
         assert os.path.exists(path)
 
+        # Truly enqueue the remaining steps again
+        await asynctools.await_all()
+
         # TODO: not fully tested here, need to write after refactor of
         # 'enqueue' helper functions in server
         q = self.worker.next_queue
@@ -287,21 +268,20 @@ class TestBuiltinMediaServer(BaseRoutes):
         assert len(q) == 1
         assert q[0]
         assert q[0][0] == Task.CONVERT
-        await_async(self.worker.run_once())
+        await self.worker.run_once()
 
         # ensure nothing more was added to queue
         q = self.worker.next_queue
         assert not q
 
-
 class TestViewerViews(BaseUnitTest):
     def setup_method(self, method):
+        super().setup_method(method)
         from omnic.builtin.services.viewer import views
         singletons.server.configure()
         self.v = views
 
     @pytest.mark.asyncio
-    @pytest.mark.skip('figuring out which ones are noisy')
     async def test_viewers_js(self):
         # Get raw response of view
         r = (await self.v.viewers_js(None)).output()
@@ -325,7 +305,7 @@ class TestViewerViews(BaseUnitTest):
         # async vs sync w.r.t. tasks
         singletons.workers._tmp_do_hack_enqueue = True
         for coro in singletons.workers._tmp_hack_enqueued_coros:
-            print('coro!!!', coro)
+            # print('coro!!!', coro)
             await coro
         assert len(self.worker.queue) == 0
 
@@ -335,6 +315,7 @@ class TestViewerViews(BaseUnitTest):
 
 class TestMediaViews(BaseUnitTest):
     def setup_method(self, method):
+        super().setup_method(method)
         from omnic.builtin.services import media
         singletons.server.configure()
         self.v = media
@@ -346,7 +327,6 @@ class TestMediaViews(BaseUnitTest):
         self.ts = 'thumb.png:200x200'
 
     @pytest.mark.asyncio
-    @pytest.mark.skip('figuring out which ones are noisy')
     async def test_media_view_placeholder(self):
         # Check that we get a placeholder
         response = await self.v.media_route(self.request, self.ts)
@@ -359,7 +339,14 @@ class TestMediaViews(BaseUnitTest):
         assert Magic.PNG in r
 
     @pytest.mark.asyncio
-    @pytest.mark.skip('figuring out which ones are noisy')
+    async def test_media_view_routing(self):
+        # Check that we get a placeholder
+        data = await self._get('/media/thumb.png:200x200/', url=self.url)
+        assert b'200 OK' in data
+        assert b'image/png' in data
+        assert Magic.PNG in data
+
+    @pytest.mark.asyncio
     async def test_media_view_just_checking(self):
         # Check that we get a json
         self.request.args['just_checking'] = ['y']

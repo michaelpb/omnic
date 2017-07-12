@@ -77,7 +77,6 @@ class ConverterGraph:
         types_by_format = {_format(s): TypeString(s) for s in profile}
 
         # Determine full path. If profile was plural, add in extra steps
-        print('PROIFOE IN USE', profile)
         path = self.dgraph.shortest_path(str(in_), _format(profile[0]))
         path += profile[1:]
 

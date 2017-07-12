@@ -4,12 +4,46 @@ import requests
 from omnic import singletons
 
 from .testing_utils import Magic
+from omnic.config.utils import use_settings
 
+class FakeService:
+    SERVICE_NAME = 'testservice'
+    urls = {
+        'thing1/': 'thing1_route',
+        '<argument>/thing2': 'thing2_route',
+        'thing1/many/things/path': 'thing3_route',
+    }
+    def thing1_route():
+        pass
 
-class TestForkedTestingServer:
-    '''
-    Some simple tests of the forking test server
-    '''
+    def thing2_route():
+        pass
+
+    def thing3_route():
+        pass
+
+FAKE_SERVICES = [
+    'test.test_server.FakeService',
+]
+
+class TestServer:
+    @use_settings(services=FAKE_SERVICES)
+    def test_basic_path_routing(self):
+        matches, view = singletons.server.route_path('testservice/thing1')
+        assert view == FakeService.thing1_route
+        assert matches == []
+        matches, view = singletons.server.route_path('testservice/thing1/many/things/path')
+        assert view == FakeService.thing3_route
+        assert matches == []
+
+    @use_settings(services=FAKE_SERVICES)
+    def test_path_routing_with_arguments(self):
+        matches, view = singletons.server.route_path('testservice/matched/thing2')
+        assert view == FakeService.thing2_route
+        assert matches == ['matched']
+
+class BrokenTestForForkingServer:
+    # TODO Really should just remove this
 
     def setup_method(self, method):
         singletons.settings
