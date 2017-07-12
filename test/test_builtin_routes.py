@@ -55,43 +55,6 @@ class BaseUnitTest:
         return data
 
 
-class BaseRoutes:
-    def setup_method(self, method):
-        from omnic.server import runserver
-
-        self.host = '127.0.0.1:42101'
-        self.tmp_path_prefix = tempfile.mkdtemp()
-
-        class FakeSettings:
-            PATH_PREFIX = self.tmp_path_prefix
-            PATH_GROUPING = None
-            ALLOWED_LOCATIONS = {self.host}
-            LOGGING = None
-        singletons.settings.use_settings(FakeSettings)
-
-        self.app = runserver('ignored', 0, just_setup_app=True)
-
-        singletons.workers.clear()
-        self.worker = RunOnceWorker()
-        singletons.workers.append(self.worker)
-
-        # Disable all HTTP logging for sanic since it leaves open FDs and
-        # causes warnings galore
-        from sanic.config import LOGGING
-        LOGGING.clear()
-
-    def _get(self, *args, **kwargs):
-        kwargs.setdefault('debug', False)
-        kwargs.setdefault('gather_request', False)
-        kwargs.setdefault('server_kwargs', {
-            'log_config': None,
-        })
-        return self.app.test_client.get(*args, **kwargs)
-
-    def teardown_method(self, method):
-        singletons.settings.use_previous_settings()
-
-
 class TestBuiltinTestRoutes(BaseUnitTest):
     @pytest.mark.asyncio
     async def test_images(self):
@@ -314,44 +277,10 @@ class TestViewerViews(BaseUnitTest):
 
 
 class TestMediaViews(BaseUnitTest):
-    def setup_method(self, method):
-        super().setup_method(method)
-        from omnic.builtin.services import media
-        singletons.server.configure()
-        self.v = media
-        self.url = '%s/test.png' % self.host
-
-        class MockRequest:
-            args = {'url': [self.url]}
-        self.request = MockRequest
-        self.ts = 'thumb.png:200x200'
-
     @pytest.mark.asyncio
     async def test_media_view_placeholder(self):
-        # Check that we get a placeholder
-        response = await self.v.media_route(self.request, self.ts)
-        response.transport = io.BytesIO()
-        await response.stream()
-        response.transport.seek(0)
-        r = response.transport.read()
-        assert b'200 OK' in r
-        assert b'image/png' in r
-        assert Magic.PNG in r
-
-    @pytest.mark.asyncio
-    async def test_media_view_routing(self):
         # Check that we get a placeholder
         data = await self._get('/media/thumb.png:200x200/', url=self.url)
         assert b'200 OK' in data
         assert b'image/png' in data
         assert Magic.PNG in data
-
-    @pytest.mark.asyncio
-    async def test_media_view_just_checking(self):
-        # Check that we get a json
-        self.request.args['just_checking'] = ['y']
-        response = await self.v.media_route(self.request, self.ts)
-        r = response.output()
-        assert b'200 OK' in r
-        assert b'application/json' in r
-        assert b'false' in r
