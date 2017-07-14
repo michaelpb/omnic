@@ -77,12 +77,11 @@ class TestViewerNodePackageBuilder(BaseUnitTest):
             assert b'require("other_module")' in data
 
 
-def _get_resources(r1, r2):
-    url = 'http://test/url'
-    return (
-        TypedResource(url, TypeString(r1)),
-        TypedResource(url, TypeString(r2)),
-    )
+def _get_resources(*args):
+    return [
+        TypedResource('http://test.url/file', TypeString(typestr))
+        for typestr in args
+    ]
 
 class TestDocumentConverterCommands:
     def test_unoconv(self):
@@ -100,12 +99,15 @@ class TestDocumentConverterCommands:
 
     def test_imagemagick_page_rasterizer(self):
         in_resource, out_resource = _get_resources('PDF', 'PNG')
-        cmd = ImageMagickPageRasterizer().get_command(in_resource, out_resource)
+        conv = ImageMagickPageRasterizer()
+        cmd = conv.get_command(in_resource, out_resource)
         assert cmd == [
             'convert',
             in_resource.cache_path,
             '%s[0]' % out_resource.cache_path,
         ]
+        filename = conv.get_output_filename(in_resource, out_resource)
+        assert filename.endswith('/file-0.png')
 
 class TestVectorConverterCommands:
     def test_inkscape_converter(self):
