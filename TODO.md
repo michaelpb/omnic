@@ -28,7 +28,7 @@ Blocking order:
     - [X] Debug issue with `await Task()` on Python 3.6
 
 - [ ] Packaging + docs
-    - [ ] Clean up packaging and README.md
+    - [X] Clean up packaging and README.md
     - [ ] Delete docs directory until API stabilizes and I can flesh it out
 
 - [ ] Scaffolding
