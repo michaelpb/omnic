@@ -17,20 +17,14 @@ if sys.argv[-1] == 'test':
     os.system('py.test')
     sys.exit()
 
-readme = open('README.md').read()
-doclink = """
-Documentation
--------------
-
-The full documentation is at http://omnic.rtfd.org."""
-history = open('HISTORY.rst').read().replace('.. :changelog:', '')
+readme = open('README.rst').read()
 
 setup(
     name='omnic',
     version='0.1.0',
     description='Mostly stateless microservice framework for generating '
     'on-the-fly thumbs and previews of a wide variety of file types.',
-    long_description=readme + '\n\n' + doclink + '\n\n' + history,
+    long_description=readme,
     author='michaelb',
     author_email='michaelpb@gmail.com',
     url='https://github.com/michaelpb/omnic',
@@ -41,6 +35,10 @@ setup(
     include_package_data=True,
     scripts=['bin/omnic'],
     install_requires=[
+        'click',
+        'python-magic',
+        'aiohttp',
+        'async_timeout',
     ],
     license='GPL3',
     zip_safe=False,
