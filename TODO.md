@@ -25,9 +25,7 @@ Blocking order:
       spawn only in unit test for ExecConverter
         - [X] Add tests for ExecConverter
         - [X] Add tests for builtin converters (testing all methods)
-    - [ ] Fix tests on Travis
-        - [ ] Get local tox environ set up
-        - [ ] Debug issue with `await Task()` on Python 3.6
+    - [X] Debug issue with `await Task()` on Python 3.6
 
 - [ ] Packaging + docs
     - [ ] Clean up packaging and README.md
@@ -76,6 +74,19 @@ Blocking order:
     - [X] Document which packages needed for which builtin stuff
     - [ ] Build simple scaffolding
     - [X] Move requirements file to test dir
+
+
+- Git notes
+    - Adding git to conversion graph:
+        - Generalize concept of conversion to include ForeignResource ->
+          LocalResource
+        - Add 'GitForeignResource' that can be converted to folder, or a file
+          within that folder
+        - Conversion then gets git foreign resource at a particular hash and
+          translates that to a folder, which in turn can transform into a
+          particular file (caching correctly each step)
+    - Git viewer
+        - Do the 'Doc Write' strategy I came up to block page on HTML render
 
 - [ ] Create `MULTICONVERT` task type, and remove `FUNC`
 

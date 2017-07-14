@@ -46,11 +46,15 @@ setup(
     zip_safe=False,
     keywords='omnic',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GPL License',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3',
+        'Framework :: AsyncIO',
+        'Topic :: Multimedia :: Graphics :: Graphics Conversion',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: GPL License',
         'License :: OSI Approved :: '
         'GNU General Public License v3 or later (GPLv3+)',
     ],
