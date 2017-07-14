@@ -1,7 +1,7 @@
 from omnic.conversion import converter
 
 
-class NodeSdfToSvgConverter(converter.ExecConverter):
+class NodeSdfToSvgRenderer(converter.ExecConverter):
     inputs = [
         'SD',
         'SDF',
@@ -21,6 +21,7 @@ class NodeSdfToSvgConverter(converter.ExecConverter):
 
 
 class OpenBabelConverter(converter.ExecConverter):
+    # NOTE: All these input types are untested
     inputs = [
         'ABINIT',  # ABINIT Output Format
         'ACESOUT',  # ACES output format

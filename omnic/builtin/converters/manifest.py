@@ -9,6 +9,7 @@ from omnic.conversion import converter
 
 
 class ManifestDownloader(converter.Converter):
+    # TODO: Possibly switch to using binary system packages like curl?
     inputs = [
         str(MANIFEST_JSON),
     ]

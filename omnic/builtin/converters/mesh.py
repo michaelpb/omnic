@@ -62,6 +62,7 @@ class Jsc3dRenderer(converter.ExecConverter):
 
 
 class DimeConverter(converter.ExecConverter):
+    # NOTE: Untested
     # Uses DIME converter
     inputs = [
         'DXF',
@@ -82,7 +83,7 @@ class DimeConverter(converter.ExecConverter):
 
 
 class KabejaAutocadConverter(converter.ExecConverter):
-    # TODO Test
+    # NOTE: Untested
     # NOTE: Kabeja dies if there are spaces in the file name (yeap.... >_>),
     # need to add feature to converter base class to only have pretty/clean
     # filenames

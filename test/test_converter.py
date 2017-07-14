@@ -4,6 +4,7 @@ Tests for `converter` module.
 
 import os
 import tempfile
+from unittest.mock import patch, MagicMock
 
 import pytest
 
@@ -234,6 +235,41 @@ class TestExecConverter(ConverterTestBase):
         self.res2 = TypedResource(URL, TypeString('JPG'))
         self.converter = ExecConverterWithOutputFilename()
         self._check_convert()
+
+class TestExecConverterUnitTest:
+    class Subclass(converter.ExecConverter):
+        command = ['test', '$IN', '$OUT']
+
+    def _get_mocked_resource(self, ts):
+        res = TypedResource(URL, TypeString(ts))
+        res.cache_makedirs = MagicMock()
+        res.cache_path = 'test/path.%s' % ts
+        return res
+
+    def test_configure_failure(self):
+        shutil = {'which.return_value': None}
+        with patch('omnic.conversion.converter.shutil', **shutil):
+            with pytest.raises(converter.ConverterUnavailable):
+                self.Subclass.configure()
+
+    def test_configure_succeed(self):
+        shutil = {'which.return_value': '/bin/test'}
+        with patch('omnic.conversion.converter.shutil', **shutil):
+            self.Subclass.configure()
+
+    def test_convert_sync(self):
+        res1 = self._get_mocked_resource('input')
+        res2 = self._get_mocked_resource('output')
+        sb = self.Subclass()
+        info = {'run.return_value': '/bin/test'}
+        with patch('omnic.conversion.converter.subprocess', **info) as sp:
+            sb.convert_sync(res1, res2)
+        res1.cache_makedirs.assert_called_once_with()
+        res2.cache_makedirs.assert_called_once_with()
+        sp.run.assert_called_once_with(
+            ['test', 'test/path.input', 'test/path.output'],
+            cwd='test',
+        )
 
 
 class TestBasicConverterGraph(ConverterTestBase):

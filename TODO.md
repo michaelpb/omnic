@@ -20,12 +20,18 @@ Blocking order:
       as pytest.async
     - [X] Write tests for ForegroundWorker
     - [X] Clean up ALL stray output when run with -s
-    - [ ] Fix tests on travis: Weird issue with `await Task`
-    - [ ] Fully wrap spawning / process stuff so ALL built-in converters can
-      actually be tested against
+    - [X] ~Fully wrap spawning / process stuff so ALL built-in converters can
+      actually be tested against~ Better solution: Just test get_command, wrap
+      spawn only in unit test for ExecConverter
+        - [X] Add tests for ExecConverter
+        - [X] Add tests for builtin converters (testing all methods)
+    - [ ] Fix tests on Travis
+        - [ ] Get local tox environ set up
+        - [ ] Debug issue with `await Task()` on Python 3.6
 
 - [ ] Packaging + docs
     - [ ] Clean up packaging and README.md
+    - [ ] Delete docs directory until API stabilizes and I can flesh it out
 
 - [ ] Scaffolding
     - [ ] Very simple scaffolding to start new project

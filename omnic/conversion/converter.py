@@ -24,9 +24,9 @@ class Converter:
 
 
 class ExecConverter(Converter):
-    @staticmethod
-    def configure():
-        binary_path = shutil.which(self.command[0])
+    @classmethod
+    def configure(cls):
+        binary_path = shutil.which(cls.command[0])
         if not binary_path:
             raise ConverterUnavailable()
 

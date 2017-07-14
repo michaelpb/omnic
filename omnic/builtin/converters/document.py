@@ -36,8 +36,6 @@ class Unoconv(converter.ExecConverter):
 
         'application/msword',
         'application/vnd.oasis.opendocument.text',
-        # TODO: remove this
-        #'application/octet-stream',
     ]
 
     outputs = [
@@ -46,6 +44,7 @@ class Unoconv(converter.ExecConverter):
     ]
 
     command = [
+        # TODO Fix this, has to do with virtualenv issues
         '/usr/bin/python3',
         '/usr/bin/unoconv',
         '-f',
