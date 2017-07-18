@@ -78,7 +78,6 @@ Blocking order:
 - [ ] Fix setup.py packaging, set up pypi
     - [ ] Add to setup.py only the minimum needed packages
     - [X] Document which packages needed for which builtin stuff
-    - [ ] Build simple scaffolding
     - [X] Move requirements file to test dir
 
 
