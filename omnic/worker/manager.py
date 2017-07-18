@@ -16,8 +16,6 @@ class WorkerManager(list):
         # By default setup a single worker
         self.worker_class = singletons.settings.load('WORKER')
         self.append(self.worker_class())
-        self._tmp_hack_enqueued_coros = []
-        self._tmp_do_hack_enqueue = False
 
     def gather_run(self):
         '''
@@ -77,11 +75,7 @@ class WorkerManager(list):
         worker = self.pick_sticky(from_resource.url_string)
         args = (converter, from_resource, to_resource)
         coro = worker.enqueue(enums.Task.CONVERT, args)
-        if self._tmp_do_hack_enqueue:
-            # TODO delete this, once we remove this method
-            self._tmp_hack_enqueued_coros.append(coro)
-        else:
-            asyncio.ensure_future(coro)
+        asyncio.ensure_future(coro)
 
     async def async_enqueue_convert(self, converter, from_resource, to_resource):
         '''
