@@ -1,6 +1,6 @@
 __author__ = 'michaelb'
 __email__ = 'michaelpb@gmail.com'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 # flake8: noqa
 # Set up singleton system
