@@ -56,8 +56,6 @@ node_modules/
 
 default.sqlite3.db
 
-# User-uploaded media
-openlab/media/
 
 staticfiles/
 
@@ -67,3 +65,5 @@ tmp/
 
 # egg stuff
 omnic.egg-info/
+
+dist/

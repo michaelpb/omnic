@@ -29,10 +29,10 @@ Blocking order:
         - [X] Add tests for builtin converters (testing all methods)
     - [X] Debug issue with `await Task()` on Python 3.6
 
-- [ ] Packaging + docs
+- [X] Packaging + docs
     - [X] Clean up packaging and README.md
     - [X] Delete docs directory until API stabilizes and I can flesh it out
-    - [ ] Publish on PyPI, ensure installable + usable
+    - [X] Publish on PyPI, ensure installable + usable
 
 - [X] CLI commands
     - [X] Create CLI subcommand framework
@@ -75,8 +75,8 @@ Blocking order:
             - [ ] Types with multiple viewers (e.g. CSV) can be swapped with a
               tab interface
 
-- [ ] Fix setup.py packaging, set up pypi
-    - [ ] Add to setup.py only the minimum needed packages
+- [X] Fix setup.py packaging, set up pypi
+    - [X] Add to setup.py only the minimum needed packages
     - [X] Document which packages needed for which builtin stuff
     - [X] Move requirements file to test dir
 
