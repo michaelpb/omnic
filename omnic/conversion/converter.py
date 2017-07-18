@@ -75,7 +75,8 @@ class ExecConverter(Converter):
                 # Non absolute path, guess that its next to in_resource
                 base_path = os.path.dirname(in_resource.cache_path)
                 output_fn = os.path.join(base_path, output_fn)
-            os.rename(output_fn, out_resource.cache_path)
+            if os.path.exists(output_fn):
+                os.rename(output_fn, out_resource.cache_path)
         return result
 
 

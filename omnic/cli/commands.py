@@ -11,16 +11,16 @@ from omnic.conversion.utils import convert_local
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 
-# alias
+# aliases
+settings = singletons.settings
 cli = singletons.cli
-
 
 @cli.subcommand('Run web conversion microservice web-server')
 def runserver(args):
     # Get configuration from settings
-    host = singletons.settings.HOST
-    port = singletons.settings.PORT
-    debug = singletons.settings.DEBUG
+    host = settings.HOST
+    port = settings.PORT
+    debug = settings.DEBUG
     cli.print('Running server at http://%s:%s' % (host, port))
     if debug:
         cli.print('DEBUG MODE ON')
@@ -41,8 +41,6 @@ def runserver(args):
     ('--type', '-t'): {'help': 'Target type for type conversion'},
 })
 async def convert(args):
-    # Ensure settings gets setup so everything is imported
-    singletons.settings
     to_type = TypeString(args.type)
 
     for path in args.files:
@@ -77,3 +75,7 @@ def old_convert(file, type):
     except DirectedGraph.NoPath as e:
         print('ERROR: %s' % str(e))
     loop.close()
+
+def main():
+    action, args = cli.parse_args_to_action_args()
+    action(args)

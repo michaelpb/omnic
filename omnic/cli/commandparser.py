@@ -104,5 +104,4 @@ class CommandParser:
         kwargs['file'] = sys.stderr
         print(*args, **kwargs)
 
-
 singletons.register('cli', CommandParser)
