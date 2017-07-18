@@ -1,26 +1,23 @@
 '''
 Contains main entrypoint of all things Omni Converter
 '''
-import asyncio
 import os
 
-import click
-
 from omnic import singletons
+from omnic.cli import consts
 from omnic.conversion.utils import convert_local
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 
-# aliases
-settings = singletons.settings
-cli = singletons.cli
+cli = singletons.cli  # Alias
 
-@cli.subcommand('Run web conversion microservice web-server')
+
+@cli.subcommand('Run HTTP server and workers for on-the-fly conversions')
 def runserver(args):
     # Get configuration from settings
-    host = settings.HOST
-    port = settings.PORT
-    debug = settings.DEBUG
+    host = singletons.settings.HOST
+    port = singletons.settings.PORT
+    debug = singletons.settings.DEBUG
     cli.print('Running server at http://%s:%s' % (host, port))
     if debug:
         cli.print('DEBUG MODE ON')
@@ -38,11 +35,12 @@ def runserver(args):
         'help': 'Input files',
         'nargs': '+',
     },
-    ('--type', '-t'): {'help': 'Target type for type conversion'},
+    ('--type', '-t'): {
+        'help': 'Desired file type for result, in TypeString format',
+    },
 })
 async def convert(args):
     to_type = TypeString(args.type)
-
     for path in args.files:
         if not path.startswith('/'):
             path = os.path.abspath(path)
@@ -50,31 +48,22 @@ async def convert(args):
         try:
             await convert_local(path, to_type)
         except DirectedGraph.NoPath as e:
-            cli.print('ERROR: %s' % str(e))
+            cli.printerr('ERROR: %s' % str(e))
 
 
-@click.argument('file', required=True)
-@click.argument('type', required=True)
-def old_convert(file, type):
-    '''
-    Converts a single file to a given type
-    '''
-
+@cli.subcommand('Minimal scaffolding for a new project', {
+    'name': {'help': 'Name to be used for new project', 'nargs': 1},
+})
+def startproject(args):
     # Ensure settings gets setup so everything is imported
-    from omnic import singletons
-    singletons.settings
-
-    path = file
-    to_type = TypeString(type)
+    path = args.name[0]
+    args.name[0]
     if not path.startswith('/'):
         path = os.path.abspath(path)
-    click.echo('Converting: {} -> {}'.format(path, to_type))
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(convert_local(path, to_type))
-    except DirectedGraph.NoPath as e:
-        print('ERROR: %s' % str(e))
-    loop.close()
+    os.mkdir(path)
+    with open(os.path.join(path, 'settings.py'), 'w+') as fd:
+        fd.write(consts.SETTINGS_PY)
+
 
 def main():
     action, args = cli.parse_args_to_action_args()

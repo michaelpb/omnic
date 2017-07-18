@@ -4,6 +4,7 @@ import textwrap
 
 import omnic
 from omnic import singletons
+from omnic.cli import consts
 from omnic.utils.asynctools import coerce_to_synchronous
 
 
@@ -15,7 +16,7 @@ class CommandParser:
     def gen_subcommand_help(self):
         return '\n'.join(
             '%s %s' % (
-                subcommand.ljust(10),
+                subcommand.ljust(15),
                 textwrap.shorten(description, width=61),
             )
             for subcommand, (description, action, opts) in self.subcommands.items()
@@ -24,12 +25,12 @@ class CommandParser:
     def parse_args(self, argv=None):
         parser = argparse.ArgumentParser(
             prog='omnic',
-            description='Generalized file conversion framework and web '
-            'micro-service.',
-            epilog='''
-                available subcommands:
-                %s
-            ''' % self.gen_subcommand_help(),
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description='Generalized file conversion framework, useful as '
+            'web micro-service.',
+            epilog=(
+                consts.CLI_HELP_EPILOG_TEMPLATE % self.gen_subcommand_help()
+            ),
         )
 
         parser.add_argument('-V', '--version',
@@ -103,5 +104,6 @@ class CommandParser:
     def printerr(self, *args, **kwargs):
         kwargs['file'] = sys.stderr
         print(*args, **kwargs)
+
 
 singletons.register('cli', CommandParser)

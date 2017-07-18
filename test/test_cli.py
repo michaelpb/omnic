@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 
+from omnic.cli import consts
 from omnic.cli.commandparser import CommandParser
 from omnic.types.typestring import TypeString
 from omnic.utils.asynctools import CoroutineMock
@@ -190,6 +191,14 @@ class TestCoreCommands:
         self.singletons.settings.DEBUG = False
         self.patchers.append(patcher)
 
+        patcher = patch('omnic.cli.commands.open')
+        self.open = patcher.start()
+        self.patchers.append(patcher)
+
+        patcher = patch('omnic.cli.commands.os.mkdir')
+        self.mkdir = patcher.start()
+        self.patchers.append(patcher)
+
     def teardown_method(self, method):
         for patcher in self.patchers:
             patcher.stop()
@@ -221,3 +230,16 @@ class TestCoreCommands:
         #        self.singletons.create_server_coro(),
         #        self.singletons.workers.gather_run(),
         #    )
+
+    def test_startproject_command(self):
+        class args:
+            name = 'testproj'
+        self.commands.startproject(args)
+        assert self.mkdir.mock_calls == [
+            call('/fake/to/testproj'),
+        ]
+        assert self.open.mock_calls[0] == call(
+            '/fake/to/testproj/settings.py', 'w+')
+        assert self.open.mock_calls[1] == call().__enter__()
+        assert self.open.mock_calls[2] == call(
+        ).__enter__().write(consts.SETTINGS_PY)

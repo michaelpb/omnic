@@ -29,7 +29,7 @@ PATH_PREFIX = '/var/tmp/omnic/'
 '''
 
 
-CLI_HELP_EPILOG_TEMPLATE ='''
+CLI_HELP_EPILOG_TEMPLATE = '''
 
 available subcommands:
 %s

@@ -34,13 +34,11 @@ Blocking order:
     - [X] Delete docs directory until API stabilizes and I can flesh it out
     - [ ] Publish on PyPI, ensure installable + usable
 
-- [ ] CLI commands
+- [X] CLI commands
     - [X] Create CLI subcommand framework
     - [X] Clean up convert command
     - [X] Remove click dependency
-    - [ ] Very simple scaffolding to start new project
-    - [ ] Scaffolding
-        - [ ] Very simple scaffolding to start new project
+    - [X] Very simple scaffolding to start new project
 
 - [ ] Get viewer demo running
     - [X] Add `just_checking` media API

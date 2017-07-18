@@ -2,7 +2,6 @@
 wheel==0.29.0
 
 # Hard dependencies:
-click==6.7
 python-magic==0.4.13
 aiohttp==2.1.0
 async_timeout==1.2.1
