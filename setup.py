@@ -4,9 +4,9 @@ import os
 import sys
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 
 if sys.argv[-1] == 'publish':
@@ -28,9 +28,7 @@ setup(
     author='michaelb',
     author_email='michaelpb@gmail.com',
     url='https://github.com/michaelpb/omnic',
-    packages=[
-        'omnic',
-    ],
+    packages=find_packages(),
     package_dir={'omnic': 'omnic'},
     include_package_data=True,
     scripts=['bin/omnic'],
