@@ -53,6 +53,8 @@ class ManifestDownloader(converter.Converter):
                     fd.close()
 
     async def _download_async(self, url, f_handle):
+        DOWNLOAD_TIMEOUT = 10
+        DOWNLOAD_CHUNK_SIZE = 1024
         with aiohttp.Timeout(DOWNLOAD_TIMEOUT):
             async with self.aiohttp.get(url) as response:
                 while True:

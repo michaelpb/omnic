@@ -10,12 +10,9 @@ def autodrain_worker():
     '''
     from omnic import singletons
     singletons.workers.clear()
-    #worker = RunOnceWorker()
     worker = ForegroundWorker()
     singletons.workers.append(worker)
     yield worker
-    # while worker.next_queue:
-    #    worker.
     singletons.clear('workers')
 
 

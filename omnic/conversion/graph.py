@@ -58,8 +58,8 @@ class ConverterGraph:
             for left, right in pair_looper(path):
                 pair = (_format(left), _format(right))
                 if pair not in self.converters:
-                    log.warning('Invalid conversion profile %s, unknown step %s' %
-                                (repr(key), repr(pair)))
+                    msg = 'Invalid conversion profile %s, unknown step %s'
+                    log.warning(msg % (repr(key), repr(pair)))
                     break
             else:
                 # If it did not break, then add to conversion profiles

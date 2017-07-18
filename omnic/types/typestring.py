@@ -1,5 +1,5 @@
 '''
-TypeString is a core class that extends mimetypes 
+TypeString is a core class that extends mimetypes
 '''
 import mimetypes
 

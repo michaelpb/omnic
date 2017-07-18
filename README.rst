@@ -147,9 +147,6 @@ Contributing
 Setting up a dev environment
 ----------------------------
 
-It's much simpler, at least on Linux-based operating systems, to run a
-dev environment without Docker, just using ``virtualenv``.
-
 1. Install Python 3, including ``pip`` and ``venv``:
 
    -  On Debian-based distros:
@@ -172,7 +169,7 @@ dev environment without Docker, just using ``virtualenv``.
 
    -  ``pip install -r requirements.txt``
 
-5. (Optional) Run test suite:
+5. Run test suite, should have 140+ tests pass:
 
    -  ``py.test``
 
@@ -256,5 +253,5 @@ Misc
 Documentation
 -------------
 
-The full documentation is at http://omnic.rtfd.org."""
+TODO: Add full docs at http://omnic.rtfd.org."""
 

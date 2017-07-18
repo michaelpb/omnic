@@ -41,7 +41,7 @@ def coerce_to_synchronous(func):
 
 class CoroutineMock(MagicMock):
     '''
-    MagicMock that yields a coroutine, for mocking async functions 
+    MagicMock that yields a coroutine, for mocking async functions
     '''
 
     def __await__(self, *args, **kwargs):

@@ -77,7 +77,7 @@ class BabelES6Compiler(converter.ExecConverter):
         out = str(out_resource.typestring)
 
         if 'dev' in out:
-            extra_arg.extend(['--source-maps', 'inline'])
+            extra_args.extend(['--source-maps', 'inline'])
 
         if 'es5' in out:
             # TODO XXX obviously broken hack: Must fix by adding the

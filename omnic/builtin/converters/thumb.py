@@ -29,7 +29,8 @@ class PILThumb(converter.Converter):
         with thumb_resource.cache_open('wb') as target:
             if thumb_resource.typestring.ts_format == 'thumb.jpg':
                 # Ensure it has no alpha before saving
-                if im.mode in ('RGBA', 'LA') or (im.mode == 'P' and 'transparency' in im.info):
+                p_mode_alpha = (im.mode == 'P' and 'transparency' in im.info)
+                if im.mode in ('RGBA', 'LA') or p_mode_alpha:
                     alpha = im.convert('RGBA').split()[-1]
                     no_alpha = Image.new("RGB", im.size, (255, 255, 255))
                     no_alpha.paste(im, mask=alpha)

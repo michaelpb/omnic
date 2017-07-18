@@ -14,12 +14,13 @@ class CommandParser:
         self._last_args = None
 
     def gen_subcommand_help(self):
+        commands = self.subcommands.items()
         return '\n'.join(
             '%s %s' % (
                 subcommand.ljust(15),
                 textwrap.shorten(description, width=61),
             )
-            for subcommand, (description, action, opts) in self.subcommands.items()
+            for subcommand, (description, action, opts) in commands
         )
 
     def parse_args(self, argv=None):
@@ -65,7 +66,7 @@ class CommandParser:
         action = self.subcommands[args.subcommand][1]
         return action, args
 
-    def register_subparser(self, action, name=None, description='', arguments={}):
+    def register_subparser(self, action, name, description='', arguments={}):
         '''
         Registers a new subcommand with a given function action.
 
@@ -86,7 +87,7 @@ class CommandParser:
         def decorator(func):
             self.register_subparser(
                 func,
-                name=func.__name__,
+                func.__name__,
                 description=description,
                 arguments=arguments,
             )

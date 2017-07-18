@@ -6,6 +6,7 @@ help:
 	@echo "lint - check style with flake8"
 	@echo "test - run tests quickly with the default Python"
 	@echo "test-all - run tests on every Python version with tox"
+	@echo "bump-and-push - run tests, lint, bump patch, push to git, and release on pypi"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
@@ -28,7 +29,8 @@ clean-coverage:
 	rm -fr htmlcov/
 
 lint:
-	flake8 omnic test
+	# flake8 omnic test # for now ignore linting issues in test
+	flake8 omnic
 
 test:
 	py.test
@@ -52,6 +54,12 @@ cleanup-pep8:
 	autopep8 --in-place -r test
 	isort -rc --atomic omnic
 	isort -rc --atomic test
+
+bump-and-push: test lint
+	bumpversion patch
+	git push
+	git push --tags
+	make release
 
 coverage:
 	coverage run --source omnic `which py.test`

@@ -35,7 +35,6 @@ setup(
     include_package_data=True,
     scripts=['bin/omnic'],
     install_requires=[
-        'click',
         'python-magic',
         'aiohttp',
         'async_timeout',
