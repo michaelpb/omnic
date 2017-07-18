@@ -4,12 +4,15 @@ import tempfile
 import pytest
 
 from omnic import singletons
+from omnic.builtin.converters.chemical import (NodeSdfToSvgRenderer,
+                                               OpenBabelConverter)
+from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
+                                               Unoconv)
+from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
+from omnic.builtin.converters.vector import (InkscapeConverter,
+                                             InkscapeRasterizer)
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
                                                       generate_index_js)
-from omnic.builtin.converters.document import Unoconv, ImageMagickPageRasterizer
-from omnic.builtin.converters.vector import InkscapeConverter, InkscapeRasterizer
-from omnic.builtin.converters.mesh import MeshLabConverter, Jsc3dRenderer
-from omnic.builtin.converters.chemical import NodeSdfToSvgRenderer, OpenBabelConverter
 from omnic.types.resource import ForeignBytesResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.worker.testing import RunOnceWorker
@@ -83,6 +86,7 @@ def _get_resources(*args):
         for typestr in args
     ]
 
+
 class TestDocumentConverterCommands:
     def test_unoconv(self):
         in_resource, out_resource = _get_resources('DOC', 'PDF')
@@ -108,6 +112,7 @@ class TestDocumentConverterCommands:
         ]
         filename = conv.get_output_filename(in_resource, out_resource)
         assert filename.endswith('/file-0.png')
+
 
 class TestVectorConverterCommands:
     def test_inkscape_converter(self):
@@ -175,4 +180,3 @@ class TestChemicalConverterCommands:
             in_resource.cache_path,
             '-O%s' % out_resource.cache_path,
         ]
-

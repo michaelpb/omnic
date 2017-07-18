@@ -2,6 +2,8 @@
 # ensure singletons etc get hooked up correctly
 AUTOLOAD = [
     'omnic.conversion.graph',
+    'omnic.cli.commandparser',
+    'omnic.cli.commands',
     'omnic.responses.placeholder',
     'omnic.web.server',
     'omnic.web.eventloop',
@@ -9,6 +11,10 @@ AUTOLOAD = [
     'omnic.worker.manager',
     'omnic.types.detectors',
 ]
+
+HOST = '127.0.0.1'
+PORT = 8080
+DEBUG = True
 
 WEB_SERVER = 'sanic'
 EVENT_LOOP = 'uvloop'

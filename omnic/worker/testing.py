@@ -1,5 +1,7 @@
-from omnic.worker.base import BaseWorker
 from contextlib import contextmanager
+
+from omnic.worker.base import BaseWorker
+
 
 @contextmanager
 def autodrain_worker():
@@ -12,9 +14,10 @@ def autodrain_worker():
     worker = ForegroundWorker()
     singletons.workers.append(worker)
     yield worker
-    #while worker.next_queue:
+    # while worker.next_queue:
     #    worker.
     singletons.clear('workers')
+
 
 class RunOnceWorker(BaseWorker):
     '''

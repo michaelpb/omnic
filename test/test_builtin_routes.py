@@ -279,4 +279,3 @@ class TestViewerViews(BaseUnitTest):
 
         q = self.worker.next_queue
         assert len(q) == 5  # five steps?
-

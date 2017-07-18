@@ -8,10 +8,10 @@ from types import ModuleType
 from omnic.config import default_settings
 from omnic.config.exceptions import ConfigurationError
 
-
 # Useful during debugging to force all logging enabled, even when tests silence
 # logging
 _FORCE_PREVENT_LOGGING_DISABLE = False
+
 
 class SettingsManager:
     '''
@@ -93,7 +93,7 @@ class SettingsManager:
         '''
         value = getattr(self, key)
         if default is not None:
-            loader = lambda path: self.load_path_with_default(path, default)
+            def loader(path): return self.load_path_with_default(path, default)
         else:
             loader = self.load_path
         if isinstance(value, dict):

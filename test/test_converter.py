@@ -4,17 +4,17 @@ Tests for `converter` module.
 
 import os
 import tempfile
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from omnic import singletons
+from omnic.config.utils import use_settings
 from omnic.conversion import converter
 from omnic.conversion.graph import ConverterGraph
 from omnic.types.resource import TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import NoPath
-from omnic.config.utils import use_settings
 
 from .testing_utils import (AgreeableDetector, DummyDetector, Magic,
                             rm_tmp_files)
@@ -235,6 +235,7 @@ class TestExecConverter(ConverterTestBase):
         self.res2 = TypedResource(URL, TypeString('JPG'))
         self.converter = ExecConverterWithOutputFilename()
         self._check_convert()
+
 
 class TestExecConverterUnitTest:
     class Subclass(converter.ExecConverter):

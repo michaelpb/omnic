@@ -5,10 +5,11 @@ Tests for `worker` module.
 import pytest
 
 from omnic import singletons
-from omnic.worker.base import BaseWorker
 from omnic.worker.aioworker import AioWorker
+from omnic.worker.base import BaseWorker
 from omnic.worker.enums import Task
 from omnic.worker.testing import ForegroundWorker, autodrain_worker
+
 from .testing_utils import MockAioQueue, MockWorker
 
 
@@ -83,6 +84,7 @@ class TestForegroundWorker(WorkerTestBase):
     @pytest.mark.asyncio
     async def test_worker_decorator(self):
         self.called = 0
+
         def fake_func(*args):
             assert args == (1 + self.called, 2 + self.called, 3 + self.called)
             self.called += 1
