@@ -233,7 +233,7 @@ class TestCoreCommands:
 
     def test_startproject_command(self):
         class args:
-            name = 'testproj'
+            name = ['testproj']
         self.commands.startproject(args)
         assert self.mkdir.mock_calls == [
             call('/fake/to/testproj'),
