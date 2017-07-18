@@ -1,5 +1,3 @@
-XXX TODO In progress: Finish CLI interface, port runserver etc to it
-
 # Next steps
 
 Blocking order:
@@ -32,13 +30,17 @@ Blocking order:
 - [X] Packaging + docs
     - [X] Clean up packaging and README.md
     - [X] Delete docs directory until API stabilizes and I can flesh it out
-    - [X] Publish on PyPI, ensure installable + usable
+    - [X] Publish on PyPI
 
 - [X] CLI commands
     - [X] Create CLI subcommand framework
     - [X] Clean up convert command
     - [X] Remove click dependency
     - [X] Very simple scaffolding to start new project
+
+- [ ] Fix packaging
+    - [ ] Include all python packages, exclude tests
+    - [ ] Include JS and HTML dependencies
 
 - [ ] Get viewer demo running
     - [X] Add `just_checking` media API
