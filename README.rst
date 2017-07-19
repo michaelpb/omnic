@@ -35,7 +35,7 @@ You likely will want to install a few more python dependencies
 
 ::
 
-    pip3 install sanic pillow jinja2 requests
+    pip3 install sanic pillow jinja2 uvloop
 
 Depending on your needs, you will probably want to install a variety of
 other system-level package conversion programs. This might include:
