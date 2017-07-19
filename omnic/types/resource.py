@@ -3,7 +3,10 @@ import os
 import shutil
 from urllib.parse import urlparse
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from omnic import singletons
 from omnic.utils.iters import group_by
@@ -99,6 +102,8 @@ class ForeignResource(Resource):
         return self.url_path_basename
 
     def download(self):
+        if requests is None:
+            raise RuntimeError('requests is not installed')
         req = requests.get(self.url_string, stream=True)
         with self.cache_open('wb') as f:
             shutil.copyfileobj(req.raw, f)
