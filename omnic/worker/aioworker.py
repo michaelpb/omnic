@@ -46,3 +46,10 @@ class AioWorker(BaseWorker):
             return False
         self.converting_resources.add(key)
         return True
+
+    async def check_multiconvert(self, url_string, to_type):
+        key = (url_string, to_type)
+        if key in self.multiconverting_resources:
+            return False
+        self.converting_resources.add(key)
+        return True

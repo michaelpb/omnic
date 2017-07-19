@@ -3,8 +3,8 @@ import logging
 import aiohttp
 
 from omnic import singletons
-
-from .enums import Task
+from omnic.worker import tasks
+from omnic.worker.enums import Task
 
 log = logging.getLogger()
 
@@ -53,6 +53,11 @@ class BaseWorker:
                     log.debug('Already converting %s' % repr(args))
                     continue
 
+            elif task_type == Task.MULTICONVERT:
+                if not await self.check_multiconvert(*args):
+                    log.debug('Already multiconverting %s' % repr(args))
+                    continue
+
             # Queue it up and run it
             self.stats_began += 1
             try:
@@ -67,6 +72,7 @@ class BaseWorker:
             Task.FUNC: self.run_func,
             Task.DOWNLOAD: self.run_download,
             Task.CONVERT: self.run_convert,
+            Task.MULTICONVERT: self.run_multiconvert,
         }.get(task_type)
 
     async def run_func(self, func, *func_args):
@@ -107,3 +113,12 @@ class BaseWorker:
             converter.convert_sync(in_resource, out_resource)
         else:
             raise ValueError('Invalid converter: %s' % repr(converter))
+
+    async def run_multiconvert(self, url_string, to_type):
+        '''
+        Enqueues in succession all conversions steps necessary to take the
+        given URL and convert it to to_type, storing the result in the cache
+        '''
+        async def enq_convert(*args):
+            await self.enqueue(Task.CONVERT, args)
+        await tasks.multiconvert(url_string, to_type, enq_convert)

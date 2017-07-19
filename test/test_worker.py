@@ -2,13 +2,18 @@
 Tests for `worker` module.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 
 from omnic import singletons
+from omnic.types.resource import TypedForeignResource, TypedResource
+from omnic.types.typestring import TypeString
 from omnic.worker.aioworker import AioWorker
 from omnic.worker.base import BaseWorker
 from omnic.worker.enums import Task
-from omnic.worker.testing import ForegroundWorker, autodrain_worker
+from omnic.worker.testing import (ForegroundWorker, RunOnceWorker,
+                                  autodrain_worker)
 
 from .testing_utils import MockAioQueue, MockWorker
 
@@ -42,6 +47,54 @@ class TestBaseWorker(WorkerTestBase):
         assert worker._get_method(Task.FUNC) == worker.run_func
         assert worker._get_method(Task.DOWNLOAD) == worker.run_download
         assert worker._get_method(Task.CONVERT) == worker.run_convert
+        assert worker._get_method(Task.MULTICONVERT) == worker.run_multiconvert
+
+
+class TestWorkerTasks:
+    def _step(self, num, a, b):
+        return MagicMock(name='con%i' % num), TypeString(a), TypeString(b)
+
+    def setup_method(self, method):
+        self.url_string = 'http://test/thing.avi'
+        self.patchers = []
+
+        patcher = patch('omnic.worker.tasks.singletons')
+        self.singletons = patcher.start()
+        self.singletons.converter_graph.find_path.return_value = [
+            self._step(0, 'AVI', 'MP4'),
+            self._step(1, 'MP4', 'PNG'),
+            self._step(2, 'PNG', 'JPG'),
+            self._step(3, 'JPG', 'thumb.jpg:123x456'),
+        ]
+        self.patchers.append(patcher)
+
+        patcher = patch('omnic.worker.tasks.ForeignResource')
+        self.foreign_resource = patcher.start()
+        self.patchers.append(patcher)
+
+    def teardown_method(self, method):
+        for patcher in self.patchers:
+            patcher.stop()
+
+    @pytest.mark.asyncio
+    async def test_run_multiconvert(self):
+        worker = RunOnceWorker()
+        await worker.run_multiconvert(self.url_string, 'thumb.jpg:123x456')
+        assert len(worker.next_queue) == 4
+        for task, args in worker.next_queue:
+            assert task == Task.CONVERT
+        assert worker.next_queue[0][1][1] == \
+            TypedForeignResource(self.url_string, TypeString('AVI'))
+        assert worker.next_queue[0][1][2] == \
+            TypedResource(self.url_string, TypeString('MP4'))
+        assert worker.next_queue[1][1][1] == \
+            TypedResource(self.url_string, TypeString('MP4'))
+        assert worker.next_queue[1][1][2] == \
+            TypedResource(self.url_string, TypeString('PNG'))
+        assert worker.next_queue[3][1][1] == \
+            TypedResource(self.url_string, TypeString('JPG'))
+        assert worker.next_queue[3][1][2] == \
+            TypedResource(self.url_string, TypeString('thumb.jpg:123x456'))
 
 
 class TestAsyncioWorker(WorkerTestBase):

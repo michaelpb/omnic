@@ -90,6 +90,11 @@ class Resource:
 
 
 class ForeignResource(Resource):
+    '''
+    A resource from a foreign source (e.g. a URL), which does not have a known
+    type, and may or may not be downloaded.
+    '''
+
     def _get_basename(self):
         return self.url_path_basename
 
@@ -110,6 +115,11 @@ class ForeignResource(Resource):
 
 
 class TypedForeignResource(Resource):
+    '''
+    A resource freshly downloaded from a foreign source that has a known
+    (guessed) type.
+    '''
+
     def __init__(self, url, typestring):
         self.typestring = typestring
         super().__init__(url)
@@ -132,9 +142,18 @@ class TypedForeignResource(Resource):
 
 
 class TypedResource(Resource):
-    def __init__(self, url, typestring):
+    '''
+    A resource that is or will be the result of a conversion, thus having
+    a known type.
+    '''
+
+    def __init__(self, url_string, typestring):
         self.typestring = typestring
-        super().__init__(url)
+        super().__init__(url_string)
+
+    def __repr__(self):
+        name = type(self).__name__
+        return '%s(%s, %s)' % (name, repr(self.url_string), repr(self.typestring))
 
     def _get_basename(self):
         return self.typestring.modify_basename(self.url_path_basename)
@@ -144,6 +163,13 @@ class TypedResource(Resource):
 
 
 class TypedLocalResource(Resource):
+    '''
+    A resource which is treated like a foreign resource, but originates from a
+    path instead of an URL.
+
+    Used in CLI conversions.
+    '''
+
     def __init__(self, path, typestring=None):
         self.path = path
 
@@ -171,6 +197,13 @@ class TypedLocalResource(Resource):
 
 
 class TypedPathedLocalResource(TypedLocalResource):
+    '''
+    Like a TypedLocalResource, but is also opinionated about where it should be
+    stored, typically somewhere other than the cache.
+
+    Used in CLI conversions.
+    '''
+
     def __init__(self, path, typestring):
         super().__init__(path, typestring)
         self.cache_path = os.path.join(
@@ -184,6 +217,10 @@ class TypedPathedLocalResource(TypedLocalResource):
 
 
 class ForeignBytesResource(ForeignResource):
+    '''
+    A foreign resource that consists of a string of bytes instead of a URL.
+    '''
+
     def __init__(self, data, extension=None, basename='source'):
         self.data = data
         ext = '.%s' % extension if extension else ''

@@ -385,6 +385,10 @@ generated from them should have much more cautious client-side cache headers.
 - [ ] Turn on `_FORCE_PREVENT_LOGGING_DISABLE` and clean up warnings in tests
   (since some indicate some messy stuff being left behind during the tests)
 
+- [ ] Refactor worker manager, worker, and task system (right now has a lot of
+  repetitive code)
+    - [ ] Make tasks be definable independent of ENUM / custom methods
+
 # Performance and stability improvements
 
 - [X] Performance hack: Have a "sticky queue" system where resources go into

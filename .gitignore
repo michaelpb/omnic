@@ -67,3 +67,4 @@ tmp/
 omnic.egg-info/
 
 dist/
+build/
