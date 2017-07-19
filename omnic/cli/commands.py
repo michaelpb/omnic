@@ -37,6 +37,7 @@ def runserver(args):
     },
     ('--type', '-t'): {
         'help': 'Desired file type for result, in TypeString format',
+        'required': True,
     },
 })
 async def convert(args):
