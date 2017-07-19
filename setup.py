@@ -30,7 +30,7 @@ setup(
     url='https://github.com/michaelpb/omnic',
     packages=find_packages(),
     package_dir={'omnic': 'omnic'},
-    include_package_data=True,
+    # include_package_data=True,
     scripts=['bin/omnic'],
     install_requires=[
         'python-magic',

@@ -153,7 +153,8 @@ class TypedResource(Resource):
 
     def __repr__(self):
         name = type(self).__name__
-        return '%s(%s, %s)' % (name, repr(self.url_string), repr(self.typestring))
+        tup = (name, repr(self.url_string), repr(self.typestring))
+        return '%s(%s, %s)' % tup
 
     def _get_basename(self):
         return self.typestring.modify_basename(self.url_path_basename)

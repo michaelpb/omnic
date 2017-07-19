@@ -1,6 +1,5 @@
 from omnic import singletons
 from omnic.types.resource import (ForeignResource, TypedForeignResource,
-                                  TypedLocalResource, TypedPathedLocalResource,
                                   TypedResource)
 from omnic.types.typestring import TypeString
 
