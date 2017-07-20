@@ -18,6 +18,7 @@ class SettingsManager:
     The `settings' singleton, used to house project settings, including logic
     to default to default settings for unset settings.
     '''
+    Error = ConfigurationError
 
     def __init__(self):
         # Initialize main two properties

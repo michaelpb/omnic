@@ -6,14 +6,18 @@ from omnic.worker.base import BaseWorker
 @contextmanager
 def autodrain_worker():
     '''
-    Context manager to temporarily override settings
+    Context manager to temporarily override worker list and only provide a
+    single ForegroundWorker, during which time it will execute everything
+    in the foreground (e.g. autodraining)
     '''
     from omnic import singletons
+    original_worker_list = list(singletons.workers)
     singletons.workers.clear()
     worker = ForegroundWorker()
     singletons.workers.append(worker)
     yield worker
-    singletons.clear('workers')
+    singletons.workers.clear()
+    singletons.workers.extend(original_worker_list)
 
 
 class RunOnceWorker(BaseWorker):

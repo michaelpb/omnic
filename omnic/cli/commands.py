@@ -9,6 +9,7 @@ from omnic.conversion.utils import convert_local
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
+from omnic.worker.testing import autodrain_worker
 
 cli = singletons.cli  # Alias
 
@@ -66,15 +67,12 @@ def startproject(args):
         fd.write(consts.SETTINGS_PY)
 
 
-@cli.subcommand('Clears cache for one or more given foreign resource URLs', {
-    'urls': {'help': 'URLs for foreign resource to clear', 'nargs': '+'},
-    ('--type', '-t'): {
-        'help': 'If specified, only target cache of given filetype',
-        'default': None,
-    },
-})
-def clearcache(args):
-    def _clear_cache(url):
+def _clear_cache(url, ts=None):
+    '''
+    Helper method used by precache and clearcache that clears the cache of
+    a given URL and type
+    '''
+    if ts is None:
         # Clears an entire ForeignResource cache
         res = ForeignResource(url)
         if not os.path.exists(res.cache_path_base):
@@ -84,8 +82,7 @@ def clearcache(args):
         cli.print('%s: clearing ALL at %s'
                   % (url, res.cache_path_base))
         res.cache_remove_all()
-
-    def _clear_cache_of_type(url, ts):
+    else:
         # Clears an entire ForeignResource cache
         res = TypedResource(url, ts)
         if not res.cache_exists():
@@ -99,11 +96,44 @@ def clearcache(args):
         else:
             res.cache_remove()
 
+
+@cli.subcommand('Clears cache for one or more given foreign resource URLs', {
+    'urls': {'help': 'URLs for foreign resource to clear', 'nargs': '+'},
+    ('--type', '-t'): {
+        'help': 'If specified, only target cache of given filetype',
+        'default': None,
+    },
+})
+def clearcache(args):
     for url in args.urls:
+        ts = None
         if args.type:
-            _clear_cache_of_type(url, TypeString(args.type))
-        else:
+            ts = TypeString(args.type)
+        _clear_cache(url, ts)
+
+
+@cli.subcommand('Precaches one or more foreign URL to given target type', {
+    'urls': {'help': 'URLs for foreign resource to clear', 'nargs': '+'},
+    ('--type', '-t'): {
+        'help': 'Desired file type to cache, in TypeString format',
+        'required': True,
+    },
+    ('--force', '-f'): {
+        'help': 'Clears cache first before attempting',
+        'action': 'store_true',
+    },
+})
+async def precache(args):
+    # singletons.settings  # Load settings
+    # singletons.workers  # Load ensure workers loaded
+    for url in args.urls:
+        to_type = args.type
+        if args.force:
+            cli.print('%s: force clearing' % url)
             _clear_cache(url)
+        cli.print('%s: precaching "%s"' % (url, to_type))
+        with autodrain_worker():
+            await singletons.workers.async_enqueue_multiconvert(url, to_type)
 
 
 def main():

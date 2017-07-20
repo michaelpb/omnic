@@ -57,9 +57,11 @@ class Resource:
         raise NotImplementedError()
 
     def path_grouping(self):
+        if singletons.settings.PATH_GROUPING is None:
+            return ['']
         if singletons.settings.PATH_GROUPING == 'MD5':
             return group_by(self.md5, 8)
-        return ['']
+        raise singletons.settings.Error('Invalid PATH_GROUPING')
 
     def cache_makedirs(self, subdir=None):
         '''

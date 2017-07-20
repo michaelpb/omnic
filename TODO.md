@@ -18,8 +18,8 @@ Blocking order:
     - [ ] Improve dev environ for JS
         - [X] `omnic clearcache http://foreign/resource/ --type=min.js`
             - [X] Without type it will clear entire cache
-        - [ ] `omnic precache http://foreign/resource/ --type=min.js`
-            - [ ] Optional `--force` which will do `clearcache` first
+        - [X] `omnic precache http://foreign/resource/ --type=min.js`
+            - [X] Optional `--force` which will do `clearcache` first
         - [ ] `omnic settings --viewers-js` -- outputs foreign
         - [ ] `make watch-js`
             - `VJS="$(omnic settings --viewers-js)"`

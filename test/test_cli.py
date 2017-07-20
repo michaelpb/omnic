@@ -260,6 +260,11 @@ class TestCacheCommands:
         urls = ['http://fake/foreign/resource']
         type = 'EXT'
 
+    class preargs:
+        urls = ['http://fake/foreign/resource']
+        type = 'EXT'
+        force = False
+
     def setup_method(self, method):
         from omnic.cli import commands
         self.commands = commands
@@ -311,4 +316,23 @@ class TestCacheCommands:
                 with patch('os.unlink') as unlink:
                     self.commands.clearcache(self.args_with_type)
         assert unlink.mock_calls == [call('/some/path/resource.ext')]
+        _check_silent(capsys)
+
+    @use_settings(path_prefix='/some/path/', path_grouping=None)
+    @pytest.mark.asyncio
+    async def test_precache_command(self, capsys):
+        # Wrap around magic mock to make async friendly
+        multic = MagicMock()
+
+        async def async_multic(*args, **kwargs):
+            multic(*args, **kwargs)
+
+        with patch('omnic.worker.tasks.multiconvert',
+                   new_callable=lambda: async_multic):
+            await self.commands.precache(self.preargs)
+        assert len(multic.mock_calls) == 1
+
+        # Ensure it calls the download attempt
+        first_two_args = ('http://fake/foreign/resource', 'EXT')
+        assert list(multic.mock_calls[0])[1][:2] == first_two_args
         _check_silent(capsys)

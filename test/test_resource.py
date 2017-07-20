@@ -10,6 +10,8 @@ import pytest
 import requests_mock
 
 from omnic import singletons
+from omnic.config.exceptions import ConfigurationError
+from omnic.config.utils import use_settings
 from omnic.types.resource import (CacheError, ForeignBytesResource,
                                   ForeignResource, TypedResource, URLError)
 from omnic.types.typestring import TypeString
@@ -230,3 +232,10 @@ class TestClearCache:
         with patch('shutil.rmtree') as mock:
             res.cache_remove_all()
         assert mock.mock_calls == [call(os.path.dirname(res.cache_path))]
+
+
+class TestCacheSettings:
+    @use_settings(path_grouping='INVALID')
+    def test_invalid_path_grouping(self):
+        with pytest.raises(ConfigurationError):
+            ForeignResource(URL)
