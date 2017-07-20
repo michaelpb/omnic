@@ -26,7 +26,7 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 clean-coverage:
-	rm -fr htmlcov/
+	rm -fr docs/htmlcov/
 
 lint:
 	# flake8 omnic test # for now ignore linting issues in test
@@ -65,8 +65,8 @@ coverage:
 	coverage run --source omnic `which py.test`
 	#coverage run `which py.test`
 	coverage report -m
-	coverage html
-	xdg-open htmlcov/index.html
+	coverage html -d ./docs/htmlcov/
+	xdg-open ./docs/htmlcov/index.html
 
 docs:
 	rm -f docs/omnic.rst

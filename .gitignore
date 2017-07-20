@@ -30,6 +30,7 @@ npm-debug.log*
 .coverage
 .tox
 htmlcov
+docs/htmlcov
 
 # Translations
 *.mo
