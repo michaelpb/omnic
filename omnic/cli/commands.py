@@ -6,8 +6,8 @@ import os
 from omnic import singletons
 from omnic.cli import consts
 from omnic.conversion.utils import convert_local
-from omnic.types.typestring import TypeString
 from omnic.types.resource import ForeignResource, TypedResource
+from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 
 cli = singletons.cli  # Alias
@@ -79,10 +79,10 @@ def clearcache(args):
         res = ForeignResource(url)
         if not os.path.exists(res.cache_path_base):
             cli.printerr('%s is not cached (looked at %s)'
-                % (url, res.cache_path_base))
+                         % (url, res.cache_path_base))
             return
         cli.print('%s: clearing ALL at %s'
-            % (url, res.cache_path_base))
+                  % (url, res.cache_path_base))
         res.cache_remove_all()
 
     def _clear_cache_of_type(url, ts):
@@ -90,10 +90,10 @@ def clearcache(args):
         res = TypedResource(url, ts)
         if not res.cache_exists():
             cli.printerr('%s is not cached for type %s (looked at %s)'
-                % (url, str(ts), res.cache_path))
+                         % (url, str(ts), res.cache_path))
             return
         cli.print('%s: clearing "%s" at %s'
-            % (url, str(ts), res.cache_path))
+                  % (url, str(ts), res.cache_path))
         if os.path.isdir(res.cache_path):
             res.cache_remove_as_dir()
         else:
@@ -104,6 +104,7 @@ def clearcache(args):
             _clear_cache_of_type(url, TypeString(args.type))
         else:
             _clear_cache(url)
+
 
 def main():
     action, args = cli.parse_args_to_action_args()

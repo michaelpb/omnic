@@ -3,13 +3,13 @@ import os
 import shutil
 from urllib.parse import urlparse
 
+from omnic import singletons
+from omnic.utils.iters import group_by
+
 try:
     import requests
 except ImportError:
     requests = None
-
-from omnic import singletons
-from omnic.utils.iters import group_by
 
 
 class Resource:

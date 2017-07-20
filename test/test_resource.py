@@ -4,10 +4,10 @@ Tests for `resource` module.
 import hashlib
 import os
 import tempfile
+from unittest.mock import call, patch
 
 import pytest
 import requests_mock
-from unittest.mock import call, patch
 
 from omnic import singletons
 from omnic.types.resource import (CacheError, ForeignBytesResource,
@@ -211,6 +211,7 @@ class TestForeignBytesResource:
         typed = self.res.guess_typed()
         assert str(typed.typestring) == 'image/jpeg'
 
+
 class TestClearCache:
     def test_remove_cache(self):
         res = TypedResource(URL, TypeString('image/gif'))
@@ -229,4 +230,3 @@ class TestClearCache:
         with patch('shutil.rmtree') as mock:
             res.cache_remove_all()
         assert mock.mock_calls == [call(os.path.dirname(res.cache_path))]
-

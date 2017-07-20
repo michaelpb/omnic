@@ -1,18 +1,20 @@
 import re
 from unittest.mock import MagicMock, call, patch
-from omnic.config.utils import use_settings
 
 import pytest
 
 from omnic.cli import consts
 from omnic.cli.commandparser import CommandParser
+from omnic.config.utils import use_settings
 from omnic.types.typestring import TypeString
 from omnic.utils.asynctools import CoroutineMock
+
 
 def _check_silent(capsys):
     out, err = capsys.readouterr()
     assert err == ''
     assert out == ''
+
 
 class TestCommandParser:
     def _check_help(self, info):
@@ -243,6 +245,7 @@ class TestCoreCommands:
         assert self.open.mock_calls[1] == call().__enter__()
         assert self.open.mock_calls[2] == call(
         ).__enter__().write(consts.SETTINGS_PY)
+
 
 class TestCacheCommands:
     class args:
