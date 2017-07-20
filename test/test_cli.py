@@ -1,5 +1,6 @@
 import re
 from unittest.mock import MagicMock, call, patch
+from omnic.config.utils import use_settings
 
 import pytest
 
@@ -8,13 +9,12 @@ from omnic.cli.commandparser import CommandParser
 from omnic.types.typestring import TypeString
 from omnic.utils.asynctools import CoroutineMock
 
+def _check_silent(capsys):
+    out, err = capsys.readouterr()
+    assert err == ''
+    assert out == ''
 
 class TestCommandParser:
-    def _check_silent(self, capsys):
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
-
     def _check_help(self, info):
         assert 'testcmd1' in info
         assert 'testcmd2' in info
@@ -55,7 +55,7 @@ class TestCommandParser:
 
         args = p.parse_args(['testcmd1'])
         assert args.subcommand == 'testcmd1'
-        self._check_silent(capsys)
+        _check_silent(capsys)
 
     def test_parse_args_with_subcommand_with_args(self, capsys):
         p = CommandParser()
@@ -66,7 +66,7 @@ class TestCommandParser:
         args = p.parse_args(['testcmd1', '-f'])
         assert hasattr(args, 'force')
         assert args.force
-        self._check_silent(capsys)
+        _check_silent(capsys)
 
     def test_parse_args_to_action_args(self, capsys):
         p = CommandParser()
@@ -77,7 +77,7 @@ class TestCommandParser:
         action, args = p.parse_args_to_action_args(['testcmd1', '-f'])
         assert action is testcmd1
         assert args.force
-        self._check_silent(capsys)
+        _check_silent(capsys)
 
     def test_gen_subcommand_help(self, capsys):
         p = CommandParser()
@@ -138,7 +138,7 @@ class TestCommandParser:
             pass
         p.parse_args(['testcmd1'])
         p.print('test')
-        self._check_silent(capsys)
+        _check_silent(capsys)
 
         # Check stderr
         p.printerr('test')
@@ -195,7 +195,7 @@ class TestCoreCommands:
         self.open = patcher.start()
         self.patchers.append(patcher)
 
-        patcher = patch('omnic.cli.commands.os.mkdir')
+        patcher = patch('os.mkdir')
         self.mkdir = patcher.start()
         self.patchers.append(patcher)
 
@@ -243,3 +243,69 @@ class TestCoreCommands:
         assert self.open.mock_calls[1] == call().__enter__()
         assert self.open.mock_calls[2] == call(
         ).__enter__().write(consts.SETTINGS_PY)
+
+class TestCacheCommands:
+    class args:
+        urls = ['http://fake/foreign/resource']
+        type = None
+
+    class args_multiple:
+        urls = ['http://foreign/resource', 'http://foreign/resource2']
+        type = None
+
+    class args_with_type:
+        urls = ['http://fake/foreign/resource']
+        type = 'EXT'
+
+    def setup_method(self, method):
+        from omnic.cli import commands
+        self.commands = commands
+
+    @use_settings(path_prefix='/some/path/', path_grouping=None)
+    def test_clearcache_command(self, capsys):
+        # Does not exist
+        with patch('os.path.exists') as exists:
+            exists.return_value = False
+            with patch('shutil.rmtree') as rmtree:
+                self.commands.clearcache(self.args)
+        assert rmtree.mock_calls == []
+        out, err = capsys.readouterr()
+        assert self.args.urls[0] in err
+        assert 'not' in err
+        assert out == ''
+
+        # Does exists
+        with patch('os.path.exists') as exists:
+            exists.return_value = True
+            with patch('shutil.rmtree') as rmtree:
+                self.commands.clearcache(self.args)
+        assert rmtree.mock_calls == [call('/some/path/')]
+        _check_silent(capsys)
+
+        # Does exist multiple
+        with patch('os.path.exists') as exists:
+            exists.return_value = True
+            with patch('shutil.rmtree') as rmtree:
+                self.commands.clearcache(self.args_multiple)
+        assert rmtree.mock_calls == [call('/some/path/'), call('/some/path/')]
+        _check_silent(capsys)
+
+        # Does exist with filetype directory
+        with patch('os.path.exists') as exists:
+            exists.return_value = True
+            with patch('os.path.isdir') as isdir:
+                isdir.return_value = True
+                with patch('shutil.rmtree') as rmtree:
+                    self.commands.clearcache(self.args_with_type)
+        assert rmtree.mock_calls == [call('/some/path/resource.ext')]
+        _check_silent(capsys)
+
+        # Does exist with filetype file
+        with patch('os.path.exists') as exists:
+            exists.return_value = True
+            with patch('os.path.isdir') as isdir:
+                isdir.return_value = False
+                with patch('os.unlink') as unlink:
+                    self.commands.clearcache(self.args_with_type)
+        assert unlink.mock_calls == [call('/some/path/resource.ext')]
+        _check_silent(capsys)

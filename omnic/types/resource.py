@@ -16,6 +16,14 @@ class Resource:
     '''
     Abstract base class for Resources
     '''
+    __slots__ = (
+        # Slots used by all Resources
+        'url', 'url_string', 'url_path_split', 'url_path_basename',
+        'basename', 'md5', 'cache_path_base', 'cache_path'
+
+        # Optional slots used by subclasses
+        'typestring', 'foreign', 'data',
+    )
 
     def __init__(self, url, is_url=True):
         # Setup props
@@ -35,9 +43,13 @@ class Resource:
         self.md5 = hashlib.md5(self.url_string.encode('utf-8')).hexdigest()
 
         # Generate filepath
-        self.cache_path = os.path.join(
+        self.cache_path_base = os.path.join(
             singletons.settings.PATH_PREFIX,
             *self.path_grouping(),
+        )
+
+        self.cache_path = os.path.join(
+            self.cache_path_base,
             self.basename,
         )
 
@@ -74,6 +86,12 @@ class Resource:
 
     def cache_exists(self):
         return os.path.exists(self.cache_path)
+
+    def cache_remove(self):
+        return os.unlink(self.cache_path)
+
+    def cache_remove_as_dir(self):
+        return shutil.rmtree(self.cache_path)
 
     def __repr__(self):
         return '%s(%s)' % (type(self).__name__, repr(self.url_string))
@@ -117,6 +135,9 @@ class ForeignResource(Resource):
             raise CacheError('Cannot guess type without first downloaded')
         ts = singletons.detectors.detect(self.cache_path)
         return TypedForeignResource(self.url_string, ts)
+
+    def cache_remove_all(self):
+        return shutil.rmtree(self.cache_path_base)
 
 
 class TypedForeignResource(Resource):

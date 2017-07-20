@@ -7,6 +7,7 @@ from omnic import singletons
 from omnic.cli import consts
 from omnic.conversion.utils import convert_local
 from omnic.types.typestring import TypeString
+from omnic.types.resource import ForeignResource, TypedResource
 from omnic.utils.graph import DirectedGraph
 
 cli = singletons.cli  # Alias
@@ -56,7 +57,6 @@ async def convert(args):
     'name': {'help': 'Name to be used for new project', 'nargs': 1},
 })
 def startproject(args):
-    # Ensure settings gets setup so everything is imported
     path = args.name[0]
     args.name[0]
     if not path.startswith('/'):
@@ -65,6 +65,45 @@ def startproject(args):
     with open(os.path.join(path, 'settings.py'), 'w+') as fd:
         fd.write(consts.SETTINGS_PY)
 
+
+@cli.subcommand('Clears cache for one or more given foreign resource URLs', {
+    'urls': {'help': 'URLs for foreign resource to clear', 'nargs': '+'},
+    ('--type', '-t'): {
+        'help': 'If specified, only target cache of given filetype',
+        'default': None,
+    },
+})
+def clearcache(args):
+    def _clear_cache(url):
+        # Clears an entire ForeignResource cache
+        res = ForeignResource(url)
+        if not os.path.exists(res.cache_path_base):
+            cli.printerr('%s is not cached (looked at %s)'
+                % (url, res.cache_path_base))
+            return
+        cli.print('%s: clearing ALL at %s'
+            % (url, res.cache_path_base))
+        res.cache_remove_all()
+
+    def _clear_cache_of_type(url, ts):
+        # Clears an entire ForeignResource cache
+        res = TypedResource(url, ts)
+        if not res.cache_exists():
+            cli.printerr('%s is not cached for type %s (looked at %s)'
+                % (url, str(ts), res.cache_path))
+            return
+        cli.print('%s: clearing "%s" at %s'
+            % (url, str(ts), res.cache_path))
+        if os.path.isdir(res.cache_path):
+            res.cache_remove_as_dir()
+        else:
+            res.cache_remove()
+
+    for url in args.urls:
+        if args.type:
+            _clear_cache_of_type(url, TypeString(args.type))
+        else:
+            _clear_cache(url)
 
 def main():
     action, args = cli.parse_args_to_action_args()

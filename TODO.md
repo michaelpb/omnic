@@ -15,9 +15,15 @@ Blocking order:
     - [X] Add `just_checking` media API
     - [X] Create new viewer format that is just a bare npm repo with
       `__init__.py` (later could mix in Python metadata)
-    - [ ] Think about and improve dev environ for JS
-        - [ ] Explicit foreground build-step that clears cache every time JS
-          changes
+    - [ ] Improve dev environ for JS
+        - [X] `omnic clearcache http://foreign/resource/ --type=min.js`
+            - [X] Without type it will clear entire cache
+        - [ ] `omnic precache http://foreign/resource/ --type=min.js`
+            - [ ] Optional `--force` which will do `clearcache` first
+        - [ ] `omnic settings --viewers-js` -- outputs foreign
+        - [ ] `make watch-js`
+            - `VJS="$(omnic settings --viewers-js)"`
+            - `omnic clearcache $VJS && omnic precache $VJS`
     - [ ] Create omnic base viewer
     - [ ] Add testing utilities in JS, using node (jasmine? or something more
       trendy?)
@@ -296,6 +302,9 @@ generated from them should have much more cautious client-side cache headers.
         - This would allow download + all conversions be queued w.r.t. each other
 
 # Decided against
+
+- [ ] Checked in cached built version of viewer
+    - [ ] `CACHE_ALIAS = {'viewers.min.js': {'/path/to/checkout/...'}}`
 - Pool should probably be configured, and always run with `runserver`
 - [ ] Redis-only commands:
     - `omnic runworker` -- runs a worker-only process
