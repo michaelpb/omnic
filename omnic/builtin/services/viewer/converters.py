@@ -2,8 +2,7 @@ import json
 
 from omnic.builtin.types.nodejs import NODE_PACKAGE
 from omnic.conversion import converter
-
-VIEWER_EXT = 'omnic_viewer_descriptor'
+from omnic.web.viewer import VIEWER_EXT
 
 PACKAGE_JSON_TEMPLATE = {
     "name": "omnicviewer",

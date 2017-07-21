@@ -1,15 +1,12 @@
 '''
 Serves JavaScript necessary to refresh and display viewers and thumbs.
 '''
-import json
 
 from omnic import singletons
 from omnic.conversion.utils import enqueue_conversion_path
 from omnic.responses.template import Jinja2TemplateHelper
-from omnic.types.resource import ForeignBytesResource, TypedResource
+from omnic.types.resource import TypedResource
 from omnic.types.typestring import TypeString
-
-from .converters import VIEWER_EXT
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.viewer', 'templates')
 
@@ -32,14 +29,7 @@ async def viewers_js(request):
     # Create a viewers resource, which is simply a JSON encoded description of
     # the viewers necessary for this viewers bundle. Basename is used for
     # controlling caching
-    # basename = 'viewers_%s' % omnic.settings.get_cache_string()
-    node_packages = singletons.viewers.get_node_packages()
-    viewers_data = json.dumps(node_packages).encode('utf8')
-    viewers_resource = ForeignBytesResource(
-        viewers_data,
-        extension=VIEWER_EXT,
-        # basename=basename,
-    )
+    viewers_resource = singletons.viewers.get_resource()
     url_string = viewers_resource.url_string
 
     target_ts = TypeString('min.js')  # get a minified JS bundle

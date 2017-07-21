@@ -25,4 +25,5 @@ class SingletonManager(object):
         return cls
 
     def clear(self, name):
-        del self.singleton_classes[name]
+        # del self.singleton_classes[name]
+        del self.singletons[name]

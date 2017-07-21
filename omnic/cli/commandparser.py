@@ -87,7 +87,7 @@ class CommandParser:
         def decorator(func):
             self.register_subparser(
                 func,
-                func.__name__,
+                func.__name__.replace('_', '-'),
                 description=description,
                 arguments=arguments,
             )

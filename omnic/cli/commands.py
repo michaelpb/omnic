@@ -69,8 +69,8 @@ def startproject(args):
 
 def _clear_cache(url, ts=None):
     '''
-    Helper method used by precache and clearcache that clears the cache of
-    a given URL and type
+    Helper function used by precache and clearcache that clears the cache
+    of a given URL and type
     '''
     if ts is None:
         # Clears an entire ForeignResource cache
@@ -95,6 +95,19 @@ def _clear_cache(url, ts=None):
             res.cache_remove_as_dir()
         else:
             res.cache_remove()
+
+
+async def _precache(url, to_type, force=False):
+    '''
+    Helper function used by precache and precache-named which does the
+    actual precaching
+    '''
+    if force:
+        cli.print('%s: force clearing' % url)
+        _clear_cache(url)
+    cli.print('%s: precaching "%s"' % (url, to_type))
+    with autodrain_worker():
+        await singletons.workers.async_enqueue_multiconvert(url, to_type)
 
 
 @cli.subcommand('Clears cache for one or more given foreign resource URLs', {
@@ -124,16 +137,30 @@ def clearcache(args):
     },
 })
 async def precache(args):
-    # singletons.settings  # Load settings
-    # singletons.workers  # Load ensure workers loaded
     for url in args.urls:
-        to_type = args.type
-        if args.force:
-            cli.print('%s: force clearing' % url)
-            _clear_cache(url)
-        cli.print('%s: precaching "%s"' % (url, to_type))
-        with autodrain_worker():
-            await singletons.workers.async_enqueue_multiconvert(url, to_type)
+        await _precache(url, args.type, force=args.force)
+
+
+@cli.subcommand('Precaches special targets (presently just viewers)', {
+    'names': {
+        'help': 'Names of special pre-cachable urls',
+        'nargs': '+',
+        'choices': ['viewers'],
+    },
+    ('--type', '-t'): {
+        'help': 'Desired file type to cache, in TypeString format',
+        'required': True,
+    },
+    ('--force', '-f'): {
+        'help': 'Clears cache first before attempting',
+        'action': 'store_true',
+    },
+})
+async def precache_named(args):
+    for name in args.names:
+        if name == 'viewers':
+            res = singletons.viewers.get_resource()
+        await _precache(res.url_string, args.type, force=args.force)
 
 
 def main():

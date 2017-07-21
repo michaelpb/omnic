@@ -20,10 +20,10 @@ Blocking order:
             - [X] Without type it will clear entire cache
         - [X] `omnic precache http://foreign/resource/ --type=min.js`
             - [X] Optional `--force` which will do `clearcache` first
-        - [ ] `omnic settings --viewers-js` -- outputs foreign
+        - [X] `omnic precache-named viewers --type=min.js` - same as
+          above, except just viewers
         - [ ] `make watch-js`
-            - `VJS="$(omnic settings --viewers-js)"`
-            - `omnic clearcache $VJS && omnic precache $VJS`
+            - `find *.js | entr omnic precache-builtin viewers --type=min.js`
     - [ ] Create omnic base viewer
     - [ ] Add testing utilities in JS, using node (jasmine? or something more
       trendy?)
@@ -244,11 +244,11 @@ Blocking order:
 
 ## Commands
 
-- [ ] 'precache' command - triggers conversion / whatever, and blocks until
+- [X] 'precache' command - triggers conversion / whatever, and blocks until
   finished. Useful for adding as a build step.
-- [ ] 'clear-cache' command - delete a single foreign resource from cache,
-  removing all generated media from that foreign resource. Also support
-  date-range.
+- [X] 'clearcache' command - delete a single foreign resource from cache,
+  removing all generated media from that foreign resource.
+    - [ ] Also support date-range.
 - [ ] 'omnic-clear-cache-cascade' application - special separate (?)
   application that would hook into any upstream proxies AND all siblings, fully
   wiping the cache for a certain foreign resource

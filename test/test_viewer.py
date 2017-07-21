@@ -6,22 +6,13 @@ import os
 from unittest import mock
 
 from omnic import singletons
-from omnic.types.resource import TypedResource
+from omnic.types.resource import ForeignBytesResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.web import viewer
 
+from .testing_utils import MockPDFViewer
+
 URL = 'http://mocksite.local/file.pdf'
-
-
-class MockPDFViewer:
-    name = 'document_viewer'
-    views = ['PDF']
-    asset_dir = '/path/to/assets'
-    node_package = 'file:/path/to/module'
-    assets = [
-        'example/asset.js',
-        'example/asset.css',
-    ]
 
 
 class MockConfig:
@@ -52,6 +43,12 @@ class TestViewerManager:
         assert self.viewers.get_node_packages() == {
             'document_viewer': 'file:/path/to/module',
         }
+
+    def test_get_resource(self):
+        assert self.viewers.get_resource() == ForeignBytesResource(
+            b'{"document_viewer": "file:/path/to/module"}',
+            extension=viewer.VIEWER_EXT,
+        )
 
 
 class TestDefaultViewer:

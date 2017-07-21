@@ -3,6 +3,7 @@ from base64 import b64decode
 from os.path import exists, join
 
 from omnic.types.detectors import Detector
+from omnic.types.resource import ForeignBytesResource
 from omnic.worker.base import BaseWorker
 
 
@@ -111,3 +112,21 @@ def clear_tmp_files(root, files):
             os.removedirs(os.path.dirname(path))
         except OSError:
             pass
+
+
+class MockPDFViewer:
+    name = 'document_viewer'
+    views = ['PDF']  # Not sure if still in use?
+    asset_dir = '/path/to/assets'
+    node_package = 'file:/path/to/module'
+    types = ['PDF']
+    assets = [
+        'example/asset.js',
+        'example/asset.css',
+    ]
+
+
+mock_viewer_resource = ForeignBytesResource(
+    b'{"document_viewer": "file:/path/to/module"}',
+    extension='omnic_viewer_descriptor',
+)

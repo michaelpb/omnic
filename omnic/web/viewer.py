@@ -2,6 +2,9 @@ import json
 import os
 
 from omnic import singletons
+from omnic.types.resource import ForeignBytesResource
+
+VIEWER_EXT = 'omnic_viewer_descriptor'  # TODO Hack
 
 
 class ViewerManager:
@@ -33,6 +36,20 @@ class ViewerManager:
             viewer.name: viewer.node_package
             for viewer in self.viewers
         }
+
+    def get_resource(self):
+        '''
+        Returns a BytesResource to build the viewers JavaScript
+        '''
+        # basename = 'viewers_%s' % settings.get_cache_string()
+        node_packages = self.get_node_packages()
+        viewers_data = json.dumps(node_packages).encode('utf8')
+        viewers_resource = ForeignBytesResource(
+            viewers_data,
+            extension=VIEWER_EXT,
+            # basename=basename,
+        )
+        return viewers_resource
 
 
 class DefaultViewer:

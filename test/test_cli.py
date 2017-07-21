@@ -9,6 +9,8 @@ from omnic.config.utils import use_settings
 from omnic.types.typestring import TypeString
 from omnic.utils.asynctools import CoroutineMock
 
+from .testing_utils import mock_viewer_resource
+
 
 def _check_silent(capsys):
     out, err = capsys.readouterr()
@@ -131,6 +133,15 @@ class TestCommandParser:
             pass
 
         assert list(p.subcommands.keys()) == ['testcmd']
+
+    def test_function_decorator_with_underscore(self):
+        p = CommandParser()
+
+        @p.subcommand('description')
+        def test_cmd(args):
+            pass
+
+        assert list(p.subcommands.keys()) == ['test-cmd']
 
     def test_print(self, capsys):
         p = CommandParser()
@@ -265,6 +276,11 @@ class TestCacheCommands:
         type = 'EXT'
         force = False
 
+    class preargs_viewer:
+        names = ['viewers']
+        type = 'min.js'
+        force = False
+
     def setup_method(self, method):
         from omnic.cli import commands
         self.commands = commands
@@ -318,7 +334,7 @@ class TestCacheCommands:
         assert unlink.mock_calls == [call('/some/path/resource.ext')]
         _check_silent(capsys)
 
-    @use_settings(path_prefix='/some/path/', path_grouping=None)
+    @use_settings(path_prefix='/some/path/')
     @pytest.mark.asyncio
     async def test_precache_command(self, capsys):
         # Wrap around magic mock to make async friendly
@@ -334,5 +350,27 @@ class TestCacheCommands:
 
         # Ensure it calls the download attempt
         first_two_args = ('http://fake/foreign/resource', 'EXT')
+        assert list(multic.mock_calls[0])[1][:2] == first_two_args
+        _check_silent(capsys)
+
+    @pytest.mark.asyncio
+    async def test_precache_viewers_command(self, capsys):
+        from omnic import singletons
+        # Wrap around magic mock to make async friendly
+        multic = MagicMock()
+
+        async def async_multic(*args, **kwargs):
+            multic(*args, **kwargs)
+
+        with use_settings(viewers=['test.testing_utils.MockPDFViewer']):
+            singletons.clear('viewers')
+            with patch('omnic.worker.tasks.multiconvert',
+                       new_callable=lambda: async_multic):
+                await self.commands.precache_named(self.preargs_viewer)
+        singletons.clear('viewers')
+        assert len(multic.mock_calls) == 1
+
+        # Ensure it starts the right process
+        first_two_args = (mock_viewer_resource.url_string, 'min.js')
         assert list(multic.mock_calls[0])[1][:2] == first_two_args
         _check_silent(capsys)
