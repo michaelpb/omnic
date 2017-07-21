@@ -366,7 +366,9 @@ class TestCacheCommands:
             singletons.clear('viewers')
             with patch('omnic.worker.tasks.multiconvert',
                        new_callable=lambda: async_multic):
-                await self.commands.precache_named(self.preargs_viewer)
+                with patch('os.path.exists') as exists:
+                    exists.return_value = True
+                    await self.commands.precache_named(self.preargs_viewer)
         singletons.clear('viewers')
         assert len(multic.mock_calls) == 1
 

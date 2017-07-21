@@ -160,6 +160,8 @@ async def precache_named(args):
     for name in args.names:
         if name == 'viewers':
             res = singletons.viewers.get_resource()
+            if not res.cache_exists():
+                res.save()
         await _precache(res.url_string, args.type, force=args.force)
 
 
