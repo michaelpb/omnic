@@ -105,8 +105,8 @@ class DetectorConverter(SymLinkConverter):
 
 class AdditiveDirectoryExecConverter(ExecConverter):
     '''
-    Similar to exec converter, except it first recursively symlinks all files,
-    thus useful for non-destructive directory-level actions
+    Similar to exec converter, except it first recursively hardlinks all
+    files, thus useful for non-destructive directory-level actions
     '''
 
     def get_cwd(self, in_resource, out_resource):
