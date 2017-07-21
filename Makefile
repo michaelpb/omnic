@@ -1,4 +1,4 @@
-.PHONY: help clean clean-pyc clean-build clean-coverage list test test-all coverage docs release sdist
+.PHONY: help clean clean-pyc clean-build clean-coverage list test test-all coverage docs release sdist js js-watch
 
 help:
 	@echo "clean-build - remove build artifacts"
@@ -28,6 +28,12 @@ clean-pyc:
 clean-coverage:
 	rm -fr docs/htmlcov/
 
+js:
+	./bin/omnic --verbose precache-named viewers --type=min.js --force
+
+js-watch:
+	find omnic/ -name \*.js | entr -r ./bin/omnic --verbose precache-named viewers --type=min.js  --force
+
 lint:
 	# flake8 omnic test # for now ignore linting issues in test
 	flake8 omnic
@@ -37,9 +43,6 @@ test:
 
 test-all:
 	tox
-
-test-watch:
-	find omnic/ test/ -name \*.py | entr -r py.test
 
 test-watch-s:
 	find omnic/ test/ -name \*.py | entr -r py.test -s

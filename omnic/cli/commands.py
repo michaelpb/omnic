@@ -108,6 +108,8 @@ async def _precache(url, to_type, force=False):
     cli.print('%s: precaching "%s"' % (url, to_type))
     with autodrain_worker():
         await singletons.workers.async_enqueue_multiconvert(url, to_type)
+    result = TypedResource(url, TypeString(to_type))
+    cli.print('%s: %s precached at: %s' % (url, to_type, result.cache_path))
 
 
 @cli.subcommand('Clears cache for one or more given foreign resource URLs', {
@@ -160,9 +162,13 @@ async def precache_named(args):
     for name in args.names:
         if name == 'viewers':
             res = singletons.viewers.get_resource()
+            if args.force:
+                url = res.url_string
+                cli.print('%s: force clearing' % url)
+                _clear_cache(url)
             if not res.cache_exists():
                 res.save()
-        await _precache(res.url_string, args.type, force=args.force)
+        await _precache(res.url_string, args.type)
 
 
 def main():

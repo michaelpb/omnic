@@ -22,7 +22,8 @@ Blocking order:
             - [X] Optional `--force` which will do `clearcache` first
         - [X] `omnic precache-named viewers --type=min.js` - same as
           above, except just viewers
-        - [ ] `make watch-js`
+            - [ ] Get fully compiling
+        - [ ] `make js-watch`
             - `find *.js | entr omnic precache-builtin viewers --type=min.js`
     - [ ] Create omnic base viewer
     - [ ] Add testing utilities in JS, using node (jasmine? or something more

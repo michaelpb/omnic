@@ -14,7 +14,10 @@ class CommandParser:
         self._last_args = None
 
     def gen_subcommand_help(self):
-        commands = self.subcommands.items()
+        '''
+        Generates s
+        '''
+        commands = sorted(self.subcommands.items(), key=lambda i: i[0])
         return '\n'.join(
             '%s %s' % (
                 subcommand.ljust(15),

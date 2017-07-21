@@ -4,7 +4,6 @@
   "description": "Wrapper JS component to view PDFs",
   "main": "index.js",
   "dependencies": {
-    "jsc3d": "0.1.8"
   },
   "omnic": {
     "types": [

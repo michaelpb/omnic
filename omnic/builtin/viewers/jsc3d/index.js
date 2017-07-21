@@ -1,5 +1,3 @@
-const jsc3d = require('jsc3d');
-
 function activate(element) {
     console.log('activating!');
 }

@@ -1,19 +1,17 @@
-Omni-Converter - omnic
+OmniC - Omni Converter
 ======================
 
 .. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
    :alt: Travis CI
 
-   Travis CI
-
 Mostly stateless microservice for generating on-the-fly thumbs and
 previews of a wide variety of file types. Fully extendable to create any
 arbitrary conversion pipelines.
 
-Omni Converter (which can be shortened to OmniC or Omnic) is free
+Omni Converter (which can be shortened to OmniC or ``omnic``) is free
 software, licensed under the GPL 3.0.
 
-**WIP WARNING:** Omnic is still 'unreleased software', a work in
+**WIP WARNING:** OmniC is still 'unreleased software', a work in
 progress. The API is subject to rapid change. I intend to release the
 first stable version before the end of this year (2017).
 
@@ -66,52 +64,49 @@ This has not yet been done.
 Usage
 =====
 
-There are 3 principle ways to use Omnic
+There are 3 principle ways to use OmniC
 
 1. Commandline conversion and thumbnailing system
 -------------------------------------------------
 
 While OmniConverter was written for the web, the server components are
-optional. Thus it doubles as a handy "swiss-army knife" of file
-conversion and thumbnail generation.
+optional. Thus it doubles as a handy "swiss-army knife" of file conversion
+and thumbnail generation.
 
--  Example: Create thumb of an ``.doc`` file with:
-   ``omnic convert input.doc thumb.jpg:200x200``
+-  Example: Create thumbs of ``.doc`` and ``.pdf`` files with:
+   ``omnic convert --type thumb.jpg:200x200 input.doc input2.pdf``
 
 2. Ready-to-use conversion and thumbnailing web-server
 ------------------------------------------------------
 
-The most common usage of Omnic is as a microservice, supplying
+The most common usage of OmniC is as a microservice, supplying
 on-the-fly file format converter and preview or thumb generator,
 
 -  Running a server is as simple as ``omnic runserver``
 
--  Override values in the ``omnic/default_settings.py`` by specifying an
-   ``OMNIC_SETTINGS`` to point to an import path to your custom settings
-   module.
+-  Create a new ``settings.py`` file to customize (use ``OMNIC_SETTINGS``
+   to point to it)
 
 3. General purpose media conversion web-framework
 -------------------------------------------------
 
-Omnic is written in a very modular format, with a structure inspired
+OmniC is written in a very modular format, with a structure inspired
 partially by Django. This allows you to tailor-make your own converters,
 using it as a library, without forking. You can easily swap out any
 part, also.
 
-1. Create a new Python project as you normally would, including
-   ``omnic`` in your ``requirements.txt``.
+::
 
-2. As with the above, override settings with a custom ``settings.py``
+    omnic startproject project_name
 
-3. Write your own converters and include them in ``settings.py``. No
-   full documentation or scaffolding is available for this yet: Take a
-   look at the ``omnic.builtin`` for examples on writing your own
-   converters or services.
+Write your own converters and include them in ``settings.py``. No full
+documentation or scaffolding is available for this yet: Take a look at the
+``omnic.builtin`` for examples on writing your own converters or services.
 
 Launching the admin interface
 =============================
 
-Omnic comes bundled with a read-only admin interface. It's main purpose
+OmniC comes bundled with a read-only admin interface. It's main purpose
 is a sort of configuration sanity check, and queue monitoring, but it
 also serves as a great demo. Once installed, get the omnic server
 running:
@@ -123,7 +118,7 @@ running:
 Now point your browser at ``http://localhost:8080/admin/`` for the admin
 interface.
 
-From here you can paste in an URL to a resource, that Omnic will attempt
+From here you can paste in an URL to a resource, that OmniC will attempt
 to display as a thumbnail. In this example an OBJ file (3D model format)
 of a trumpet was pasted in, and a 200x200 thumbnail was generated:
 
@@ -169,7 +164,7 @@ Setting up a dev environment
 
    -  ``pip install -r requirements.txt``
 
-5. Run test suite, should have 140+ tests pass:
+5. Run test suite, should have 150+ tests pass:
 
    -  ``py.test``
 
@@ -217,8 +212,7 @@ code!
 Production
 ----------
 
-Omnic is not yet production ready, although you are welcome to try -- I
-look forward to the pull requests!
+OmniC is not yet production ready, although you are welcome to try.
 
 The intended use is running as a microservice as part of a larger server
 infrastructure. This is to supplement or fully replace traditional
