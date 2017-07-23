@@ -3,23 +3,21 @@ import json
 from omnic.builtin.types.nodejs import NODE_PACKAGE
 from omnic.conversion import converter
 from omnic.web.viewer import VIEWER_EXT
+import omnic
 
 PACKAGE_JSON_TEMPLATE = {
-    "name": "omnicviewer",
-    "version": "0.0.0",
-    "description": "Auto-generated viewer package",
-    "main": "index.js",
-    "dependencies": None,
-    "author": "",
-    "license": "GPL-3.0"
+    'name': 'omnicviewer',
+    'version': omnic.__version__,
+    'description': 'Auto-generated viewer package',
+    'main': 'index.js',
+    'dependencies': None,
+    'author': '',
+    'license': 'GPL-3.0'
 }
 
 
 LOADED_JS = '''
-    if (!window.OMNIC) window.OMNIC = {};
-    if (!window.OMNIC.viewers) window.OMNIC.viewers = {};
-
-    window._OMNIC_VIEWER_BUNDLE_IS_LOADED = true;
+window._OMNIC_VIEWER_BUNDLE_IS_LOADED = true;
 '''
 
 

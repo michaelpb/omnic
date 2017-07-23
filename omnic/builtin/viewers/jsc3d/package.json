@@ -1,5 +1,5 @@
 {
-  "name": "jsc3d_mesh_viewer",
+  "name": "jsc3d-mesh-viewer",
   "version": "0.1.0",
   "description": "Wrapper JS component to view PDFs",
   "main": "index.js",

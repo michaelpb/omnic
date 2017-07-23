@@ -1,12 +1,21 @@
 // const pdfjs = require('pdfjs-dist');
 // "pdfjs-dist": "1.8.507"
-// TODO: need to add a worker build system for the viewers
 
-function activate(element) {
-    console.log('activating!');
-    element.innerHTML = '<p>lol</p>';
+const {Viewer, registerViewer} = require('omnic-viewer-core');
+const packageJSON = require('./package.json');
+
+class PDFViewer extends Viewer {
+    static get types() {
+       return packageJSON.omnic.types;
+    }
+
+    mount(element) {
+        console.log('mounting on element!');
+        element.remove();
+    }
 }
+console.log('document viewer loading!');
 
-window.OMNIC.viewers['PDF'] = activate;
-window.OMNIC.viewers['application/pdf'] = activate;
+registerViewer(PDFViewer);
+
 console.log('document viewer loaded!');

@@ -1,5 +1,5 @@
 {
-  "name": "core",
+  "name": "omnic-viewer-core",
   "version": "0.1.0",
   "description": "Core utilities for omnic viewers",
   "main": "index.js",

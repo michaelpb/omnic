@@ -34,6 +34,9 @@ async def viewers_js(request):
 
     target_ts = TypeString('min.js')  # get a minified JS bundle
     target_resource = TypedResource(url_string, target_ts)
+    print('this is cache path', target_resource.cache_path)
+    print('this is cache path', target_resource.cache_path)
+    print('this is cache path', target_resource.cache_path)
 
     if target_resource.cache_exists():
         return await response.file(target_resource.cache_path, headers={

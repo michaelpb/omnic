@@ -15,19 +15,21 @@ Blocking order:
     - [X] Add `just_checking` media API
     - [X] Create new viewer format that is just a bare npm repo with
       `__init__.py` (later could mix in Python metadata)
-    - [ ] Improve dev environ for JS
+    - [X] Improve dev environ for JS
         - [X] `omnic clearcache http://foreign/resource/ --type=min.js`
             - [X] Without type it will clear entire cache
         - [X] `omnic precache http://foreign/resource/ --type=min.js`
             - [X] Optional `--force` which will do `clearcache` first
         - [X] `omnic precache-named viewers --type=min.js` - same as
           above, except just viewers
-            - [ ] Get fully compiling
-        - [ ] `make js-watch`
+            - [X] Get fully compiling
+        - [X] `make js-watch`
             - `find *.js | entr omnic precache-builtin viewers --type=min.js`
+    - [ ] Further improve dev environ
+        - [ ] Add in 'freshen' concept
+        - [ ] Make conversion path 'freshen installed_node_package' -> 'min.js'
+        - Likely related to Mutable concept
     - [ ] Create omnic base viewer
-    - [ ] Add testing utilities in JS, using node (jasmine? or something more
-      trendy?)
     - [ ] Add in the following viewers:
         - [ ] Image (lightbox style pop-up, see whats most popular)
         - [ ] 3D with JSC3D
@@ -45,6 +47,8 @@ Blocking order:
         - [ ] Various data viz stuff (CSV -> graph)
         - [ ] Molecule (2D)
         - [ ] Molecule (3D)
+    - [ ] Add testing utilities in JS, using node (jasmine? or something more
+      trendy?)
     - [ ] Ambitious viewer ideas:
         - [ ] One viewer be draggable maps. Render tiles from BytesResource service
         - [ ] Git tree viewer -- essentially embeddable github -- with ALL THE
@@ -241,6 +245,28 @@ Blocking order:
 - Thus, omnic becomes "just in time deployment"
 - Obvs in real life, this would be triggered with a hook
 
+# Mutable resources
+
+- 'mutable' concept - some foreign URLs might be mutable. All media
+generated from them should have much more cautious client-side cache headers.
+- e.g. Git would be a ForeignMutable that is turned into a TypedResource
+  once 'Freshened'
+- Git implementation would be bare repo
+- [ ] `ForeignMutable` - Behaves differently than foreign resource, can be
+  transformed into a TypedResource after being 'freshened' or 'locked'
+    - [ ] `freshen()` - Mutates cached resource
+    - [ ] Store a log of all freshen instances in cache, like `history.txt`
+    - [ ] `get_history()` - Returns an abbreviated list of version-strings,
+      one of which can be selected, generally `current` and all previous
+      instances of freshen.
+    - [ ] `get_locked(LockString)` - Returns a LockedTypedResource
+- [ ] `LockedForeignMutable` - for `git` would represent a specific hash,
+  for non-VC, would just get an imaginary timestamp (or hash)
+    - `get_typed_resource(path=None)` - Returns a specific typed resource.
+      Some ForeignMutables can transform into individual paths (?).
+    - [ ] `LockedTypedResource` - Source from a ForeignMutable, it would
+      simply need to be linked from its true location
+
 # Production caching control improvements
 
 ## Commands
@@ -256,13 +282,11 @@ Blocking order:
 
 ## Resource system improvements
 
-- [ ] 'mutable' concept - some foreign URLs might be mutable. All media
-generated from them should have much more cautious client-side cache headers.
 - [ ] Time-based grouper: In addition to MD5 structure, have
-    `/var/tmp/omnic/date-cache/2017/08/01/ae08/`. This will allow cron to
-    aggressively purge older cache, e.g. only maintain a couple days in prod.
-    This is good because IRL it won't be serving media anyway, the cache is
-    only good for conversion.
+  `/var/tmp/omnic/date-cache/2017/08/01/ae08/`. This will allow cron to
+  aggressively purge older cache, e.g. only maintain a couple days in prod.
+  This is good because IRL it won't be serving media anyway, the cache is
+  only good for conversion.
 
 ## Cron
 
