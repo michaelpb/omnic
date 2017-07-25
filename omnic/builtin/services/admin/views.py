@@ -30,9 +30,9 @@ def _gen_viewer_src(form):
     if not viewer_type:
         return ''
     # For now, we just go by type, not URL
-    # qs = urlencode({'url': form['res_url']})
-    # return 'http://localhost:8080/media/%s/?%s' % (viewer_type, qs)
-    return viewer_type
+    qs = urlencode({'url': form['res_url']})
+    return 'http://localhost:8080/media/%s/?%s' % (viewer_type, qs)
+    # return viewer_type
 
 
 def _depluralize_query_dict(dct):

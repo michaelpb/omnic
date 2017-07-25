@@ -30,20 +30,31 @@ Blocking order:
         - [ ] Make conversion path 'freshen installed_node_package' -> 'min.js'
         - Likely related to Mutable concept
     - [ ] Create omnic base viewer
-    - [ ] Add in the following viewers:
-        - [ ] Image (lightbox style pop-up, see whats most popular)
-        - [ ] 3D with JSC3D
-    - [ ] Possibly add in web-worker hook system to base viewer (?) so I can
-      add PDF.js to the demo
+    - [ ] Base viewers:
+        - [ ] Inline (thumbnail gets replaced)
+        - [ ] Modal (goes into "gallery" lightbox mode)
+        - [ ] StaticHTML (Viewer contains a static 'prepareHTML' function,
+          that outputs HTML --- possibly with injected styles, etc)
+    - [ ] Add in proof-of-concept image viewer
+        - [ ] Extends Modal, so on click modal appears with full-res image
+    - [ ] Possibly add in web-worker hook system to base viewer (?) so I
+      can add PDF.js to the demo
         - [ ] Build 1 JS package, but detect if in web worker or not, and
           execute different code path for each
     - [ ] If viewer infrastructure is as robust as I intend, add a bunch more
       viewers:
-        - [ ] SVG pan
         - [ ] Video player
         - [ ] Audio player
-        - [ ] Markdown
-        - [ ] Syntax highlighting
+        - [ ] PDF
+        - [ ] SVG pan
+        - [ ] Hi-res pannable image
+        - [ ] 3D with JSC3D
+        - [ ] HTML inline embed viewers
+            - [ ] Base viewer that takes a <div> (not img) and inserts
+              content
+            - [ ] Markdown
+            - [ ] Syntax highlighting
+            - [ ] Git tree repo
         - [ ] Various data viz stuff (CSV -> graph)
         - [ ] Molecule (2D)
         - [ ] Molecule (3D)
@@ -266,6 +277,24 @@ generated from them should have much more cautious client-side cache headers.
       Some ForeignMutables can transform into individual paths (?).
     - [ ] `LockedTypedResource` - Source from a ForeignMutable, it would
       simply need to be linked from its true location
+
+## Chat stream (and timeseries?) as a mutable data source
+
+Needs more thoughts, but OoniChat would utilize omnic to render HTML
+backlogs. It would have ws servers waiting to push to a (postgres?)
+database, and trigger reloads for clients as new messages come in. However,
+at the core would be a multi-page app (progressive enhancement), meaning
+the core would not require JS (JS would just add the sugar of
+auto-refresh). This is to make it feel faster, simpler,  and more "solid"
+than sluggish competitors.
+
+- [ ] `ForeignMutable('mysql://whatever@host.com:3363')`
+    - [ ] `freshen()` - Freshens cached data for the series (?)
+    - [ ] `get_history()` - Returns an abbreviated list of version-strings,
+      one of which can be selected.
+    - [ ] `get_locked(LockString)` - Returns a LockedTypedResource
+- [ ] `LockedForeignMutable` - for `timeseries` would represent a specific
+  time
 
 # Production caching control improvements
 

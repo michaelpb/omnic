@@ -27,16 +27,12 @@ async def viewers_js(request):
     response = singletons.server.response
 
     # Create a viewers resource, which is simply a JSON encoded description of
-    # the viewers necessary for this viewers bundle. Basename is used for
-    # controlling caching
+    # the viewers necessary for this viewers bundle.
     viewers_resource = singletons.viewers.get_resource()
     url_string = viewers_resource.url_string
 
     target_ts = TypeString('min.js')  # get a minified JS bundle
     target_resource = TypedResource(url_string, target_ts)
-    print('this is cache path', target_resource.cache_path)
-    print('this is cache path', target_resource.cache_path)
-    print('this is cache path', target_resource.cache_path)
 
     if target_resource.cache_exists():
         return await response.file(target_resource.cache_path, headers={

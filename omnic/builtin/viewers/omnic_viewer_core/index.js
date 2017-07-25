@@ -1,7 +1,10 @@
 'use strict';
 
+const CanvasViewer = require('./canvas-viewer');
+
 class Viewer {
 }
+
 
 function setup() {
     if (!window.OMNIC) {
@@ -13,15 +16,13 @@ function setup() {
 }
 
 function activate(element, viewerClass) {
-    const viewer = viewerClass();
+    const viewer = new viewerClass();
     viewer.mount(element);
 }
 
 function registerViewer(viewerClass) {
-    console.log('register viewer!');
     setup();
     for (const type of viewerClass.types) {
-        console.log('hi', type, viewerClass);
         window.OMNIC.viewers[type] = element => {
             activate(element, viewerClass);
         };
@@ -30,5 +31,6 @@ function registerViewer(viewerClass) {
 
 module.exports = {
     Viewer,
+    CanvasViewer,
     registerViewer,
 };
