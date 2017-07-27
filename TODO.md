@@ -30,13 +30,13 @@ Blocking order:
         - [ ] Make conversion path 'freshen installed_node_package' -> 'min.js'
         - Likely related to Mutable concept
     - [ ] Create omnic base viewer
-    - [ ] Base viewers:
+        - [X] Move most reload-viewers.js into base viewer.js
         - [ ] Inline (thumbnail gets replaced)
-        - [ ] Modal (goes into "gallery" lightbox mode)
+        - [X] Modal (goes into "gallery" lightbox mode)
         - [ ] StaticHTML (Viewer contains a static 'prepareHTML' function,
           that outputs HTML --- possibly with injected styles, etc)
-    - [ ] Add in proof-of-concept image viewer
-        - [ ] Extends Modal, so on click modal appears with full-res image
+    - [X] Add in proof-of-concept image viewer
+        - [X] Extends Modal, so on click modal appears with full-res image
     - [ ] Possibly add in web-worker hook system to base viewer (?) so I
       can add PDF.js to the demo
         - [ ] Build 1 JS package, but detect if in web worker or not, and
@@ -127,19 +127,6 @@ Blocking order:
     - [ ] Replace all spawn system calls with asyncio equivalent
 
 
-# Build out builtin
-
-# CLI and packaging
-- [ ] Document the three uses:
-    - CLI and library - Include in other projects (e.g. Django, Celery) as a
-      useful conversion utility
-    - Ready-to-go server - Provide docker container to spin up behind nginx,
-      using env variables to configure, only providing a settings.py file if
-      necessary
-    - Web media conversion framework - In the manner of Django, Flask, etc have
-      a cookiecutter example of setting up an new project, and hooking in your
-      own Services and Converters
-
 # Future
 
 ## JS viewer system
@@ -201,33 +188,16 @@ Blocking order:
         ...
     ]
 
-## WebSocket RPC service
-- [ ] /ws/ Service - Exposes all other services via a websocket RPC-like
-  interface. Useful for creating more involved progress-bar UIs etc and
-  pre-caching longer-running processes
-    - Still would have no trust, simply exposing the public HTTP interface in
-      another way, for more involved front-end applications
-    - Example:
-        - `< "media", {url: "foo.com/bar.pdf", typestring="thumb.png"}`
-        - `> "downloaded", {url: "foo.com/bar.pdf"}`
-        - `> "converting", {url: "foo.com/bar.pdf", type="PNG"}`
-        - `> "converting", {url: "foo.com/bar.pdf", type="thumb.png"}`
-        - `> "ready", {url: "foo.com/bar.pdf"}`
-        - `< "bundle", {url: "foo.com/bar.json"}`
-        - `> "in-progress", {url: "foo.com/bar.json"}`
-        - `> "downloaded", {url: "foo.com/bar.json"}`
-        - `> "downloaded", {url: "foo.com/bar.json"}`
-
 ## JS converter
 - [X] Minifier and JSX / TypeScript compiler
 - [X] Possibly a service dedicated to this, or just use /bundle/ wit ha
   different target type ('js')
 - [ ] Support more JS build systems
     - [ ] Webpack based bundling + compilation
-        -  TODO For "full webpack packages", that is, ones with custom config
-           scripts that may require executing untrusted code.  Needs to somehow
-           guess where files will end up. This path SHOULD NOT be allowed in
-           normal confs.
+        -  TODO For "full webpack packages", that is, ones with custom
+           config scripts that may require executing untrusted code.  Needs
+           to somehow guess where files will end up. This path SHOULD NOT
+           be allowed in normal confs.
     - [ ] Babelrc based compilation
 
 ## Packaging build server Converters
@@ -280,7 +250,7 @@ generated from them should have much more cautious client-side cache headers.
 
 ## Chat stream (and timeseries?) as a mutable data source
 
-Needs more thoughts, but OoniChat would utilize omnic to render HTML
+Needs more thoughts, but OmniChat would utilize omnic to render HTML
 backlogs. It would have ws servers waiting to push to a (postgres?)
 database, and trigger reloads for clients as new messages come in. However,
 at the core would be a multi-page app (progressive enhancement), meaning
@@ -304,7 +274,7 @@ than sluggish competitors.
   finished. Useful for adding as a build step.
 - [X] 'clearcache' command - delete a single foreign resource from cache,
   removing all generated media from that foreign resource.
-    - [ ] Also support date-range.
+    - [ ] Also support date-range (requires grouping)
 - [ ] 'omnic-clear-cache-cascade' application - special separate (?)
   application that would hook into any upstream proxies AND all siblings, fully
   wiping the cache for a certain foreign resource
@@ -341,8 +311,8 @@ than sluggish competitors.
 - [ ] Turn on `_FORCE_PREVENT_LOGGING_DISABLE` and clean up warnings in tests
   (since some indicate some messy stuff being left behind during the tests)
 
-- [ ] Refactor worker manager, worker, and task system (right now has a lot of
-  repetitive code)
+- [ ] Refactor worker manager, worker, and task system (right now has a lot
+  of repetitive code)
     - [ ] Make tasks be definable independent of ENUM / custom methods
 
 # Performance and stability improvements
@@ -355,7 +325,38 @@ than sluggish competitors.
     - [ ] Long term solution: Allow task ordering in work queue system
         - This would allow download + all conversions be queued w.r.t. each other
 
+# CLI and packaging
+- [ ] Document the three uses:
+    - CLI and library - Include in other projects (e.g. Django, Celery) as a
+      useful conversion utility
+    - Ready-to-go server - Provide docker container to spin up behind nginx,
+      using env variables to configure, only providing a settings.py file if
+      necessary
+    - Web media conversion framework - In the manner of Django, Flask, etc have
+      a cookiecutter example of setting up an new project, and hooking in your
+      own Services and Converters
+
 # Decided against
+
+## Low prio
+
+- [ ] /ws/ Service - Exposes all other services via a websocket RPC-like
+  interface. Useful for creating more involved progress-bar UIs etc and
+  pre-caching longer-running processes
+    - Still would have no trust, simply exposing the public HTTP interface in
+      another way, for more involved front-end applications
+    - Example:
+        - `< "media", {url: "foo.com/bar.pdf", typestring="thumb.png"}`
+        - `> "downloaded", {url: "foo.com/bar.pdf"}`
+        - `> "converting", {url: "foo.com/bar.pdf", type="PNG"}`
+        - `> "converting", {url: "foo.com/bar.pdf", type="thumb.png"}`
+        - `> "ready", {url: "foo.com/bar.pdf"}`
+        - `< "bundle", {url: "foo.com/bar.json"}`
+        - `> "in-progress", {url: "foo.com/bar.json"}`
+        - `> "downloaded", {url: "foo.com/bar.json"}`
+        - `> "downloaded", {url: "foo.com/bar.json"}`
+
+## Likely never useful
 
 - [ ] Checked in cached built version of viewer
     - [ ] `CACHE_ALIAS = {'viewers.min.js': {'/path/to/checkout/...'}}`

@@ -86,7 +86,7 @@ VIEWERS = [
     'omnic.builtin.viewers.omnic_viewer_core',
     'omnic.builtin.viewers.pdfjs',
     'omnic.builtin.viewers.jsc3d',
-    'omnic.builtin.viewers.photoswipe',
+    'omnic.builtin.viewers.simple_image_viewer',
 ]
 
 PLACEHOLDERS = [

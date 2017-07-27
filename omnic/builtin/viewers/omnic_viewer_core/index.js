@@ -1,36 +1,19 @@
 'use strict';
+const insertCss = require('insert-css');
 
+const Viewer = require('./viewer-base');
 const CanvasViewer = require('./canvas-viewer');
+const MagnificPopupViewer = require('./magnific-popup-viewer');
 
-class Viewer {
-}
-
-
-function setup() {
-    if (!window.OMNIC) {
-        window.OMNIC = {};
-    }
-    if (!window.OMNIC.viewers) {
-        window.OMNIC.viewers = {};
-    }
-}
-
-function activate(element, viewerClass) {
-    const viewer = new viewerClass();
-    viewer.mount(element);
-}
 
 function registerViewer(viewerClass) {
-    setup();
-    for (const type of viewerClass.types) {
-        window.OMNIC.viewers[type] = element => {
-            activate(element, viewerClass);
-        };
-    }
+    insertCss(viewerClass.css || '');
+    viewerClass.mountPage(document);
 }
 
 module.exports = {
     Viewer,
+    MagnificPopupViewer,
     CanvasViewer,
     registerViewer,
 };

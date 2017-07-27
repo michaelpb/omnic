@@ -39,6 +39,8 @@ async def viewers_js(request):
             'Content-Type': 'application/javascript',
         })
 
+    raise ValueError(url_string) # XXX REMOVEME
+
     # Otherwise, does not exist, save this descriptor to cache and kick off
     # conversion process
     if not viewers_resource.cache_exists():
