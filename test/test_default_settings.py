@@ -57,4 +57,4 @@ class TestSettingsBuiltinDefaults:
         viewers_list = singletons.viewers.viewers
         viewer_types = sum([viewer.types for viewer in viewers_list], [])
         assert 'PDF' in viewer_types
-        assert 'STL' in viewer_types
+        assert 'PNG' in viewer_types

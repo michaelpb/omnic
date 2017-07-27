@@ -1,14 +1,14 @@
 {
-  "name": "jsc3d-mesh-viewer",
+  "name": "simple_pdf_embed",
   "version": "0.1.0",
-  "description": "Wrapper JS component to view PDFs",
+  "description": "Simple PDF viewer using embedded objects",
   "main": "index.js",
   "dependencies": {
   },
   "omnic": {
     "types": [
-        "STL",
-        "OBJ"
+        "PDF",
+        "application/pdf"
     ]
   },
   "scripts": {

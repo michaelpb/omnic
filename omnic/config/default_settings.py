@@ -84,9 +84,8 @@ CONVERSION_PROFILES = {}
 
 VIEWERS = [
     'omnic.builtin.viewers.omnic_viewer_core',
-    'omnic.builtin.viewers.pdfjs',
-    'omnic.builtin.viewers.jsc3d',
     'omnic.builtin.viewers.simple_image_viewer',
+    'omnic.builtin.viewers.simple_pdf_embed',
 ]
 
 PLACEHOLDERS = [
@@ -103,6 +102,7 @@ ALLOWED_LOCATIONS = {
 
     # test sites mentioned in README
     'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov', 'wiki.jmol.org',
+    'opendatakit.org',
 }
 
 # Conversion type safety stuff:

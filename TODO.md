@@ -37,15 +37,11 @@ Blocking order:
           that outputs HTML --- possibly with injected styles, etc)
     - [X] Add in proof-of-concept image viewer
         - [X] Extends Modal, so on click modal appears with full-res image
-    - [ ] Possibly add in web-worker hook system to base viewer (?) so I
-      can add PDF.js to the demo
-        - [ ] Build 1 JS package, but detect if in web worker or not, and
-          execute different code path for each
     - [ ] If viewer infrastructure is as robust as I intend, add a bunch more
       viewers:
         - [ ] Video player
         - [ ] Audio player
-        - [ ] PDF
+        - [X] PDF
         - [ ] SVG pan
         - [ ] Hi-res pannable image
         - [ ] 3D with JSC3D
@@ -340,6 +336,10 @@ than sluggish competitors.
 
 ## Low prio
 
+- [ ] Possibly add in web-worker hook system to base viewer (?) so I
+    can add PDF.js to the demo
+    - [ ] Build 1 JS package, but detect if in web worker or not, and
+        execute different code path for each
 - [ ] /ws/ Service - Exposes all other services via a websocket RPC-like
   interface. Useful for creating more involved progress-bar UIs etc and
   pre-caching longer-running processes
