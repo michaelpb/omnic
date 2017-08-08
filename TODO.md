@@ -1,17 +1,18 @@
 # Next steps
 
 Blocking order:
-1. Build better testing infrastructure
-2. Fix packaging + docs
-3. Make scaffolding
-4. Write containers for a few builtin setting-sets, such as 'kitchen sink',
-'image', and 'empty', allowing to lock down specs
-5. Build CLI-level tests that include mini-scaffold test apps for full e2e
-(rendering all tests in tests/ directory merely unit and integration tests)
-6. Create "zoo" repo of specimen and include full e2e tests on all zoo specimen
+- [X] Build better testing infrastructure
+- [X] Fix packaging + docs
+- [X] Make scaffolding
+- [ ] Write containers for a few builtin setting-sets, such as 'kitchen
+  sink', 'image', and 'empty', allowing to lock down specs
+- [ ] Build CLI-level tests that include mini-scaffold test apps for full e2e
+  (all tests in tests/ directory should be merely unit and integration tests)
+- [ ] Create "zoo" repo of specimen and include full e2e tests on all zoo
+  specimen
 
 ## Top priority
-- [ ] Get viewer demo running
+- [X] Get viewer demo running
     - [X] Add `just_checking` media API
     - [X] Create new viewer format that is just a bare npm repo with
       `__init__.py` (later could mix in Python metadata)
@@ -25,10 +26,56 @@ Blocking order:
             - [X] Get fully compiling
         - [X] `make js-watch`
             - `find *.js | entr omnic precache-builtin viewers --type=min.js`
+- [ ] Switch to `MULTICONVERT` and async enqueues
+    - [X] Create `MULTICONVERT` task type
+    - [ ] Remove sync `FUNC` task type (requires lots of test changes)
+    - [ ] Remove all synchronous enqueues (requires lots of test changes)
+
+## Misc
+
+- [ ] BUG: Fix running unoconv within venv
+    - [ ] Check if in virtualenv and ensure system Python is used when doing
+      subprocess calls
+
+- [ ] QoL conversion grid improvements
+    - [X] ~Think more about how to make extension "supersede" mimetype
+      in a reliable way~ The detector system generally takes care of this
+    - [X] Add "configure" check to base Converter, which should ensure correct
+      Python and system packages installed for the converter to be functoinal
+    - [ ] Allow conversions to self
+    - [X] Allow full conversion paths in settings, which are picked first if
+      available (useful for locking down)
+    - [X] Allow 'conversion profile' system, which ranges from aliases, to
+      partial conversion path
+
+    - [ ] Locking + sanity check process:
+        - [ ] 1. Before, optionally (based on conf) do sanity Detector check
+        - [ ] 2. After, optionally (based on conf) do sanity Detector check
+        - [ ] 3. After, (required) make output all exclusively readonly,
+          recursively in the case of a directory
+        - [ ] 4. `Resource` base class should treat writable caches as
+          non-existent, thus making "in progress" files unusable to front-end
+          services. This step is essential for data integrity.
+        - [ ] Obsolete Detector Converter types, I believe
+
+    - [ ] For JS, should have full input graph, e.g. can uglify plain JS files,
+      but rely on "preferred paths" to ensure that it gets es5ified first (can
+      configure in default settings this way)
+
+    - [ ] It's becoming increasingly clear I need to build a constant-based
+      TypeString hierarchy, such that a bundle.js or es5.js is a type of JS
+      file, and thus gets proper mimetypes, etc, while remaining more specific
+
+- [ ] AsyncIO improvements
+    - [ ] Replace all file system calls with aiofiles
+    - [ ] Replace all spawn system calls with asyncio equivalent
+
+
+- [ ] Viewer improvements
     - [ ] Further improve dev environ
         - [ ] Add in 'freshen' concept
         - [ ] Make conversion path 'freshen installed_node_package' -> 'min.js'
-        - Likely related to Mutable concept
+        - Likely related to Mutable concept (?)
     - [ ] Create omnic base viewer
         - [X] Move most reload-viewers.js into base viewer.js
         - [ ] Inline (thumbnail gets replaced)
@@ -75,52 +122,6 @@ Blocking order:
           particular file (caching correctly each step)
     - Git viewer
         - Do the 'Doc Write' strategy I came up to block page on HTML render
-
-- [ ] Switch to `MULTICONVERT` and async enqueues
-    - [X] Create `MULTICONVERT` task type
-    - [ ] Remove sync `FUNC` task type (requires lots of test changes)
-    - [ ] Remove all synchronous enqueues (requires lots of test changes)
-
-- [ ] Switch to `MULTICONVERT` and async enqueues
-
-## Misc
-
-- [ ] BUG: Fix running unoconv within venv
-    - [ ] Check if in virtualenv and ensure system Python is used when doing
-      subprocess calls
-
-- [ ] QoL conversion grid improvements
-    - [X] ~Think more about how to make extension "supersede" mimetype
-      in a reliable way~ The detector system generally takes care of this
-    - [X] Add "configure" check to base Converter, which should ensure correct
-      Python and system packages installed for the converter to be functoinal
-    - [ ] Allow conversions to self
-    - [X] Allow full conversion paths in settings, which are picked first if
-      available (useful for locking down)
-    - [X] Allow 'conversion profile' system, which ranges from aliases, to
-      partial conversion path
-
-    - [ ] Locking + sanity check process:
-        - [ ] 1. Before, optionally (based on conf) do sanity Detector check
-        - [ ] 2. After, optionally (based on conf) do sanity Detector check
-        - [ ] 3. After, (required) make output all exclusively readonly,
-          recursively in the case of a directory
-        - [ ] 4. `Resource` base class should treat writable caches as
-          non-existent, thus making "in progress" files unusable to front-end
-          services. This step is essential for data integrity.
-        - [ ] Obsolete Detector Converter types, I believe
-
-    - [ ] For JS, should have full input graph, e.g. can uglify plain JS files,
-      but rely on "preferred paths" to ensure that it gets es5ified first (can
-      configure in default settings this way)
-
-    - [ ] It's becoming increasingly clear I need to build a constant-based
-      TypeString hierarchy, such that a bundle.js or es5.js is a type of JS
-      file, and thus gets proper mimetypes, etc, while remaining more specific
-
-- [ ] AsyncIO improvements
-    - [ ] Replace all file system calls with aiofiles
-    - [ ] Replace all spawn system calls with asyncio equivalent
 
 
 # Future
@@ -230,19 +231,23 @@ generated from them should have much more cautious client-side cache headers.
   once 'Freshened'
 - Git implementation would be bare repo
 - [ ] `ForeignMutable` - Behaves differently than foreign resource, can be
-  transformed into a TypedResource after being 'freshened' or 'locked'
+  transformed into a TypedResource after being 'locked'
     - [ ] `freshen()` - Mutates cached resource
     - [ ] Store a log of all freshen instances in cache, like `history.txt`
     - [ ] `get_history()` - Returns an abbreviated list of version-strings,
       one of which can be selected, generally `current` and all previous
       instances of freshen.
     - [ ] `get_locked(LockString)` - Returns a LockedTypedResource
-- [ ] `LockedForeignMutable` - for `git` would represent a specific hash,
-  for non-VC, would just get an imaginary timestamp (or hash)
-    - `get_typed_resource(path=None)` - Returns a specific typed resource.
-      Some ForeignMutables can transform into individual paths (?).
-    - [ ] `LockedTypedResource` - Source from a ForeignMutable, it would
-      simply need to be linked from its true location
+- [ ] `LockedForeignMutable` - for `git` would represent a specific hash, for
+  non-VCS, would be a timestamp
+    - `get_resource(view_selector)` - Returns either a LockedResource resource.
+        - For VCS, you would use PathViewSelector
+        - For Chat history, you would use TimeRangeViewSelector
+    - `get_typed_resource(view_selector)` - Possibly later add this, since for
+      chat history this would be used, since the resulting resource is of known
+      type
+    - [ ] `LockedResource` - Source from a ForeignMutable, it would
+      simply need to be linked from its true location, can be
 
 ## Chat stream (and timeseries?) as a mutable data source
 
@@ -254,13 +259,7 @@ the core would not require JS (JS would just add the sugar of
 auto-refresh). This is to make it feel faster, simpler,  and more "solid"
 than sluggish competitors.
 
-- [ ] `ForeignMutable('mysql://whatever@host.com:3363')`
-    - [ ] `freshen()` - Freshens cached data for the series (?)
-    - [ ] `get_history()` - Returns an abbreviated list of version-strings,
-      one of which can be selected.
-    - [ ] `get_locked(LockString)` - Returns a LockedTypedResource
-- [ ] `LockedForeignMutable` - for `timeseries` would represent a specific
-  time
+- e.g. `ForeignMutable('postgres://whatever@host.com:3363')`
 
 # Production caching control improvements
 
@@ -280,8 +279,8 @@ than sluggish competitors.
 - [ ] Time-based grouper: In addition to MD5 structure, have
   `/var/tmp/omnic/date-cache/2017/08/01/ae08/`. This will allow cron to
   aggressively purge older cache, e.g. only maintain a couple days in prod.
-  This is good because IRL it won't be serving media anyway, the cache is
-  only good for conversion.
+  This is good because IRL it won't be serving media anyway, the cache is only
+  good for conversion.
 
 ## Cron
 

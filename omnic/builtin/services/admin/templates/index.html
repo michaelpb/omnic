@@ -74,13 +74,17 @@
     </div>
 </div>
 
-<script src="/viewer/js/viewers.js"></script>
+{% if viewer_src %}
+    <script src="/viewer/js/viewers.js"></script>
+    <script src="/viewer/js/reload-viewers.js"></script>
+{% endif %}
 <script src="/viewer/js/reload-thumb.js"></script>
-<script src="/viewer/js/reload-viewers.js"></script>
 
 <script>
     $(document).ready(function () {
-        return; // XXX REMOVEME
+        {% if not update_workers %}
+            return;
+        {% endif %}
         // Auto-reload workers every 1 second
         var reloadWorkers = function () {
             $('#workers').load('/admin/ajax/workers/', function () {

@@ -1,6 +1,6 @@
-"""
+'''
 Tests for `resource` module.
-"""
+'''
 import hashlib
 import os
 import tempfile
