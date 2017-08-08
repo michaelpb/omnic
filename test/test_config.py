@@ -36,7 +36,27 @@ class TestSettings:
     def test_overriding_with_dict(self):
         settings = SettingsManager()
         assert settings.SERVICES
-        settings.use_settings_dict({'services': []})
+        settings.set(services=[])
+        assert not settings.SERVICES
+        settings.use_settings_dict({'services': ['asdf']})
+        assert not settings.SERVICES
+        settings.use_previous_settings()
+        assert not settings.SERVICES
+
+    def test_overriding_exception(self):
+        settings = SettingsManager()
+        with pytest.raises(ValueError):
+            settings.set(SERVICES=[])
+        with pytest.raises(AttributeError):
+            settings.set(nonexistant=[])
+
+    def test_set(self):
+        settings = SettingsManager()
+        assert settings.SERVICES
+
+        class MockSettings:
+            SERVICES = []
+        settings.use_settings(MockSettings)
         assert not settings.SERVICES
         settings.use_previous_settings()
         assert settings.SERVICES

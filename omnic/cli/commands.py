@@ -14,12 +14,21 @@ from omnic.worker.testing import autodrain_worker
 cli = singletons.cli  # Alias
 
 
-@cli.subcommand('Run HTTP server and workers for on-the-fly conversions')
+@cli.subcommand('Run HTTP server and workers for on-the-fly conversions', {
+    ('--host', '-H'): {'help': 'Host name'},
+    ('--port', '-p'): {'help': 'Port to listen on', 'type': int},
+})
 def runserver(args):
+    settings = singletons.settings
+    if args.host:
+        settings.set(host=args.host)
+    if args.port:
+        settings.set(port=args.port)
+
     # Get configuration from settings
-    host = singletons.settings.HOST
-    port = singletons.settings.PORT
-    debug = singletons.settings.DEBUG
+    host = settings.HOST
+    port = settings.PORT
+    debug = settings.DEBUG
     cli.print('Running server at http://%s:%s' % (host, port))
     if debug:
         cli.print('DEBUG MODE ON')

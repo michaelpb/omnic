@@ -229,7 +229,8 @@ class TestCoreCommands:
 
     def test_runserver_command(self):
         class args:
-            pass
+            host = None
+            port = None
         self.commands.runserver(args)
         server_kwargs = dict(host='host', port=1337, debug=False)
         assert self.singletons.mock_calls[0] == call.eventloop.reconfigure()
@@ -243,6 +244,14 @@ class TestCoreCommands:
         #        self.singletons.create_server_coro(),
         #        self.singletons.workers.gather_run(),
         #    )
+
+    def test_runserver_command_with_args(self):
+        class args:
+            host = '1.2.3.4'
+            port = 22
+        self.commands.runserver(args)
+        assert call.settings.set(host='1.2.3.4') in self.singletons.mock_calls
+        assert call.settings.set(port=22) in self.singletons.mock_calls
 
     def test_startproject_command(self):
         class args:

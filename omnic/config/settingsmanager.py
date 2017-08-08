@@ -24,6 +24,7 @@ class SettingsManager:
         # Initialize main two properties
         self.default_settings_module = default_settings
         self.settings_module = None
+        self.overridden_settings = {}
 
         # Now we figure out which (if any) settings module to use
         files = os.listdir(os.getcwd())
@@ -52,6 +53,10 @@ class SettingsManager:
         if key.upper() != key:  # not upper case
             raise AttributeError('Invalid settings attribute, '
                                  'must be all-uppercase: "%s"' % key)
+        # Try with customized settings
+        if key in self.overridden_settings:
+            return self.overridden_settings[key]
+
         try:  # Try with the custom settings
             return getattr(self.settings_module, key)
         except AttributeError:
@@ -139,6 +144,22 @@ class SettingsManager:
                     imported_obj.__spec__.origin == 'namespace'):
                 imported_obj = default_constructor(path)
         return imported_obj
+
+    def set(self, **kwargs):
+        '''
+        Override existing settings, taking precedence over both user settings
+        object and default settings. Useful for specific runtime requirements,
+        such as overriding PORT or HOST.
+        '''
+        for lower_key, value in kwargs.items():
+            if lower_key.lower() != lower_key:
+                raise ValueError('Requires lowercase: %s' % lower_key)
+            key = lower_key.upper()
+            try:
+                getattr(self, key)
+            except (AttributeError, ConfigurationError):
+                raise AttributeError('Cannot override %s' % key)
+            self.overridden_settings[key] = value
 
     def use_settings(self, settings_module):
         '''
