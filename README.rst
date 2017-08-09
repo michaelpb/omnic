@@ -1,15 +1,15 @@
-OmniC - Omni Converter
-======================
+.. figure:: docs/images/logo_medium.png
+   :alt: OmniC Logo
+
+Omni Converter
+==============
 
 .. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
    :alt: Travis CI
 
-.. figure:: docs/images/logo_medium.png
-   :alt: OmniC Logo
-
-Mostly stateless microservice for generating on-the-fly thumbs and
-previews of a wide variety of file types. Fully extendable to create any
-arbitrary conversion pipelines.
+Mostly stateless microservice for generating on-the-fly thumbs and previews of
+a wide variety of file types. Comes battery-included, but designed like a
+framework to be extended into any arbitrary conversion pipelines.
 
 Omni Converter (which can be shortened to OmniC or ``omnic``) is free software,
 licensed under the GPL 3.0.
@@ -25,45 +25,46 @@ OmniC is a lot of things. Most likely you will want it for making
 visualizations and thumbnails of a wide variety of file types without needing
 any (more) server-side code or database modifications.
 
+Ever have to write a worker/queue system for thumbnailing or conversions? Way
+too hard, right? OmniC does that, only with a lot less fuss.  It is inspired in
+part by [White
+Noise](http://whitenoise.evans.io/en/stable/#infrequently-asked-questions).
+
+
 On-the-fly conversions
 ----------------------
 
 - OmniC is a web server that listens to requests like
-  `http://omnic.mysite.com/media/thumb.png:200x200/?url=mysite.com/myimage.jpg`, and then it will
+  ``/media/thumb.png:200x200/?url=mysite.com/myimage.jpg``, and then it will
   download the `myimage.jpg` file, generate a 200x200 thumbnail of it, then
   respond with that thumbnail.
 
 - It can also do filetype conversions like
-  `/media/PDF/?url=mysite.com/mydoc.doc` for a PDF representation of a `.doc`
-  file.
+  ``/media/PDF/?url=mysite.com/mydoc.doc`` for a PDF representation of a
+  ``.doc`` file.
 
-- OmniC doesn't do any of the conversions itself, instead it simply uses
-  various CLI renderers and converters made by others
+- OmniC stitches together various CLI renderers and converters made by others
 
 Extensible conversion graph
 ---------------------------
 - OmniC is written as both a "batteries included" micro-service that you can
-  run as-is, and as a general web framework
+  run as-is, and as a general web media framework
 
-- Central to OmniC is the Conversion Graph: you give it a file, and the
-  desired type, and it will find path in the graph to get it there, even if it
-  takes multiple conversions.
-
-- In a few lines of code you can supply more converters (edges) in the
-  conversion graph via an extensible framework, **extending it to any
-  filetype** you need, or deactivating converters you don't need
+- Central to OmniC is the Conversion Graph: **you give it a file, and the
+  desired type, and it will find the shortest path there**  even if it takes
+  multiple conversions
 
 - OmniC's builtin converters can handle hundreds of filetypes in many different
-  use domains, including 3D files, molecules, and more
+  use domains, including 3D files, molecules, and more -- but if that's not
+  enough, **it only takes a few lines to add your own converter**
 
 Caching
 -------
 
 - Every download and conversion step is cached, so it only has to do it once.
 
-- In production, it should sit behind an upstream cache or CDN, to eliminate
-  the need for Python to serve up static assets (similar in spirit to
-  [WhiteNoise](http://whitenoise.evans.io/en/stable/#infrequently-asked-questions))
+- In production, it should sit behind an upstream cache or CDN, thus
+  eliminating the need for Python to serve up static assets
 
 - OmniC thus replaces worker/queue systems with a much simpler solution, making
   dev environments far smaller while resembling production, and potentially
@@ -107,6 +108,8 @@ take advantage of the built-in conversion graph.
 
 4. Go to http://127.0.0.1:8080/admin/ to see the admin interface demo
 
+Run the test suite: `docker run -it <IMAGE HASH> py.test`
+
 Admin
 -----
 
@@ -117,16 +120,12 @@ of a trumpet was pasted in, and a 200x200 thumbnail was generated:
 .. figure:: docs/images/admin_conversion_view.jpg
    :alt: Admin interface screenshot
 
-   Admin interface screenshot
-
-To the right of the thumbnail it has an HTML snippet (the source-code of
-the thumbnail to the left), and a button that will take you to the
-conversion graph for that type:
+To the right of the thumbnail it has an HTML snippet (the source-code of the
+thumbnail to the left), and a button that will take you to the conversion graph
+for that type:
 
 .. figure:: docs/images/admin_graph_view.jpg
    :alt: Admin graph screenshot
-
-   Admin graph screenshot
 
 Installing with pip
 ===================
