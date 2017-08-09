@@ -4,8 +4,8 @@ OmniC - Omni Converter
 .. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
    :alt: Travis CI
 
-.. figure:: docs/images/logo_large.png
-   :alt: Logo
+.. figure:: docs/images/logo_medium.png
+   :alt: OmniC Logo
 
 Mostly stateless microservice for generating on-the-fly thumbs and
 previews of a wide variety of file types. Fully extendable to create any

@@ -320,6 +320,93 @@
          result="composite2"
          id="feComposite770-9-2-7" />
     </filter>
+    <filter
+       inkscape:label="In and Out"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Inner colorized shadow, outer black shadow"
+       style="color-interpolation-filters:sRGB"
+       id="filter931-3-5-3">
+      <feGaussianBlur
+         result="result0"
+         in="SourceAlpha"
+         stdDeviation="4"
+         id="feGaussianBlur925-1-5-6" />
+      <feOffset
+         dx="5"
+         dy="5"
+         result="result4"
+         id="feOffset927-9-4-7" />
+      <feComposite
+         in="SourceGraphic"
+         in2="result4"
+         operator="xor"
+         result="result3"
+         id="feComposite929-4-7-5" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter784-5-7-6-3">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood774-9-8-5-5" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite776-2-4-6-6" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="10"
+         result="blur"
+         id="feGaussianBlur778-2-5-9-2" />
+      <feOffset
+         dx="10"
+         dy="0"
+         result="offset"
+         id="feOffset780-8-0-3-9" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite782-9-3-7-1" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter772-7-6-4-2">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood762-3-1-5-7" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite764-6-0-2-0" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="10"
+         result="blur"
+         id="feGaussianBlur766-1-6-5-9" />
+      <feOffset
+         dx="10"
+         dy="0"
+         result="offset"
+         id="feOffset768-2-3-4-3" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite770-9-2-7-6" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -329,8 +416,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.061871843"
-     inkscape:cx="1095.9104"
-     inkscape:cy="-3903.6965"
+     inkscape:cx="-1408.4424"
+     inkscape:cy="-5017.7788"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -347,7 +434,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -510,5 +597,38 @@
            y="5842.5195"
            style="fill:#ffffff;stroke:#000000;stroke-width:1.00001088;stroke-miterlimit:4;stroke-dasharray:none" /></flowRegion><flowPara
          id="flowPara1316-7"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeSans;-inkscape-font-specification:'FreeSans Bold';fill:#ffffff;stroke:#000000;stroke-width:1.00001088;stroke-miterlimit:4;stroke-dasharray:none">OmniC</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeSans;-inkscape-font-specification:'FreeSans Bold';fill:#ffffff;stroke:#000000;stroke-width:1.00001088;stroke-miterlimit:4;stroke-dasharray:none">OmniC</flowPara></flowRoot>    <g
+       id="g736-0-4-0"
+       transform="translate(-2593.5834,1006.3029)"
+       style="filter:url(#filter931-3-5-3)"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <path
+         id="path33-3-7-6-4-6"
+         d="m 1131.4983,252.35872 c -23.2214,-0.0485 -46.8382,3.84185 -69.9482,12.08349 51.6217,-18.04201 108.1331,7.23914 129.3673,57.10246 a 150.43452,150.43452 0 0 1 90.6017,137.95541 150.43452,150.43452 0 0 1 -150.4347,150.43422 150.43452,150.43452 0 0 1 -59.8325,-12.47933 c 21.4072,50.26959 78.6685,75.55521 130.6276,56.6534 107.4791,-39.09894 162.9121,-157.92445 123.8132,-265.40345 -30.5461,-83.96796 -109.753,-136.16978 -194.1944,-136.3462 z"
+         style="fill:#ffdd55;stroke-width:0.26458332;filter:url(#filter784-5-7-6-3)"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path35-6-9-1-3-2"
+         d="m 1131.5076,247.77606 c -24.1667,-0.0505 -48.7529,4.06794 -72.7842,12.81006 -109.85699,39.96402 -166.51648,161.4179 -126.55246,271.27491 39.96402,109.85701 161.41786,166.51647 271.27496,126.55248 109.857,-39.96402 166.5165,-161.41789 126.5524,-271.2749 -31.2218,-85.82581 -112.1811,-139.18229 -198.4907,-139.36255 z m -0.01,4.58266 c 84.4414,0.17642 163.6483,52.37824 194.1943,136.3462 39.099,107.479 -16.3341,226.30451 -123.8131,265.40345 -51.9563,18.90075 -109.2089,-6.38479 -130.6189,-56.64875 a 150.43452,150.43452 0 0 1 -12.2985,-5.94071 150.43452,150.43452 0 0 1 -12.8193,-7.86001 150.43452,150.43452 0 0 1 -11.9709,-9.10021 150.43452,150.43452 0 0 1 -11.0024,-10.25001 150.43452,150.43452 0 0 1 -9.9245,-11.29699 150.43452,150.43452 0 0 1 -8.7467,-12.23182 150.43452,150.43452 0 0 1 -7.48227,-13.04312 150.43452,150.43452 0 0 1 -6.14224,-13.72578 150.43452,150.43452 0 0 1 -4.74184,-14.26994 150.43452,150.43452 0 0 1 -3.29335,-14.67197 150.43452,150.43452 0 0 1 -1.81176,-14.92777 150.43452,150.43452 0 0 1 -0.37674,-10.64121 150.43452,150.43452 0 0 1 0.75139,-15.01872 150.43452,150.43452 0 0 1 2.2474,-14.86835 150.43452,150.43452 0 0 1 3.7202,-14.56965 150.43452,150.43452 0 0 1 5.15628,-14.12523 150.43452,150.43452 0 0 1 6.54068,-13.54026 150.43452,150.43452 0 0 1 7.85945,-12.81938 150.43452,150.43452 0 0 1 9.1002,-11.97084 150.43452,150.43452 0 0 1 10.2501,-11.00295 150.43452,150.43452 0 0 1 11.2969,-9.92394 150.43452,150.43452 0 0 1 12.2318,-8.74727 150.43452,150.43452 0 0 1 13.0437,-7.48172 150.43452,150.43452 0 0 1 13.7253,-6.14277 150.43452,150.43452 0 0 1 14.2699,-4.74132 150.43452,150.43452 0 0 1 14.672,-3.29333 150.43452,150.43452 0 0 1 14.9277,-1.8123 150.43452,150.43452 0 0 1 10.6413,-0.37672 150.43452,150.43452 0 0 1 15.0187,0.75189 150.43452,150.43452 0 0 1 14.8683,2.24689 150.43452,150.43452 0 0 1 14.5696,3.72019 150.43452,150.43452 0 0 1 14.1253,5.15628 150.43452,150.43452 0 0 1 1.2428,0.60048 c -21.4096,-50.26469 -78.6627,-75.55015 -130.6194,-56.64927 23.511,-8.55289 47.565,-12.58247 71.2086,-12.53307 z"
+         style="fill:#6c5353;stroke-width:0.26458332;filter:url(#filter772-7-6-4-2)"
+         inkscape:connector-curvature="0" />
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1310-5-6"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.00001085;stroke-miterlimit:4;stroke-dasharray:none"
+       transform="matrix(5.3039423,0,0,5.3039423,-4824.0806,-29641.808)"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><flowRegion
+         id="flowRegion1312-6-1"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1.00001085;stroke-miterlimit:4;stroke-dasharray:none"><rect
+           id="rect1314-7-8"
+           width="5920"
+           height="2011.4286"
+           x="685.71429"
+           y="5842.5195"
+           style="fill:#ffffff;stroke:#000000;stroke-width:1.00001085;stroke-miterlimit:4;stroke-dasharray:none" /></flowRegion><flowPara
+         id="flowPara1316-7-7"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeSans;-inkscape-font-specification:'FreeSans Bold';fill:#ffffff;stroke:#000000;stroke-width:1.00001085;stroke-miterlimit:4;stroke-dasharray:none">OmniC</flowPara></flowRoot>  </g>
 </svg>
