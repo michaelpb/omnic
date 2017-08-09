@@ -4,16 +4,19 @@ OmniC - Omni Converter
 .. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
    :alt: Travis CI
 
+.. figure:: docs/images/logo_large.png
+   :alt: Logo
+
 Mostly stateless microservice for generating on-the-fly thumbs and
 previews of a wide variety of file types. Fully extendable to create any
 arbitrary conversion pipelines.
 
-Omni Converter (which can be shortened to OmniC or ``omnic``) is free
-software, licensed under the GPL 3.0.
+Omni Converter (which can be shortened to OmniC or ``omnic``) is free software,
+licensed under the GPL 3.0.
 
-**WIP WARNING:** OmniC is still 'unreleased software', a work in progress. The
-API is subject to rapid change. I intend to release the first stable version
-before the end of this year (2017).
+- **WIP WARNING:** OmniC is still 'unreleased software', a work in progress.
+  The API is subject to rapid change. I intend to release the first stable
+  version before the end of this year (2017).
 
 What is OmniC?
 ==============
@@ -35,41 +38,45 @@ On-the-fly conversions
   file.
 
 - OmniC doesn't do any of the conversions itself, instead it simply uses
-  pre-made Linux visualizers and converters
+  various CLI renderers and converters made by others
 
 Extensible conversion graph
 ---------------------------
-- OmniC accomplishes these conversion via a Conversion Graph. In other words,
-  you give it a file, and the desired type, and it will find path in the graph
-  to get it there, even if it takes multiple conversions.
+- OmniC is written as both a "batteries included" micro-service that you can
+  run as-is, and as a general web framework
+
+- Central to OmniC is the Conversion Graph: you give it a file, and the
+  desired type, and it will find path in the graph to get it there, even if it
+  takes multiple conversions.
 
 - In a few lines of code you can supply more converters (edges) in the
   conversion graph via an extensible framework, **extending it to any
   filetype** you need, or deactivating converters you don't need
 
-Fast because of caching
------------------------
+- OmniC's builtin converters can handle hundreds of filetypes in many different
+  use domains, including 3D files, molecules, and more
 
-- Since conversion can be a time-consuming process, every download and
-  conversion step is cached for speed, so it only has to do it once.
+Caching
+-------
 
-- In production, it should sit behind an upstream cache or CDN,
+- Every download and conversion step is cached, so it only has to do it once.
 
-- OmniC thus replaces the worker/queue/object-store formula with a stateless +
-  caching formula, which is a much simpler topology, reducing scaling problems
-  to load balancing problems
+- In production, it should sit behind an upstream cache or CDN, to eliminate
+  the need for Python to serve up static assets (similar in spirit to
+  [WhiteNoise](http://whitenoise.evans.io/en/stable/#infrequently-asked-questions))
+
+- OmniC thus replaces worker/queue systems with a much simpler solution, making
+  dev environments far smaller while resembling production, and potentially
+  reducing scaling problems to load balancing problems
 
 Replacing the build step
 ------------------------
 - OmniC's concept of conversion is extremely broad and versatile: For example,
-  it can build JS bundles from ES6 sources
+  it can build minified JS bundles from ES6 sources
 
-- OmniC provides optional CLI tools to precache essential assets, to ensure
-  even the first view after launching a site is correct
-
-- Dependable file conversion made is easy: Use the provided Dockerfile to pull
-  in every imaginable converter, with minor version numbers locked down
-
+- Ideally, OmniC could replace most of the build-step in deployment, making
+  builds simply deploying new code to app servers, and everything else gets
+  done on the fly on the first request (such as by a tester on staging)
 
 JavaScript framework
 --------------------
@@ -85,11 +92,12 @@ JavaScript framework
   a Word document might initially show a JPG thumbnail, then on click show a
   PDF-based viewer in a modal
 
-
 Docker
 ======
 
-This repo provides a (very bulky) Dockerfile for working with OmniC
+This repo provides a (very bulky) Dockerfile for working with OmniC. The
+advantage is you don't have to worry about tracking down system dependencies to
+take advantage of the built-in conversion graph.
 
 1. Install and configure docker on your machine
 
@@ -97,22 +105,10 @@ This repo provides a (very bulky) Dockerfile for working with OmniC
 
 3. Run the image: `docker run -it -p 127.0.0.1:8080:8080 <IMAGE HASH>`
 
-4. Go to http://127.0.0.1:8080/ to see the deault "kitchen sink" OmniC server
-in action
+4. Go to http://127.0.0.1:8080/admin/ to see the admin interface demo
 
-The Admin Interface
-===================
-
-OmniC comes bundled with a read-only admin interface. It's main purpose
-is a sort of configuration sanity check, and queue monitoring, but it
-also serves as a great demo.
-
-::
-
-    omnic runserver
-
-Now point your browser at ``http://localhost:8080/admin/`` for the admin
-interface.
+Admin
+-----
 
 From here you can paste in an URL to a resource, that OmniC will attempt
 to display as a thumbnail. In this example an OBJ file (3D model format)
@@ -131,7 +127,6 @@ conversion graph for that type:
    :alt: Admin graph screenshot
 
    Admin graph screenshot
-
 
 Installing with pip
 ===================

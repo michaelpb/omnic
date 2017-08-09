@@ -8,8 +8,8 @@ from omnic.builtin.converters.chemical import (NodeSdfToSvgRenderer,
                                                OpenBabelConverter)
 from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
                                                Unoconv)
-from omnic.builtin.converters.thumb import ImageMagickThumb
 from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
+from omnic.builtin.converters.thumb import ImageMagickThumb
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
@@ -204,4 +204,3 @@ class TestThumbConverterCommands:
         _, out_resource = _get_resources('JPEG', 'thumb.png')
         args = conv. get_arguments(out_resource)
         assert args == ['200x200^', '100x100']
-

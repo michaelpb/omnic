@@ -19,6 +19,7 @@ class PILThumb(converter.Converter):
         'thumb.jpg',
     ]
     default_size = (200, 200)
+
     def __init__(self):
         super(self).__init__()
         # Import from Image only when in use
@@ -51,6 +52,7 @@ class PILThumb(converter.Converter):
             width_s, _, height_s = arguments[0].partition('x')
             size = (int(width_s), int(height_s))
         self.generate_thumb(size, in_resource, out_resource)
+
 
 class ImageMagickThumb(converter.ExecConverter):
     inputs = [
