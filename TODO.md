@@ -4,8 +4,7 @@ Blocking order:
 - [X] Build better testing infrastructure
 - [X] Fix packaging + docs
 - [X] Make scaffolding
-- [ ] Write containers for a few builtin setting-sets, such as 'kitchen
-  sink', 'image', and 'empty', allowing to lock down specs
+- [X] Write Dockerfile for general use / dev
 - [ ] Build CLI-level tests that include mini-scaffold test apps for full e2e
   (all tests in tests/ directory should be merely unit and integration tests)
 - [ ] Create "zoo" repo of specimen and include full e2e tests on all zoo

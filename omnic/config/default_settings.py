@@ -60,7 +60,8 @@ SERVICES = [
 ]
 
 CONVERTERS = [
-    'omnic.builtin.converters.thumb.PILThumb',
+    # 'omnic.builtin.converters.thumb.PILThumb', # Disabling Pillow thumb
+    'omnic.builtin.converters.thumb.ImageMagickThumb',
     'omnic.builtin.converters.document.Unoconv',
     'omnic.builtin.converters.document.ImageMagickPageRasterizer',
     'omnic.builtin.converters.mesh.MeshLabConverter',

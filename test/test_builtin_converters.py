@@ -8,6 +8,7 @@ from omnic.builtin.converters.chemical import (NodeSdfToSvgRenderer,
                                                OpenBabelConverter)
 from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
                                                Unoconv)
+from omnic.builtin.converters.thumb import ImageMagickThumb
 from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
@@ -180,3 +181,27 @@ class TestChemicalConverterCommands:
             in_resource.cache_path,
             '-O%s' % out_resource.cache_path,
         ]
+
+
+class TestThumbConverterCommands:
+    def test_imagemagick_thumb(self):
+        in_resource, out_resource = _get_resources('JPEG', 'thumb.png:123x456')
+        conv = ImageMagickThumb()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'convert',
+            '-thumbnail',
+            '123x456^',
+            '-gravity',
+            'center',
+            '-extent',
+            '61x228',
+            in_resource.cache_path,
+            out_resource.cache_path,
+        ]
+
+        # Test default arguments
+        _, out_resource = _get_resources('JPEG', 'thumb.png')
+        args = conv. get_arguments(out_resource)
+        assert args == ['200x200^', '100x100']
+
