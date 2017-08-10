@@ -21,13 +21,9 @@ licensed under the GPL 3.0.
 What is OmniC?
 ==============
 
-OmniC is a lot of things. Most likely you will want it for making
-visualizations and thumbnails of a wide variety of file types without needing
-any (more) server-side code or database modifications.
-
-Ever have to write a worker/queue system for thumbnailing or conversions? Way
-too hard, right? OmniC does that, only with a lot less fuss.  It is inspired in
-part by [White
+OmniC can do a lot of things. Most likely you will want it for making
+visualizations and thumbnails without (any other) backend code.  It is inspired
+in part by [White
 Noise](http://whitenoise.evans.io/en/stable/#infrequently-asked-questions).
 
 
@@ -43,55 +39,52 @@ On-the-fly conversions
   ``/media/PDF/?url=mysite.com/mydoc.doc`` for a PDF representation of a
   ``.doc`` file.
 
-- OmniC stitches together various CLI renderers and converters made by others
+- OmniC doesn't reinvent any wheels, instead provides the framework to stitch
+  together existing CLI converters and expose them as a microservice
 
 Extensible conversion graph
 ---------------------------
 - OmniC is written as both a "batteries included" micro-service that you can
   run as-is, and as a general web media framework
 
-- Central to OmniC is the Conversion Graph: **you give it a file, and the
-  desired type, and it will find the shortest path there**  even if it takes
-  multiple conversions
+- Central to OmniC is the "Conversion Graph": **you give the URL to a file, and
+  the desired type, and it finds the shortest path**  even if it takes multiple
+  conversions
 
-- OmniC's builtin converters can handle hundreds of filetypes in many different
-  use domains, including 3D files, molecules, and more -- but if that's not
-  enough, **it only takes a few lines to add your own converter**
+- OmniC's builtin converters can handle hundreds of file-types in many
+  different use domains, including 3D files, documents, and more -- but if
+  that's not enough, **it only takes a few lines to add your own converter**
 
 Caching
 -------
 
-- Every download and conversion step is cached, so it only has to do it once.
+- Since conversion is slow, **every step is cached** so it is only done once,
+  and in production it should sit behind an upstream cache or CDN
 
-- In production, it should sit behind an upstream cache or CDN, thus
-  eliminating the need for Python to serve up static assets
-
-- OmniC thus replaces worker/queue systems with a much simpler solution, making
-  dev environments far smaller while resembling production, and potentially
-  reducing scaling problems to load balancing problems
+- OmniC thus potentially can replace worker/queue systems with a much simpler
+  solution, **making dev environments far simpler** while resembling
+  production, and **potentially reducing worker/queue scaling problems to load
+  balancing problems**
 
 Replacing the build step
 ------------------------
 - OmniC's concept of conversion is extremely broad and versatile: For example,
   it can build minified JS bundles from ES6 sources
 
-- Ideally, OmniC could replace most of the build-step in deployment, making
-  builds simply deploying new code to app servers, and everything else gets
-  done on the fly on the first request (such as by a tester on staging)
+- Ideally, OmniC could replace most of the build-step during production
+  deployments, making launches simply deploying new code to app servers, and
+  everything else gets done as-needed on the first request (such as by a tester
+  on staging)
 
 JavaScript framework
 --------------------
-- For best first-user experience and prevent connections from timing out, OmniC
-  will initially serve up single transparent pixels in lieu of uncached
-  thumbnails, but provides a tiny snippet of JavaScript to re-fetch it after
-  its converted.
+- OmniC comes with some JS to smooth over the experience: For uncached media,
+  it will initially serve a placeholder, but with the included JS snippet it
+  will reload the relevant assets when the conversion is finished
 
-- OmniC also provides an optional JavaScript viewer system, hooked into its
-  conversion system
-
-- This allows the thumbnails to become interactive after a click: For example,
-  a Word document might initially show a JPG thumbnail, then on click show a
-  PDF-based viewer in a modal
+- OmniC also provides an **optional JavaScript viewer system**, hooked right
+  into its conversion system: For example, a Word document might initially show
+  as a JPG thumbnail, then on click show a PDF-based viewer in a modal
 
 Docker
 ======
@@ -117,14 +110,14 @@ From here you can paste in an URL to a resource, that OmniC will attempt
 to display as a thumbnail. In this example an OBJ file (3D model format)
 of a trumpet was pasted in, and a 200x200 thumbnail was generated:
 
-.. figure:: docs/images/admin_conversion_view.jpg
+.. figure:: docs/images/admin_conversion_view.jpg?
    :alt: Admin interface screenshot
 
 To the right of the thumbnail it has an HTML snippet (the source-code of the
 thumbnail to the left), and a button that will take you to the conversion graph
 for that type:
 
-.. figure:: docs/images/admin_graph_view.jpg
+.. figure:: docs/images/admin_graph_view.jpg?
    :alt: Admin graph screenshot
 
 Installing with pip
