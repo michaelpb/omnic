@@ -294,7 +294,11 @@ class TestCacheCommands:
         from omnic.cli import commands
         self.commands = commands
 
-    @use_settings(path_prefix='/some/path/', path_grouping=None)
+    @use_settings(
+        path_prefix='/some/path/',
+        resource_cache_interfix='res',
+        path_grouping=None,
+    )
     def test_clearcache_command(self, capsys):
         # Does not exist
         with patch('os.path.exists') as exists:
@@ -312,7 +316,7 @@ class TestCacheCommands:
             exists.return_value = True
             with patch('shutil.rmtree') as rmtree:
                 self.commands.clearcache(self.args)
-        assert rmtree.mock_calls == [call('/some/path/')]
+        assert rmtree.mock_calls == [call('/some/path/res/')]
         _check_silent(capsys)
 
         # Does exist multiple
@@ -320,7 +324,7 @@ class TestCacheCommands:
             exists.return_value = True
             with patch('shutil.rmtree') as rmtree:
                 self.commands.clearcache(self.args_multiple)
-        assert rmtree.mock_calls == [call('/some/path/'), call('/some/path/')]
+        assert rmtree.mock_calls == [call('/some/path/res/'), call('/some/path/res/')]
         _check_silent(capsys)
 
         # Does exist with filetype directory
@@ -330,7 +334,7 @@ class TestCacheCommands:
                 isdir.return_value = True
                 with patch('shutil.rmtree') as rmtree:
                     self.commands.clearcache(self.args_with_type)
-        assert rmtree.mock_calls == [call('/some/path/resource.ext')]
+        assert rmtree.mock_calls == [call('/some/path/res/resource.ext')]
         _check_silent(capsys)
 
         # Does exist with filetype file
@@ -340,7 +344,7 @@ class TestCacheCommands:
                 isdir.return_value = False
                 with patch('os.unlink') as unlink:
                     self.commands.clearcache(self.args_with_type)
-        assert unlink.mock_calls == [call('/some/path/resource.ext')]
+        assert unlink.mock_calls == [call('/some/path/res/resource.ext')]
         _check_silent(capsys)
 
     @use_settings(path_prefix='/some/path/')

@@ -24,6 +24,7 @@ class BaseUnitTest:
         class FakeSettings:
             PATH_PREFIX = self.tmp_path_prefix
             PATH_GROUPING = None
+            RESOURCE_CACHE_INTERFIX = ''
             ALLOWED_LOCATIONS = {self.host}
             LOGGING = None
         singletons.settings.use_settings(FakeSettings)

@@ -96,6 +96,7 @@ PLACEHOLDERS = [
 ]
 
 PATH_PREFIX = '/tmp/omnic/'
+RESOURCE_CACHE_INTERFIX = 'resource'
 PATH_GROUPING = 'MD5'
 ALLOWED_LOCATIONS = {
     # local

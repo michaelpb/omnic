@@ -45,6 +45,7 @@ class Resource:
         # Generate filepath
         self.cache_path_base = os.path.join(
             singletons.settings.PATH_PREFIX,
+            singletons.settings.RESOURCE_CACHE_INTERFIX,
             *self.path_grouping(),
         )
 
