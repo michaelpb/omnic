@@ -75,14 +75,14 @@ class ImageMagickThumb(converter.ExecConverter):
 
     command = [
         'convert',
-        # -define jpeg:size=500x180 ... should be 2x size, and correspond to
-        # JPEG or PNG
+        # -define jpeg:size=500x180 ... should be 2x
+        # size, and correspond to JPEG or PNG
         '-thumbnail',
         '$0',
         '-gravity',
         'center',
         '-extent',
-        '$1',
+        '$0',
         '$IN',
         '$OUT',
     ]
@@ -96,5 +96,4 @@ class ImageMagickThumb(converter.ExecConverter):
             size = (int(width), int(height))
         else:
             size = self.default_size
-        extent_size = (int(size[0] / 2), int(size[1] / 2))
-        return ['%ix%i^' % size, '%ix%i' % extent_size]
+        return ['%ix%i^' % size]

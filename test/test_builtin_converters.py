@@ -195,7 +195,7 @@ class TestThumbConverterCommands:
             '-gravity',
             'center',
             '-extent',
-            '61x228',
+            '123x456^',
             in_resource.cache_path,
             out_resource.cache_path,
         ]
@@ -203,4 +203,4 @@ class TestThumbConverterCommands:
         # Test default arguments
         _, out_resource = _get_resources('JPEG', 'thumb.png')
         args = conv. get_arguments(out_resource)
-        assert args == ['200x200^', '100x100']
+        assert args == ['200x200^']
