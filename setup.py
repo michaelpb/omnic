@@ -21,7 +21,7 @@ readme = open('README.rst').read()
 
 setup(
     name='omnic',
-    version='0.1.11',
+    version='0.1.12',
     description='Mostly stateless microservice framework for generating '
     'on-the-fly thumbs and previews of a wide variety of file types.',
     long_description=readme,
