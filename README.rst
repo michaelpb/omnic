@@ -74,10 +74,11 @@ What is OmniC?
 ==============
 
 OmniC can do a lot of things. Most likely you will want it for making
-visualizations and thumbnails without (any other) backend code.  It is inspired
-in part by `White Noise_`.
+visualizations and thumbnails without (any other) backend code. It is inspired
+in part by `White Noise`_ -- notably, reducing complexity by serving media with
+Python.
 
-.. _White Noise: http://whitenoise.evans.io/en/stable/#infrequently-asked-questions).
+.. _`White Noise`: http://whitenoise.evans.io/en/stable/#infrequently-asked-questions
 
 
 On-the-fly media processing
