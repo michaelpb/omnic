@@ -151,3 +151,38 @@ Documentation
 
 TODO: Add full docs at http://omnic.rtfd.org."""
 
+Contributing
+============
+
+Setting up a dev environment
+----------------------------
+
+1. Install Python 3, including ``pip`` and ``venv``:
+
+   -  On Debian-based distros:
+
+      -  ``sudo apt-get install python3 python3-env python3-pip``
+
+   -  On macOS, use something like ``brew``
+
+2. Create a virtualenv. For example:
+
+   -  ``mkdir -p ~/.venvs/``
+   -  ``python3 -m venv ~/.venvs/omnic``
+
+3. Activate virtualenv:
+
+   -  ``source ~/.venvs/omnic/bin/activate``
+   -  You will need to do this any time you want to work
+
+4. Install dependencies:
+
+   -  ``pip install -r requirements.txt``
+
+5. Run test suite, should have 150+ tests pass:
+
+   -  ``py.test``
+
+6. Start the server:
+
+   -  ``./bin/omnic runserver``
