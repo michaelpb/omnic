@@ -9,11 +9,24 @@
                 <p>Paste in a permitted link to test conversion to thumbnail, and optionally a JavaScript viewer for a relevant type.</p>
                 <form action="" method="GET">
                     <div class="col-sm-7 col-md-7">
+
                         <div class="input-group input-group-lg">
-                            <span class="input-group-addon" id="sizing-addon1">Foreign resource</span>
-                            <input type="text" value="{{ form.res_url }}" name="res_url" class="form-control" placeholder="http://url.to/resource" aria-describedby="sizing-addon1">
+                            <span class="input-group-addon" id="foreignresource">Foreign resource
+                            </span>
+                            <input type="text" value="{{ form.res_url }}" name="res_url" class="form-control" placeholder="url.to/resource" aria-describedby="foreignresource">
                         </div>
 
+
+                            <span class="dropdown">
+                                <button class="btn btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                                Examples
+                                <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    {% for path, filename in zoo_examples %}
+                                        <li><a class="zoo-example" data-fn="{{ filename }}" data-url="{{ path }}">{{ filename }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </span>
                     </div>
                     <div class="col-sm-4 col-md-4">
                         <div class="input-group input-group-lg">
@@ -81,7 +94,33 @@
 <script src="/viewer/js/reload-thumb.js"></script>
 
 <script>
+    window.setURL = function (newURL) {
+    }
+
     $(document).ready(function () {
+        $('.zoo-example').click(function () {
+            var ext = $(this).attr('data-fn').split('.')[1];
+            var viewer = null;
+
+            // add in PDF viewer for a few types
+            console.log('thsi is ext', ext)
+            if ('odt, doc'.indexOf(ext) !== -1) {
+                viewer = 'PDF';
+            }
+            if ('svg, mol, obj, pdf'.indexOf(ext) !== -1) {
+                viewer = 'PNG';
+            }
+
+            if (viewer) {
+                $('[name=viewer_type]').val(viewer);
+            } else {
+                $('[name=viewer_type]').val('');
+            }
+
+            $('[name=res_url]').val($(this).attr('data-url'));
+            $('form').submit();
+        });
+
         {% if not update_workers %}
             return;
         {% endif %}

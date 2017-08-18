@@ -17,9 +17,11 @@ RUN apt-get update && apt-get install -y \
     unoconv=0.7-1.1
 
 RUN npm install -g \
+    babel-cli@6.24.1 \
+    babel-preset-es2015@6.24.1 \
     browserify@14.4.0 \
     jsc3d@0.1.8 \
-    babel-cli@6.24.1
+    uglify-js@3.0.20
 
 # Setup python reqs
 COPY ./test/requirements.txt /requirements.txt

@@ -105,6 +105,9 @@ ALLOWED_LOCATIONS = {
     # test sites mentioned in README
     'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov', 'wiki.jmol.org',
     'opendatakit.org',
+
+    # github
+    'github.com',
 }
 
 # Conversion type safety stuff:

@@ -11,8 +11,20 @@ from omnic.types.resource import ForeignResource
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
+zoo_example_template = 'github.com/michaelpb/omnic-zoo/raw/master/data/%s'
+zoo_example_filenames = [
+    'caffeine.mol',
+    'imrtemplate.doc',
+    'libre.jpg',
+    'trumpet.obj',
+    'fdl-1.3.odt',
+    'js_cheatsheet.pdf',
+    'tux.svg',
+]
+ZOO_EXAMPLES = [(zoo_example_template % fn, fn) for fn in zoo_example_filenames]
+
 FORM_DEFAULT = {
-    'res_url': 'unsplash.it/500/500',
+    'res_url': 'github.com/michaelpb/omnic-zoo/raw/master/data/libre.jpg',
     'thumb_width': 200,
     'thumb_height': 200,
     'viewer_type': '',
@@ -150,6 +162,7 @@ async def conversion_tester(request):
         'thumb_src': thumb_src,
         'viewer_src': viewer_src,
         'form': form,
+        'zoo_examples': ZOO_EXAMPLES,
         'ext': ext,
     })
 

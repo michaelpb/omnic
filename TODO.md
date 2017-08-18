@@ -5,10 +5,9 @@ Blocking order:
 - [X] Fix packaging + docs
 - [X] Make scaffolding
 - [X] Write Dockerfile for general use / dev
-- [ ] Build CLI-level tests that include mini-scaffold test apps for full e2e
-  (all tests in tests/ directory should be merely unit and integration tests)
-- [ ] Create "zoo" repo of specimen and include full e2e tests on all zoo
-  specimen
+- [ ] Add Downloader / git support
+- [ ] Create demo site that simply embeds zoo repo
+- [ ] Create zoo repo
 
 ## Top priority
 - [X] Get viewer demo running
@@ -122,6 +121,10 @@ Blocking order:
     - Git viewer
         - Do the 'Doc Write' strategy I came up to block page on HTML render
 
+- [ ] Build CLI-level tests that include mini-scaffold test apps for full e2e
+  (all tests in tests/ directory should be merely unit and integration tests)
+- [ ] Create "zoo" repo of specimen and include full e2e tests on all zoo
+  specimen
 
 # Future
 
@@ -222,7 +225,27 @@ Blocking order:
 - Thus, omnic becomes "just in time deployment"
 - Obvs in real life, this would be triggered with a hook
 
+# Resource download protocols
+
+- Like TypeStrings, there can also be NetSchemeType
+    - A list of download handlers for each one
+    - HTTP/HTTPS is default
+    - Git
+    - postgres/mysql
+- [ ] Downloader classes
+    - HttpDownloader - uses curl to download
+    - GitDownloader - uses git to download
+        - `git clone`
+        - `git archive --format=tar --prefix=/8eaf/../whatever.git_downloaded/ v1.4.3 | tar -xf`
+    - Others could include: FtpDownloader S3Downloader, etc
+
+- [ ] Complex URL strings
+    - More flexible system to take the place of "View Strings"
+    - Complex URL strings:
+        - git://host/whatever.git<githash:eaf6f63><file:path/to/file.png>
+
 # Mutable resources
+- *NOTE: with Download Scheme this complication might not be needed*
 
 - 'mutable' concept - some foreign URLs might be mutable. All media
 generated from them should have much more cautious client-side cache headers.
@@ -258,7 +281,14 @@ the core would not require JS (JS would just add the sugar of
 auto-refresh). This is to make it feel faster, simpler,  and more "solid"
 than sluggish competitors.
 
-- e.g. `ForeignMutable('postgres://whatever@host.com:3363')`
+- Possibly useful front-end fw: http://intercoolerjs.org/docs.html
+
+- More OmniChat ideas:
+    - "channels" are just "pinned" resources - could be any resource, from an
+      image to a document
+    - There's a "auto-pin creator" that in reality just stores a URL to be added
+    - Full URL:
+        - /media/chatlogs.html/?url=postgres://host.com/<saved-query:omnichat_logs><select:WHERE channel=general><select:WHERE date > xyz AND date < xyz><save-as:chatlogs.json>
 
 # Production caching control improvements
 
@@ -308,6 +338,28 @@ than sluggish competitors.
 - [ ] Refactor worker manager, worker, and task system (right now has a lot
   of repetitive code)
     - [ ] Make tasks be definable independent of ENUM / custom methods
+
+# Integration with existing cloud infrastructure
+
+- [ ] Cloud upload feature - add '&cloud=true' option
+    - [ ] This would attempt to upload the final result, and then respond with
+      a 301 perm redirect instead
+    - [ ] This produces a special `_cloud_link` format file, that contains the
+      URL to the cloud provider (which is sent back as a perm redirect)
+
+
+# Docker images / integration tests notes
+
+- Have 1 base docker image that has no system software installed
+- For integration testing, have 3 other docker images, as such:
+    - latest (cutting edge versions of all system software)
+    - stable (version pinned to a fairly recent version)
+    - legacy (version pinned to earliest possible version)
+    - The rational is it allows for a "range" of versions that are compatible
+- When creating a new project (with cookiecutter?), a Dockerimage is
+  automatically created that only includes the software in use
+    - The docker image derives
+
 
 # Performance and stability improvements
 
