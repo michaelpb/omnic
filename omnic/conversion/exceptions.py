@@ -14,5 +14,13 @@ class ConversionOutputError(ConversionError):
     pass
 
 
+class DownloadError(ConversionError):
+    pass
+
+
 class ConverterUnavailable(Exception):
+    pass
+
+
+class DownloaderUnavailable(Exception):
     pass

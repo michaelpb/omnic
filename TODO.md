@@ -127,6 +127,10 @@ Blocking order:
   specimen
 
 # Future
+## Subprocess management
+- [ ] Wrap all subprocess calls in a singleton that manages them
+    - Allow a queue that (async blocks) until finished, and thus have a
+      configurable max number of subprocesses (e.g. 1 per core)
 
 ## JS viewer system
 -[ ] First API call looks for all `img[omnic-viewer]` and

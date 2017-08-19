@@ -4,6 +4,7 @@ import subprocess
 
 from omnic.conversion.exceptions import (ConversionInputError,
                                          ConverterUnavailable)
+from omnic.conversion.utils import apply_command_list_template
 from omnic.utils import filesystem
 
 
@@ -37,18 +38,12 @@ class ExecConverter(Converter):
         return os.path.dirname(in_resource.cache_path)
 
     def get_command(self, in_resource, out_resource):
-        args = self.get_arguments(out_resource)
-        replacements = {
-            '$IN': in_resource.cache_path,
-            '$OUT': out_resource.cache_path,
-        }
-
-        # Add in positional arguments ($0, $1, etc)
-        for i, arg in enumerate(args):
-            replacements['$' + str(i)] = arg
-
-        # Returns list of truthy replaced arguments in command
-        return [replacements.get(arg, arg) for arg in self.command]
+        return apply_command_list_template(
+            self.command,
+            in_resource.cache_path,
+            out_resource.cache_path,
+            self.get_arguments(out_resource),
+        )
 
     async def convert(self, in_resource, out_resource):
         # TODO: make async
