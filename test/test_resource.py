@@ -54,7 +54,7 @@ class TestForeignResource:
 
     def test_properties(self):
         assert self.res.url_string == URL
-        assert self.res.url_path_basename == 'file.png'
+        assert self.res.url.path_basename == 'file.png'
         assert self.res.cache_path.endswith('file.png')
         assert not self.res.cache_exists()
 

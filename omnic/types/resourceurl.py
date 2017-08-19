@@ -2,6 +2,7 @@
 ResourceURL is a core class that extends mimetypes
 '''
 import re
+import hashlib
 
 from urllib.parse import urlparse
 
@@ -26,19 +27,25 @@ class ResourceURL:
         self.kwargs = kwargs
 
         # Parse and process URL
-        self.url_string = url_string
-        self.url = urlparse(url_string)
-        self.url_path_split = self.url.path.split('/')
-        self.url_path_basename = self.url_path_split[-1]
-        if len(self.url_path_basename) < 1:
+        self.url = url_string
+        self.parsed = urlparse(url_string)
+        self.path_split = self.parsed.path.split('/')
+        self.path_basename = self.path_split[-1]
+        if len(self.path_basename) < 1:
             # Path is too small, probably ends with /, try 1 up
-            self.url_path_basename = self.url_path_split[-2]
+            self.path_basename = self.url_path_split[-2]
+
+        self.md5 = hashlib.md5(str(self).encode('utf-8')).hexdigest()
 
     def __str__(self):
-        return '%s%s' % (
-            self.url_string,
+        return ''.join((
+            self.url,
             ''.join('<%s>' % arg for arg in self.args),
-        )
+            ''.join('<%s:%s>' % pair for pair in self.kwargs.items()),
+        ))
+
+    def __repr__(self):
+        return '%s(%s)' % (type(self).__name__, repr(str(self)))
 
     @staticmethod
     def parse_string(s):
@@ -70,3 +77,13 @@ class ResourceURL:
 
         return url_string.strip(), args, kwargs
 
+class BytesResourceURL(ResourceURL):
+    '''
+    Used by Foreign Bytes Resource, when resource data is in memory but has no
+    particular foreign URL
+    '''
+    def __init__(self, data, extension, basename):
+        ext = '.%s' % extension if extension else ''
+        self.data_md5 = hashlib.md5(data).hexdigest()
+        virtual_path = 'file://%s/%s%s' % (self.data_md5, basename, ext)
+        super().__init__(virtual_path)

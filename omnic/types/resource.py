@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 from omnic import singletons
 from omnic.utils.iters import group_by
+from omnic.types.resourceurl import ResourceURL, BytesResourceURL
 
 try:
     import requests
@@ -18,31 +19,25 @@ class Resource:
     '''
     __slots__ = (
         # Slots used by all Resources
-        'url', 'url_string', 'url_path_split', 'url_path_basename',
+        'url', 'url_string',
         'basename', 'md5', 'cache_path_base', 'cache_path'
 
         # Optional slots used by subclasses
         'typestring', 'foreign', 'data',
     )
 
-    def __init__(self, url, is_url=True):
-        # Setup props
-        self.url = url
+    def __init__(self, resource_url):
+        # Coerce resource_url to ResourceURL if necessary
+        if isinstance(resource_url, str):
+            resource_url = ResourceURL(resource_url)
+        self.url = resource_url
 
-        # Parse and process URL
-        self.url_string = url
-        self.url = urlparse(url)
-        self.url_path_split = self.url.path.split('/')
-        self.url_path_basename = self.url_path_split[-1]
-        if len(self.url_path_basename) < 1:
-            # Path is too small, probably ends with /, try 1 up
-            self.url_path_basename = self.url_path_split[-2]
-        self.basename = self._get_basename()
-
-        # Generate MD5
-        self.md5 = hashlib.md5(self.url_string.encode('utf-8')).hexdigest()
+        # Alias properties of URL
+        self.url_string = str(self.url)
+        self.md5 = self.url.md5
 
         # Generate filepath
+        self.basename = self._get_basename()
         self.cache_path_base = os.path.join(
             singletons.settings.PATH_PREFIX,
             singletons.settings.RESOURCE_CACHE_INTERFIX,
@@ -120,7 +115,7 @@ class ForeignResource(Resource):
     '''
 
     def _get_basename(self):
-        return self.url_path_basename
+        return self.url.path_basename
 
     def download(self):
         if requests is None:
@@ -130,7 +125,7 @@ class ForeignResource(Resource):
             shutil.copyfileobj(req.raw, f)
 
     def validate(self):
-        if not check_url(singletons.settings, self.url):
+        if not check_url(singletons.settings, self.url.parsed):
             raise URLError('Invalid URL: "%s"' % self.url_string)
 
     def guess_typed(self):
@@ -161,7 +156,7 @@ class TypedForeignResource(Resource):
 
     def _get_basename(self):
         # Ignores URL basename
-        base, _ = os.path.splitext(self.url_path_basename)
+        base, _ = os.path.splitext(self.url.path_basename)
         return self.typestring.modify_basename(base)
 
     def symlink_from(self, foreign_resource):
@@ -186,7 +181,7 @@ class TypedResource(Resource):
         return '%s(%s, %s)' % tup
 
     def _get_basename(self):
-        return self.typestring.modify_basename(self.url_path_basename)
+        return self.typestring.modify_basename(self.url.path_basename)
 
     def __hash__(self):
         return hash('%s - %s' % (self.url_string, str(self.typestring)))
@@ -220,7 +215,7 @@ class TypedLocalResource(Resource):
         if self.foreign:
             return os.path.basename(self.path)
         else:
-            return self.typestring.modify_basename(self.url_path_basename)
+            return self.typestring.modify_basename(self.url.path_basename)
 
     def __hash__(self):
         return hash(self.path)
@@ -253,10 +248,7 @@ class ForeignBytesResource(ForeignResource):
 
     def __init__(self, data, extension=None, basename='source'):
         self.data = data
-        ext = '.%s' % extension if extension else ''
-        md5 = hashlib.md5(data).hexdigest()
-        virtual_path = 'file://%s/%s%s' % (md5, basename, ext)
-        super().__init__(virtual_path)
+        super().__init__(BytesResourceURL(data, extension, basename))
 
     def __repr__(self):
         return '%s(%s)' % (type(self).__name__, repr(self.data))
