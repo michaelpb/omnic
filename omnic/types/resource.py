@@ -40,7 +40,7 @@ class Resource:
         self.basename = self._get_basename()
         self.cache_path_base = os.path.join(
             singletons.settings.PATH_PREFIX,
-            singletons.settings.RESOURCE_CACHE_INTERFIX,
+            self._get_cache_interfix(),
             *self.path_grouping(),
         )
 
@@ -48,6 +48,9 @@ class Resource:
             self.cache_path_base,
             self.basename,
         )
+
+    def _get_cache_interfix(self):
+        return singletons.settings.RESOURCE_CACHE_INTERFIX
 
     def _get_basename(self):
         raise NotImplementedError()
@@ -136,6 +139,15 @@ class ForeignResource(Resource):
 
     def cache_remove_all(self):
         return shutil.rmtree(self.cache_path_base)
+
+
+class MutableResource(ForeignResource):
+    '''
+    A Mutable Resource resource from a foreign source (e.g. a URL) 
+    '''
+    def _get_cache_interfix(self):
+        # TODO change to setting
+        raise singletons.settings.RESOURCE_CACHE_INTERFIX
 
 
 class TypedForeignResource(Resource):

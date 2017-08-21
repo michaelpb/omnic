@@ -5,7 +5,7 @@ Blocking order:
 - [X] Fix packaging + docs
 - [X] Make scaffolding
 - [X] Write Dockerfile for general use / dev
-- [ ] Add Downloader / git support
+- [ ] Add ResourceResolver / git support
 - [ ] Create demo site that simply embeds zoo repo
 - [ ] Create zoo repo
 
@@ -236,12 +236,12 @@ Blocking order:
     - HTTP/HTTPS is default
     - Git
     - postgres/mysql
-- [ ] Downloader classes
-    - HttpDownloader - uses curl to download
-    - GitDownloader - uses git to download
+- [ ] ResourceResolver classes
+    - HttpResourceResolver - uses curl to download
+    - GitResourceResolver - uses git to download
         - `git clone`
         - `git archive --format=tar --prefix=/8eaf/../whatever.git_downloaded/ v1.4.3 | tar -xf`
-    - Others could include: FtpDownloader S3Downloader, etc
+    - Others could include: FtpResourceResolver S3ResourceResolver, etc
 
 - [ ] Complex URL strings
     - More flexible system to take the place of "View Strings"
