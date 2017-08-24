@@ -7,6 +7,9 @@ Omni Converter
 .. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
    :alt: Travis CI
 
+.. image:: https://badge.fury.io/py/omnic.svg
+   :alt: Omnic PyPI Badge
+
 Mostly stateless microservice for generating on-the-fly thumbs and previews of
 a wide variety of file types. Comes battery-included, but designed like a
 framework to be extended into any arbitrary conversion pipelines.
