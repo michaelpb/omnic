@@ -24,8 +24,8 @@ def _just_checking_response(resource_exists, resource):
 async def media_route(request, ts):
     response = singletons.server.response
 
-    url_suffix = request.args['url'][0]
-    url_string = 'http://' + url_suffix
+    # url_string = 'http://' + url_suffix
+    url_string = request.args['url'][0]
     is_just_checking = bool(request.args.get('just_checking', [''])[0])
 
     # Prep ForeignResource and ensure does not validate security settings

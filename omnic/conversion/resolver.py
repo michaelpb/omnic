@@ -70,6 +70,7 @@ async def download_git(resource_url):
         hash_or_tag,
         subpath,
     ]
+    out_resource.cache_makedirs()
     subprocess.run(cmd, cwd=git_resource.cache_path)
 
     # TODO: Have another mode specified by a kwarg that simply gets recursive
