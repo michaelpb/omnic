@@ -109,8 +109,9 @@ ALLOWED_LOCATIONS = {
     'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov', 'wiki.jmol.org',
     'opendatakit.org',
 
-    # github
+    # github, for omnic-zoo
     'github.com',
+    'raw.githubusercontent.com',
 }
 
 # Conversion type safety stuff:

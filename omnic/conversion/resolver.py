@@ -4,9 +4,13 @@ import os
 
 from omnic.types.resource import MutableResource, ForeignResource
 
-# TODO Presently hardcoded, refactor this into a "resolver" conversion system
-
-# TODO Replace with async subprocess stuff (if necessary..?)
+# TODO:
+# * Presently hardcoded, refactor this into a "resolver" conversion system
+#    * Can use ConverterGraph except with Resolvers instead, which take a
+#    resource_url, and ensure that a ForeignResource is cached from that
+# * Replace with async subprocess stuff
+# * Possibly create async subprocess base class helpers used by both conversion
+# system and resolver system
 
 
 async def download_http(resource_url):
@@ -14,10 +18,14 @@ async def download_http(resource_url):
     out_resource.cache_makedirs()
     cmd = [
         'curl',
+        '-L', # follow redirects
         '--silent',
         '--output', out_resource.cache_path,
         resource_url.url,
     ]
+    print('-----------------------------')
+    print(' '.join(cmd))
+    print('-----------------------------')
     subprocess.run(cmd)
 
 # git archive --output=../index.html --format=raw befd15d index.html
@@ -42,13 +50,17 @@ async def download_git(resource_url):
     # HEAD, and branch names (should only be tags or commit hashes)
 
     if not os.path.exists(git_resource.cache_path):
+        # Check out bare repo into cache path
         cmd = ['git', 'clone', '--bare', git_url, git_resource.cache_path]
         subprocess.run(cmd)
+
+        # Append to git config customized git archive format
         config_path = os.path.join(git_resource.cache_path, 'config')
         with open(config_path, 'a') as fd:
+            # Note: Not too concerned with staying idempotent, unlikely it
+            # could happen twice, and extra entries cause no issue
             fd.write(GIT_ARCHIVE_FORMATS)
 
-        # TODO Append this to end of config (no need to check for idem, multiple is OK)
     # NOW, git bare repo exists, let's extract the given file
     cmd = [
         'git',

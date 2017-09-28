@@ -11,7 +11,8 @@ from omnic.types.resource import ForeignResource
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
-zoo_example_template = 'github.com/michaelpb/omnic-zoo/raw/master/data/%s'
+#zoo_example_template = 'github.com/michaelpb/omnic-zoo/raw/master/data/%s'
+zoo_example_template = 'raw.githubusercontent.com/michaelpb/omnic-zoo/master/data/%s'
 zoo_example_filenames = [
     'caffeine.mol',
     'imrtemplate.doc',

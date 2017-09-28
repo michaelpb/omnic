@@ -82,25 +82,28 @@ class BaseWorker:
         func(*func_args)
 
     async def run_download(self, foreign_resource):
-        '''
-        Downloads a foreign resource asynchronously
-        '''
-        url = foreign_resource.url_string
-        with foreign_resource.cache_open('wb') as f_handle:
-            await self._download_async(url, f_handle)
+        await tasks.resolve_foreign_resource(foreign_resource)
 
-    async def _download_async(self, url, f_handle):
-        loop = singletons.eventloop.loop
-        self.aiohttp = aiohttp.ClientSession(loop=loop)
-        with aiohttp.Timeout(DOWNLOAD_TIMEOUT):
-            async with self.aiohttp.get(url) as response:
-                while True:
-                    chunk = await response.content.read(DOWNLOAD_CHUNK_SIZE)
-                    if not chunk:
-                        break
-                    f_handle.write(chunk)
-                self._close()
-                return await response.release()
+    #async def run_download(self, foreign_resource):
+    #    '''
+    #    Downloads a foreign resource asynchronously
+    #    '''
+    #    url = foreign_resource.url_string
+    #    with foreign_resource.cache_open('wb') as f_handle:
+    #        await self._download_async(url, f_handle)
+
+    #async def _download_async(self, url, f_handle):
+    #    loop = singletons.eventloop.loop
+    #    self.aiohttp = aiohttp.ClientSession(loop=loop)
+    #    with aiohttp.Timeout(DOWNLOAD_TIMEOUT):
+    #        async with self.aiohttp.get(url) as response:
+    #            while True:
+    #                chunk = await response.content.read(DOWNLOAD_CHUNK_SIZE)
+    #                if not chunk:
+    #                    break
+    #                f_handle.write(chunk)
+    #            self._close()
+    #            return await response.release()
 
     async def run_convert(self, converter, in_resource, out_resource):
         '''

@@ -69,7 +69,7 @@ class TestDownloaderFunction:
         self.mkdir.assert_has_calls((call('/t', 511), call('/t/res', 511)))
 
         # ensure the curl command was called
-        curl_cmd = ['curl', '--silent', '--output']
+        curl_cmd = ['curl', '-L', '--silent', '--output']
         paths = ['/t/res/whatever.png', 'http://site.com/whatever.png']
         self.subprocess.run.assert_called_once_with(curl_cmd + paths)
 
@@ -94,10 +94,12 @@ class TestDownloaderFunction:
                 cwd='/t/mut/lol.git'),
         ]
 
-        # ensure called once
+        # ensure git config was appended to
         self.open.assert_called_once_with('/t/mut/lol.git/config', 'a')
         assert len(self.open().write.mock_calls) == 1
         contents = list(self.open().write.mock_calls[0])[1][0] # first arg
+        assert '[tar "raw"]' in contents
         assert 'command = tar xfO -' in contents
+        assert '[tar "directory"]' in contents
         assert 'command = tar xf' in contents
 
