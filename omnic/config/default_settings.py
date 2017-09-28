@@ -71,6 +71,7 @@ CONVERTERS = [
     'omnic.builtin.converters.vector.InkscapeRasterizer',
     'omnic.builtin.converters.manifest.ManifestDownloader',
 
+    # Front-end JavaScript build system
     'omnic.builtin.converters.nodejs.NodePackageDetector',
     'omnic.builtin.converters.nodejs.NPMInstalledDirectoryConverter',
     'omnic.builtin.converters.nodejs.BrowserifyBundler',
@@ -97,7 +98,8 @@ PLACEHOLDERS = [
 
 PATH_PREFIX = '/tmp/omnic/'
 RESOURCE_CACHE_INTERFIX = 'resource'
-FOREIGN_RESOURCE_CACHE_INTERFIX = 'foreign'
+# FOREIGN_RESOURCE_CACHE_INTERFIX = 'foreign'
+MUTABLE_RESOURCE_CACHE_INTERFIX = 'mutable'
 PATH_GROUPING = 'MD5'
 ALLOWED_LOCATIONS = {
     # local

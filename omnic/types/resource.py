@@ -121,6 +121,7 @@ class ForeignResource(Resource):
         return self.url.path_basename
 
     def download(self):
+        # DEPRECATED
         if requests is None:
             raise RuntimeError('requests is not installed')
         req = requests.get(self.url_string, stream=True)
@@ -146,8 +147,7 @@ class MutableResource(ForeignResource):
     A Mutable Resource resource from a foreign source (e.g. a URL) 
     '''
     def _get_cache_interfix(self):
-        # TODO change to setting
-        raise singletons.settings.RESOURCE_CACHE_INTERFIX
+        return singletons.settings.MUTABLE_RESOURCE_CACHE_INTERFIX
 
 
 class TypedForeignResource(Resource):

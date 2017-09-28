@@ -1,6 +1,8 @@
-.PHONY: help clean clean-pyc clean-build clean-coverage list test test-all coverage docs release sdist js js-watch
+.PHONY: help clean clean-pyc clean-build clean-coverage list test test-all coverage docs release sdist js js-watch docker-run docker-build docker-run-watch
 
 help:
+	@echo "----"
+	@echo "MISC"
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "lint - check style with flake8"
@@ -11,6 +13,11 @@ help:
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
 	@echo "sdist - package"
+	@echo "cleanup-pep8 - automatical clean up some linting violations"
+	@echo "----"
+	@echo "DOCKER"
+	@echo "docker-build - run a server with local checkout using docker"
+	@echo "docker-run - run a server with local checkout using docker"
 	@echo "cleanup-pep8 - automatical clean up some linting violations"
 
 clean: clean-build clean-pyc clean-coverage
@@ -33,6 +40,15 @@ js:
 
 js-watch:
 	find omnic/ -name \*.js | entr -r ./bin/omnic --verbose precache-named viewers --type=min.js  --force
+
+docker-build:
+	docker build --tag omnic .
+
+docker-run: docker-build
+	docker run -it -p 127.0.0.1:8080:8080 omnic
+
+docker-run-watch:
+	find omnic -name '*.js' -o -name '*.py' | entr -r make docker-run
 
 lint:
 	# flake8 omnic test # for now ignore linting issues in test

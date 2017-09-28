@@ -2,6 +2,7 @@
 ResourceURL is a core class that extends mimetypes
 '''
 import re
+import os
 import hashlib
 
 from urllib.parse import urlparse
@@ -14,6 +15,13 @@ URL_ARGUMENTS_RE = re.compile(r'<([^>]+)>')
 SPLIT_URL_RE = re.compile(r'^([^<]+)(<?.*)$')
 ARG_RE = re.compile(r'^\s*([a-zA-Z0-9]+)\s*:\s*(.*)$')
 SCHEME_RE = re.compile(r'^[a-zA-Z0-9+-]+://')
+
+def _get_basename_based_on_url(resource_url):
+    path_basename = resource_url.path_split[-1]
+    if len(path_basename) < 1:
+        # Path is too small, probably ends with /, try 1 up
+        path_basename = resource_url.path_split[-2]
+    return path_basename
 
 class ResourceURL:
     '''
@@ -30,10 +38,10 @@ class ResourceURL:
         self.url = url_string
         self.parsed = urlparse(url_string)
         self.path_split = self.parsed.path.split('/')
-        self.path_basename = self.path_split[-1]
-        if len(self.path_basename) < 1:
-            # Path is too small, probably ends with /, try 1 up
-            self.path_basename = self.url_path_split[-2]
+
+        # In case something else should drive the basename of paths built from
+        # this URL, e.g., in the case of a resource within a git repo
+        self.path_basename = self.get_basename(self)
 
         self.md5 = hashlib.md5(str(self).encode('utf-8')).hexdigest()
 
@@ -76,6 +84,28 @@ class ResourceURL:
             url_string = '%s://%s' % (DEFAULT_SCHEME, url_string)
 
         return url_string.strip(), args, kwargs
+
+    @staticmethod
+    def get_basename(resource_url):
+        '''
+        Figures out path basename for given resource_url
+        '''
+        # NOTE: Needs to be moved into resolver architecture
+        scheme = resource_url.parsed.scheme
+        if scheme in ('http', 'https', 'file'):
+            return _get_basename_based_on_url(resource_url)
+
+        elif scheme in ('git', 'git+https', 'git+http'):
+            if len(resource_url.args) == 2:
+                # For now, git has 2 positional args, hash and path
+                git_tree, subpath = resource_url.args
+                return os.path.basename(subpath)
+            else:
+                return _get_basename_based_on_url(resource_url)
+
+        else:
+            raise ValueError('Unknown URL scheme: "%s"' % scheme)
+
 
 class BytesResourceURL(ResourceURL):
     '''
