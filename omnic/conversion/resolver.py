@@ -1,8 +1,7 @@
-import asyncio
-import subprocess
 import os
+import subprocess
 
-from omnic.types.resource import MutableResource, ForeignResource
+from omnic.types.resource import ForeignResource, MutableResource
 
 # TODO:
 # * Presently hardcoded, refactor this into a "resolver" conversion system
@@ -18,19 +17,15 @@ async def download_http(resource_url):
     out_resource.cache_makedirs()
     cmd = [
         'curl',
-        '-L', # follow redirects
+        '-L',  # follow redirects
         '--silent',
         '--output', out_resource.cache_path,
         resource_url.url,
     ]
-    print('-----------------------------')
-    print(' '.join(cmd))
-    print('-----------------------------')
+    # print('-----------------------------')
+    # print(' '.join(cmd))
+    # print('-----------------------------')
     subprocess.run(cmd)
-
-# git archive --output=../index.html --format=raw befd15d index.html
-# [tar "raw"]
-#    command = tar xfO -
 
 GIT_ARCHIVE_FORMATS = '''
 [tar "raw"]
@@ -38,6 +33,7 @@ GIT_ARCHIVE_FORMATS = '''
 [tar "directory"]
 \tcommand = tar xf
 '''
+
 
 async def download_git(resource_url):
     # First, ascertain status of Git resource
@@ -49,7 +45,7 @@ async def download_git(resource_url):
     # NOTE: Should do validation on GIT resource urls, notably disallowing
     # HEAD, and branch names (should only be tags or commit hashes)
 
-    if not os.path.exists(git_resource.cache_path):
+    if not git_resource.cache_exists():
         # Check out bare repo into cache path
         cmd = ['git', 'clone', '--bare', git_url, git_resource.cache_path]
         subprocess.run(cmd)
@@ -82,6 +78,7 @@ async def download_git(resource_url):
     # the specified "tree object" does not exist, 404
     out_resource = ForeignResource(resource_url)
 
+
 async def download(resource_url):
     '''
     Download given resource_url
@@ -93,5 +90,3 @@ async def download(resource_url):
         await download_git(resource_url)
     else:
         raise ValueError('Unknown URL scheme: "%s"' % scheme)
-
-

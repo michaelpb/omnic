@@ -1,8 +1,8 @@
 from omnic import singletons
+from omnic.conversion import resolver
 from omnic.types.resource import (ForeignResource, TypedForeignResource,
                                   TypedResource)
 from omnic.types.typestring import TypeString
-from omnic.conversion import resolver
 
 
 async def multiconvert(url_string, to_type, enqueue_convert):
@@ -34,6 +34,7 @@ async def multiconvert(url_string, to_type, enqueue_convert):
         out_resource = TypedResource(url_string, to_ts)
         await enqueue_convert(converter, in_resource, out_resource)
         is_first = False
+
 
 async def resolve_foreign_resource(foreign_resource):
     await resolver.download(foreign_resource.url)

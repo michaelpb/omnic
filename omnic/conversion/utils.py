@@ -6,6 +6,7 @@ from omnic.types.resource import (ForeignResource, TypedForeignResource,
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
 
+
 def apply_command_list_template(command_list, in_path, out_path, args):
     '''
     Perform necessary substitutions on a command list to create a CLI-ready
@@ -24,6 +25,7 @@ def apply_command_list_template(command_list, in_path, out_path, args):
 
     # Returns list of truthy replaced arguments in command
     return [item for item in results if item]
+
 
 async def convert_local(path, to_type):
     '''

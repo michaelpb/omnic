@@ -22,7 +22,8 @@ zoo_example_filenames = [
     'js_cheatsheet.pdf',
     'tux.svg',
 ]
-ZOO_EXAMPLES = [(zoo_example_template % fn, fn) for fn in zoo_example_filenames]
+ZOO_EXAMPLES = [(zoo_example_template % fn, fn)
+                for fn in zoo_example_filenames]
 
 FORM_DEFAULT = {
     'res_url': 'github.com/michaelpb/omnic-zoo/raw/master/data/libre.jpg',

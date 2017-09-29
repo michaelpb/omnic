@@ -1,11 +1,9 @@
-import hashlib
 import os
 import shutil
-from urllib.parse import urlparse
 
 from omnic import singletons
+from omnic.types.resourceurl import BytesResourceURL, ResourceURL
 from omnic.utils.iters import group_by
-from omnic.types.resourceurl import ResourceURL, BytesResourceURL
 
 try:
     import requests
@@ -146,6 +144,7 @@ class MutableResource(ForeignResource):
     '''
     A Mutable Resource resource from a foreign source (e.g. a URL) 
     '''
+
     def _get_cache_interfix(self):
         return singletons.settings.MUTABLE_RESOURCE_CACHE_INTERFIX
 

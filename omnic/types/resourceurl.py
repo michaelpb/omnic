@@ -1,10 +1,9 @@
 '''
 ResourceURL is a core class that extends mimetypes
 '''
-import re
-import os
 import hashlib
-
+import os
+import re
 from urllib.parse import urlparse
 
 from omnic.types.exceptions import URLParseException
@@ -16,6 +15,7 @@ SPLIT_URL_RE = re.compile(r'^([^<]+)(<?.*)$')
 ARG_RE = re.compile(r'^\s*([a-zA-Z0-9]+)\s*:\s*(.*)$')
 SCHEME_RE = re.compile(r'^[a-zA-Z0-9+-]+://')
 
+
 def _get_basename_based_on_url(resource_url):
     path_basename = resource_url.path_split[-1]
     if len(path_basename) < 1:
@@ -23,10 +23,12 @@ def _get_basename_based_on_url(resource_url):
         path_basename = resource_url.path_split[-2]
     return path_basename
 
+
 class ResourceURL:
     '''
     Immutable utility class for parsing URLs
     '''
+
     def __init__(self, s):
         self.str = s
 
@@ -112,6 +114,7 @@ class BytesResourceURL(ResourceURL):
     Used by Foreign Bytes Resource, when resource data is in memory but has no
     particular foreign URL
     '''
+
     def __init__(self, data, extension, basename):
         ext = '.%s' % extension if extension else ''
         self.data_md5 = hashlib.md5(data).hexdigest()

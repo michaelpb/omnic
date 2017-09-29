@@ -1,12 +1,12 @@
-import pytest
+from unittest.mock import call, mock_open, patch
 
-from unittest.mock import MagicMock, patch, call, mock_open
+import pytest
 
 from omnic.config.utils import use_settings
 from omnic.conversion import resolver
 from omnic.types.resourceurl import ResourceURL
 
-#class TestExecDownloaderBaseClass:
+# class TestExecDownloaderBaseClass:
 #    class Subclass(downloader.ExecDownloader):
 #        command = ['test', '$IN', '$OUT']
 #
@@ -36,6 +36,7 @@ normalized_settings = dict(
     resource_cache_interfix='res',
     mutable_resource_cache_interfix='mut',
 )
+
 
 class TestDownloaderFunction:
     def setup_method(self, method):
@@ -88,18 +89,17 @@ class TestDownloaderFunction:
         # ensure the sequence of git commands were called
         assert self.subprocess.run.mock_calls == [
             call(['git', 'clone', '--bare',
-                'git://githoobie.com/lol.git', '/t/mut/lol.git']),
+                  'git://githoobie.com/lol.git', '/t/mut/lol.git']),
             call(['git', 'archive', '--output=/t/res/README.md',
-                '--format=raw', tree_object, 'README.md'],
-                cwd='/t/mut/lol.git'),
+                  '--format=raw', tree_object, 'README.md'],
+                 cwd='/t/mut/lol.git'),
         ]
 
         # ensure git config was appended to
         self.open.assert_called_once_with('/t/mut/lol.git/config', 'a')
         assert len(self.open().write.mock_calls) == 1
-        contents = list(self.open().write.mock_calls[0])[1][0] # first arg
+        contents = list(self.open().write.mock_calls[0])[1][0]  # first arg
         assert '[tar "raw"]' in contents
         assert 'command = tar xfO -' in contents
         assert '[tar "directory"]' in contents
         assert 'command = tar xf' in contents
-

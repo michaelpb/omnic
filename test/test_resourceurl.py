@@ -3,7 +3,7 @@ Tests for `resourceurl` module.
 """
 
 
-from omnic.types.resourceurl import ResourceURL, BytesResourceURL
+from omnic.types.resourceurl import BytesResourceURL, ResourceURL
 
 
 class TestResourceURLParsing:
@@ -22,23 +22,28 @@ class TestResourceURLParsing:
         assert url.path_basename == 'file'
 
     def test_parse_args(self):
-        url = ResourceURL('some.com/path/to/file  < some positional stuff  ><not: so positional>')
+        url = ResourceURL(
+            'some.com/path/to/file  < some positional stuff  ><not: so positional>')
         assert url.url == 'http://some.com/path/to/file'
         assert url.args == ('some positional stuff', )
         assert url.kwargs == {'not': 'so positional'}
 
     def test_str(self):
-        url = ResourceURL('some.com/path/to/file  <not: so positional>  < some positional stuff  >')
-        assert str(url) == 'http://some.com/path/to/file<some positional stuff><not:so positional>'
+        url = ResourceURL(
+            'some.com/path/to/file  <not: so positional>  < some positional stuff  >')
+        assert str(
+            url) == 'http://some.com/path/to/file<some positional stuff><not:so positional>'
 
     def test_scheme(self):
-        url = ResourceURL('git+https://githoob.com/lol.git<efa09><subpath/to/file>')
+        url = ResourceURL(
+            'git+https://githoob.com/lol.git<efa09><subpath/to/file>')
         assert url.url == 'git+https://githoob.com/lol.git'
         assert url.args == ('efa09', 'subpath/to/file')
         assert url.kwargs == {}
 
     def test_basename(self):
-        url = ResourceURL('git+https://githoob.com/lol.git<efa09><subpath/to/file>')
+        url = ResourceURL(
+            'git+https://githoob.com/lol.git<efa09><subpath/to/file>')
         assert url.path_basename == 'file'
 
         url = ResourceURL('git+https://githoob.com/lol.git')
@@ -57,5 +62,3 @@ class TestBytesResourceURLParsing:
         assert url.url.endswith('/input.txt')
         assert url.url.startswith('file://')
         assert '/%s/' % url.data_md5 in url.url
-
-

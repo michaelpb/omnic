@@ -324,7 +324,8 @@ class TestCacheCommands:
             exists.return_value = True
             with patch('shutil.rmtree') as rmtree:
                 self.commands.clearcache(self.args_multiple)
-        assert rmtree.mock_calls == [call('/some/path/res/'), call('/some/path/res/')]
+        assert rmtree.mock_calls == [
+            call('/some/path/res/'), call('/some/path/res/')]
         _check_silent(capsys)
 
         # Does exist with filetype directory

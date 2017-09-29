@@ -1,8 +1,5 @@
 import logging
 
-import aiohttp
-
-from omnic import singletons
 from omnic.worker import tasks
 from omnic.worker.enums import Task
 
@@ -84,7 +81,7 @@ class BaseWorker:
     async def run_download(self, foreign_resource):
         await tasks.resolve_foreign_resource(foreign_resource)
 
-    #async def run_download(self, foreign_resource):
+    # async def run_download(self, foreign_resource):
     #    '''
     #    Downloads a foreign resource asynchronously
     #    '''
@@ -92,7 +89,7 @@ class BaseWorker:
     #    with foreign_resource.cache_open('wb') as f_handle:
     #        await self._download_async(url, f_handle)
 
-    #async def _download_async(self, url, f_handle):
+    # async def _download_async(self, url, f_handle):
     #    loop = singletons.eventloop.loop
     #    self.aiohttp = aiohttp.ClientSession(loop=loop)
     #    with aiohttp.Timeout(DOWNLOAD_TIMEOUT):

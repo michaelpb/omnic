@@ -151,16 +151,11 @@ class TestTypedResource:
 
     def test_uniqueness(self):
         paths = set([
-            TypedResource(URL, TypeString(
-                'image/gif')).cache_path,
-            TypedResource(URL, TypeString(
-                'image/png')).cache_path,
-            TypedResource(URL_GIF,
-                          TypeString('image/gif')).cache_path,
-            TypedResource(URL1, TypeString(
-                'image/gif')).cache_path,
-            TypedResource(URL2, TypeString(
-                'image/gif')).cache_path,
+            TypedResource(URL, TypeString('image/gif')).cache_path,
+            TypedResource(URL, TypeString('image/png')).cache_path,
+            TypedResource(URL_GIF, TypeString('image/gif')).cache_path,
+            TypedResource(URL1, TypeString('image/gif')).cache_path,
+            TypedResource(URL2, TypeString('image/gif')).cache_path,
         ])
         assert len(paths) == 5
 
