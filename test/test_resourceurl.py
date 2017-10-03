@@ -42,8 +42,7 @@ class TestResourceURLParsing:
         assert url.kwargs == {}
 
     def test_basename(self):
-        url = ResourceURL(
-            'git+https://githoob.com/lol.git<efa09><subpath/to/file>')
+        url = ResourceURL('git+https://gh.com/lol.git<efa09><subpath/to/file>')
         assert url.path_basename == 'file'
 
         url = ResourceURL('git+https://githoob.com/lol.git')
@@ -55,6 +54,8 @@ class TestResourceURLParsing:
         url = ResourceURL('http://hoob.com/thing.png<some><thing>')
         assert url.path_basename == 'thing.png'
 
+        url = ResourceURL('git://gh.com/lol.git<efa09></>')
+        assert url.path_basename == 'lol.git'
 
 class TestBytesResourceURLParsing:
     def test_faux_url_construction(self):

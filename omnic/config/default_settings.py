@@ -71,6 +71,10 @@ CONVERTERS = [
     'omnic.builtin.converters.vector.InkscapeRasterizer',
     'omnic.builtin.converters.manifest.ManifestDownloader',
 
+    # Git preview system
+    'omnic.builtin.converters.git.GitLsTreeToJson',
+    'omnic.builtin.converters.git.GitTreeJsonToHtml',
+
     # Front-end JavaScript build system
     'omnic.builtin.converters.nodejs.NodePackageDetector',
     'omnic.builtin.converters.nodejs.NPMInstalledDirectoryConverter',

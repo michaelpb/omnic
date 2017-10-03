@@ -101,9 +101,10 @@ class ResourceURL:
             if len(resource_url.args) == 2:
                 # For now, git has 2 positional args, hash and path
                 git_tree, subpath = resource_url.args
-                return os.path.basename(subpath)
-            else:
-                return _get_basename_based_on_url(resource_url)
+                basename = os.path.basename(subpath)
+                if basename:
+                    return basename  # subpath was not '/' or ''
+            return _get_basename_based_on_url(resource_url)
 
         else:
             raise ValueError('Unknown URL scheme: "%s"' % scheme)

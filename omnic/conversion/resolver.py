@@ -40,7 +40,6 @@ async def download_git(resource_url):
     git_url = resource_url.url
     out_resource = ForeignResource(resource_url)
     git_resource = MutableResource(git_url)
-    hash_or_tag, subpath = resource_url.args
 
     # NOTE: Should do validation on GIT resource urls, notably disallowing
     # HEAD, and branch names (should only be tags or commit hashes)
@@ -57,21 +56,57 @@ async def download_git(resource_url):
             # could happen twice, and extra entries cause no issue
             fd.write(GIT_ARCHIVE_FORMATS)
 
-    # NOW, git bare repo exists, let's extract the given file
-    cmd = [
-        'git',
-        'archive',
-        '--output=%s' % out_resource.cache_path,
-        '--format=raw',
-        hash_or_tag,
-        subpath,
-    ]
-    out_resource.cache_makedirs()
-    subprocess.run(cmd, cwd=git_resource.cache_path)
+    subpath = None
+    output_file = None
+    if len(resource_url.args) == 2:
+        hash_or_tag, subpath = resource_url.args
+    elif len(resource_url.args) == 1:
+        # ls-tree instance
+        hash_or_tag = resource_url.args[0]
+        output_file = out_resource.cache_path
+    else:
+        raise ValueError('Requires 1 or 2 positional args for URL')
 
-    # TODO: Have another mode specified by a kwarg that simply gets recursive
-    # dir listing, as plaintext file, e.g.  /file1.html\n/path/to/file2.html
-    # etc
+    if subpath is None:
+        # Get the tree structure of the current git repo
+        cmd = [
+            'git',
+            'ls-tree',
+            '-r',
+            '--long',
+            '--full-tree',
+            hash_or_tag,
+        ]
+
+    elif subpath == '/':
+        # Do entire directory, not a particular path
+        cmd = [
+            'git',
+            'archive',
+            '--prefix=%s' % out_resource.cache_path,
+            '--format=directory',
+            hash_or_tag,
+        ]
+
+    else:
+        # Get a single file
+        cmd = [
+            'git',
+            'archive',
+            '--output=%s' % out_resource.cache_path,
+            '--format=raw',
+            hash_or_tag,
+            subpath,
+        ]
+
+
+    out_resource.cache_makedirs()
+
+    if output_file:
+        with open(output_file, 'w+') as fd:
+            subprocess.run(cmd, cwd=git_resource.cache_path, stdout=fd)
+    else:
+        subprocess.run(cmd, cwd=git_resource.cache_path)
 
     # TODO: Have failure handling here, if this command fails and can't find
     # given hash, it should attempt to update, if that fails, then we know that

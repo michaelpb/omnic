@@ -217,3 +217,100 @@ class TestFilesystemUtils:
         assert len(results) == len(self.results)  # ensure right number
         for path, _ in results:
             assert not islink(path)  # ensure hardlinks
+
+class TestGitFilesystemUtils:
+    FLAT_CASE = [
+        ["100644", "blob", "ab", "748", ".gitignore"],
+        ["100644", "blob", "b1", "290", ".travis.yml"],
+        ["100644", "blob", "9b", "322", "README.md"],
+    ]
+
+    FLAT_CASE_RESULT = {
+        'path': '/',
+        'type': 'directory',
+        'children': [
+            {
+                "mode": "100644",
+                "type": "blob",
+                "sha": "ab",
+                "size": 748,
+                "path": ".gitignore",
+            },
+            {
+                "mode": "100644",
+                "type": "blob",
+                "sha": "b1",
+                "size": 290,
+                "path": ".travis.yml",
+            },
+            {
+                "mode": "100644",
+                "type": "blob",
+                "sha": "9b",
+                "size": 322,
+                "path": "README.md",
+            },
+        ],
+    }
+
+    BUMPY_CASE = FLAT_CASE + [
+        ["100644", "blob", "1d", "156740", "data/js_cheatsheet.pdf"],
+        ["100644", "blob", "b3", "594551", "data/libre.jpg"],
+        ["100644", "blob", "80", "148", "data/test_js_project/index.js"],
+    ]
+
+    BUMPY_CASE_EXPECTED = {
+        'path': '/',
+        'type': 'directory',
+        'children': [
+            {
+                "type": "directory",
+                "path": "data",
+                "children": [
+                    {
+                        "type": "directory",
+                        "path": "data/test_js_project",
+                        "children": [
+                            {
+                                "mode": "100644",
+                                "type": "blob",
+                                "sha": "80",
+                                "size": 148,
+                                "path": "data/test_js_project/index.js",
+                            },
+                        ],
+                    },
+                    {
+                        "mode": "100644",
+                        "type": "blob",
+                        "sha": "1d",
+                        "size": 156740,
+                        "path": "data/js_cheatsheet.pdf",
+                    },
+                    {
+                        "mode": "100644",
+                        "type": "blob",
+                        "sha": "b3",
+                        "size": 594551,
+                        "path": "data/libre.jpg",
+                    },
+                ],
+            },
+        ] + FLAT_CASE_RESULT['children'],
+    }
+
+    def test_empty_case(self):
+        assert filesystem.flat_git_tree_to_nested([]) == {
+            'path': '/',
+            'type': 'directory',
+            'children': [],
+        }
+
+    def test_flat_case(self):
+        res = filesystem.flat_git_tree_to_nested(self.FLAT_CASE)
+        assert res == self.FLAT_CASE_RESULT
+
+    def test_nested_case(self):
+        res = filesystem.flat_git_tree_to_nested(self.BUMPY_CASE)
+        assert res == self.BUMPY_CASE_EXPECTED
+
