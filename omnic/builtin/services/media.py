@@ -5,6 +5,7 @@ from omnic import singletons
 from omnic.conversion.utils import enqueue_conversion_path
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
+from omnic.web import security
 
 # Required interface for service module
 SERVICE_NAME = 'media'
@@ -28,11 +29,13 @@ async def media_route(request, ts):
     url_string = request.args['url'][0]
     is_just_checking = bool(request.args.get('just_checking', [''])[0])
 
-    # Prep ForeignResource and ensure does not validate security settings
+    # First do security check
     # TODO: catch errors one up, and return 4xx errors?
+    await security.check(ts, request.args)
+
+    # Prep ForeignResource and ensure does not validate security settings
     singletons.settings
     foreign_res = ForeignResource(url_string)
-    foreign_res.validate()
 
     target_ts = TypeString(ts)
     target_resource = TypedResource(url_string, target_ts)
