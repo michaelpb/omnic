@@ -6,29 +6,6 @@ from omnic.config.utils import use_settings
 from omnic.conversion import resolver
 from omnic.types.resourceurl import ResourceURL
 
-# class TestExecDownloaderBaseClass:
-#    class Subclass(downloader.ExecDownloader):
-#        command = ['test', '$IN', '$OUT']
-#
-#    def _get_mocked_resource(self, ts):
-#        res = TypedResource(URL, TypeString(ts))
-#        res.cache_makedirs = MagicMock()
-#        res.cache_path = 'test/path.%s' % ts
-#        return res
-#
-#    @pytest.skip
-#    def test_configure_failure(self):
-#        shutil = {'which.return_value': None}
-#        with patch('omnic.conversion.downloader.shutil', **shutil):
-#            with pytest.raises(downloader.DownloaderUnavailable):
-#                self.Subclass.configure()
-#
-#    @pytest.skip
-#    def test_configure_succeed(self):
-#        shutil = {'which.return_value': '/bin/test'}
-#        with patch('omnic.conversion.downloader.shutil', **shutil):
-#            self.Subclass.configure()
-
 normalized_settings = dict(
     path_prefix='/t/',
     path_grouping=None,

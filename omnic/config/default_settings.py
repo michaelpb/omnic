@@ -116,3 +116,9 @@ ALLOWED_LOCATIONS = {
 
 # Conversion type safety stuff:
 CONVERSION_SYSTEM_CHECK = True
+
+SECURITY = None
+
+HMAC_SECRET = 'REPLACE_ME_PRIVATE'
+
+
