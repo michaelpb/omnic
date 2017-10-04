@@ -46,12 +46,14 @@ def recursive_hardlink_dirs(source_d, destination_d):
         os.rmdir(destination_d)
     shutil.copytree(source_d, destination_d, copy_function=func)
 
+
 def _make_empty_dir_dict(path):
     return {
         'path': path,
         'type': 'directory',
         'children': [],
     }
+
 
 def _make_child(info):
     return {
@@ -62,7 +64,9 @@ def _make_child(info):
         'path': info[4],
     }
 
+
 PATH = 4
+
 
 def flat_git_tree_to_nested(flat_tree, prefix=''):
     '''
@@ -108,7 +112,7 @@ def flat_git_tree_to_nested(flat_tree, prefix=''):
     descendent_dirs = set(
         os.path.dirname(info[PATH]) for info in descendent_files
         if os.path.dirname(info[PATH]).startswith(prefix)
-            and not os.path.dirname(info[PATH]) == prefix
+        and not os.path.dirname(info[PATH]) == prefix
     )
 
     # Figure out all descendent directories

@@ -102,7 +102,6 @@ class TestDownloaderFunction:
                  cwd='/t/mut/lol.git'),
         ]
 
-
     @pytest.mark.asyncio
     async def test_download_lstree_git(self):
         tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'

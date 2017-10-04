@@ -57,6 +57,7 @@ class TestResourceURLParsing:
         url = ResourceURL('git://gh.com/lol.git<efa09></>')
         assert url.path_basename == 'lol.git'
 
+
 class TestBytesResourceURLParsing:
     def test_faux_url_construction(self):
         url = BytesResourceURL(b'testdata', 'txt', 'input')

@@ -1,5 +1,5 @@
-import random
 import os
+import random
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 

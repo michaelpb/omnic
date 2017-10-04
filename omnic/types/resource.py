@@ -142,7 +142,7 @@ class ForeignResource(Resource):
 
 class MutableResource(ForeignResource):
     '''
-    A Mutable Resource resource from a foreign source (e.g. a URL) 
+    A Mutable Resource resource from a foreign source (e.g. a URL)
     '''
 
     def _get_cache_interfix(self):

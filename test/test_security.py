@@ -13,6 +13,7 @@ normalized_settings = dict(
     allowed_locations={'whatevs.com'},
 )
 
+
 class TestHmacSha1Security:
     @pytest.mark.asyncio
     async def test_check(self):
@@ -58,5 +59,3 @@ class TestSecurity:
                 'url': ['http://whatevs.com/stuff.png'],
                 'digest': ['6d2a1495209af2d193affbb485d309a2e15bc5b1'],
             })
-
-

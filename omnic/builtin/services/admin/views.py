@@ -11,8 +11,9 @@ from omnic.types.resource import ForeignResource
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
-#zoo_example_template = 'github.com/michaelpb/omnic-zoo/raw/master/data/%s'
-zoo_example_template = 'raw.githubusercontent.com/michaelpb/omnic-zoo/master/data/%s'
+# zoo_example_template = 'github.com/michaelpb/omnic-zoo/raw/master/data/%s'
+zoo_example_template = ('raw.githubusercontent.com/'
+                        'michaelpb/omnic-zoo/master/data/%s')
 zoo_example_filenames = [
     'caffeine.mol',
     'imrtemplate.doc',
@@ -137,7 +138,7 @@ async def conversion_tester_root(request):
 
 async def zoo_tester(request):
     singletons.settings
-    workers = await get_worker_info()
+    await get_worker_info()
     sha = '8a192e251273a68091042fc169a604ce6bb5d868'
     ts = 'docwrite-inject.js'
     qs = urlencode({
@@ -148,7 +149,6 @@ async def zoo_tester(request):
         'inject_zoo_url': s,
         'is_zoo': True,
     })
-
 
 
 async def conversion_tester(request):

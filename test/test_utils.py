@@ -218,6 +218,7 @@ class TestFilesystemUtils:
         for path, _ in results:
             assert not islink(path)  # ensure hardlinks
 
+
 class TestGitFilesystemUtils:
     FLAT_CASE = [
         ["100644", "blob", "ab", "748", ".gitignore"],
@@ -313,4 +314,3 @@ class TestGitFilesystemUtils:
     def test_nested_case(self):
         res = filesystem.flat_git_tree_to_nested(self.BUMPY_CASE)
         assert res == self.BUMPY_CASE_EXPECTED
-

@@ -1,21 +1,17 @@
-import asyncio
 import json
 
-import aiohttp
-
-from omnic import singletons
-from omnic.builtin.types.core import DIRECTORY, MANIFEST_JSON
-from omnic.responses.template import Jinja2TemplateHelper
 from omnic.conversion import converter
+from omnic.responses.template import Jinja2TemplateHelper
 from omnic.utils import filesystem
 
 templates = Jinja2TemplateHelper('omnic.builtin.converters', 'templates')
+
 
 class GitLsTreeToJson(converter.Converter):
     inputs = [
         'GIT',
         # TODO: Clean this up, use the detector system instead
-        # ALSO TODO: 
+        # ALSO TODO:
         # When finishing Resolver graph system, give option of popping out
         # known types in addition to unknown (for example, known type of
         # .git-ls-tree)
@@ -44,6 +40,7 @@ class GitLsTreeToJson(converter.Converter):
         with out_resource.cache_open('w+') as fd:
             json.dump(nested_structure, fd, indent=2)
 
+
 class GitTreeJsonToHtml(converter.Converter):
     inputs = [
         'git-tree.json',
@@ -61,6 +58,7 @@ class GitTreeJsonToHtml(converter.Converter):
         })
         with out_resource.cache_open('w+') as fd:
             fd.write(html_result)
+
 
 class InlineJsVariable(converter.Converter):
     inputs = [
@@ -95,4 +93,3 @@ class InlineJsVariable(converter.Converter):
         })
         with out_resource.cache_open('w+') as fd:
             fd.write(js_result)
-

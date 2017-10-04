@@ -1,8 +1,9 @@
-import hmac
 import hashlib
+import hmac
 
-from omnic.types.typestring import TypeString
 from omnic.types.resourceurl import ResourceURL
+from omnic.types.typestring import TypeString
+
 
 def get_hmac_sha1_digest(secret, resource_url, target_type, api_key=None):
     '''
@@ -21,4 +22,3 @@ def get_hmac_sha1_digest(secret, resource_url, target_type, api_key=None):
     hm.update(target_type_bytes)
     hm.update(resource_url_bytes)
     return hm.hexdigest()
-

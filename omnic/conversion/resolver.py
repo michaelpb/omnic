@@ -99,7 +99,6 @@ async def download_git(resource_url):
             subpath,
         ]
 
-
     out_resource.cache_makedirs()
 
     if output_file:
