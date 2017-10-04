@@ -135,6 +135,22 @@ async def conversion_tester_root(request):
     return redirect('/admin/conversion/')
 
 
+async def zoo_tester(request):
+    singletons.settings
+    workers = await get_worker_info()
+    sha = '8a192e251273a68091042fc169a604ce6bb5d868'
+    ts = 'docwrite-inject.js'
+    qs = urlencode({
+        'url': 'git://github.com/michaelpb/omnic-zoo.git<%s>' % sha,
+    })
+    s = 'http://localhost:8080/media/%s/?%s' % (ts, qs)
+    return templates.render(request, 'zoo.html', {
+        'inject_zoo_url': s,
+        'is_zoo': True,
+    })
+
+
+
 async def conversion_tester(request):
     singletons.settings
     workers = await get_worker_info()

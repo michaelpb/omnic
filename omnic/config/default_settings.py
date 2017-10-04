@@ -74,6 +74,7 @@ CONVERTERS = [
     # Git preview system
     'omnic.builtin.converters.git.GitLsTreeToJson',
     'omnic.builtin.converters.git.GitTreeJsonToHtml',
+    'omnic.builtin.converters.git.InlineJsVariable',
 
     # Front-end JavaScript build system
     'omnic.builtin.converters.nodejs.NodePackageDetector',

@@ -1,4 +1,5 @@
 import random
+import os
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -11,6 +12,7 @@ class Jinja2TemplateHelper:
             loader=PackageLoader(package, path),
             autoescape=select_autoescape(['html'])
         )
+        self.env.filters['basename'] = lambda s: os.path.basename(s)
 
     def process_context(self, request):
         return {
