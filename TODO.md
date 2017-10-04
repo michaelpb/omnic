@@ -5,9 +5,9 @@ Blocking order:
 - [X] Fix packaging + docs
 - [X] Make scaffolding
 - [X] Write Dockerfile for general use / dev
-- [ ] Add ResourceResolver / git support
+- [X] Add ResourceResolver / git support
+- [X] Create zoo repo
 - [ ] Create demo site that simply embeds zoo repo
-- [ ] Create zoo repo
 
 ## Top priority
 - [X] Get viewer demo running
