@@ -74,15 +74,15 @@ Documentation
 -------------
 
 .. |Join the chat at https://gitter.im/omniconverter/Lobby| image:: https://badges.gitter.im/omniconverter/Lobby.svg
-:target: https://gitter.im/omniconverter/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+   :target: https://gitter.im/omniconverter/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 .. |Build Status| image:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
-:target: https://travis-ci.org/michaelpb/omnic
+   :target: https://travis-ci.org/michaelpb/omnic
 .. |Documentation| image:: https://readthedocs.org/projects/omnic/badge/?version=latest
-:target: http://omnic.readthedocs.io/en/latest/?badge=latest
+   :target: http://omnic.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/omnic.svg
-:target: https://pypi.python.org/pypi/omnic/
+   :target: https://pypi.python.org/pypi/omnic/
 .. |PyPI version| image:: https://img.shields.io/pypi/pyversions/omnic.svg
-:target: https://pypi.python.org/pypi/omnic/
+   :target: https://pypi.python.org/pypi/omnic/
 
 What is OmniC?
 ==============
