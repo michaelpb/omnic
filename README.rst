@@ -73,10 +73,10 @@ dependencies:
 Documentation
 -------------
 
-.. |Join the chat at https://gitter.im/omnic/Lobby| image:: https://badges.gitter.im/omnic/Lobby.svg
-:target: https://gitter.im/omnic/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-.. |Build Status| image:: https://travis-ci.org/channelcat/omnic.svg?branch=master
-:target: https://travis-ci.org/channelcat/omnic
+.. |Join the chat at https://gitter.im/omniconverter/Lobby| image:: https://badges.gitter.im/omniconverter/Lobby.svg
+:target: https://gitter.im/omniconverter/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+.. |Build Status| image:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
+:target: https://travis-ci.org/michaelpb/omnic
 .. |Documentation| image:: https://readthedocs.org/projects/omnic/badge/?version=latest
 :target: http://omnic.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/omnic.svg
