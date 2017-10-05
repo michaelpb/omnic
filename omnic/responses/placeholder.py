@@ -36,7 +36,6 @@ class PlaceholderSelector:
 
     def __init__(self, use_settings=None):
         if use_settings:
-            # Used by testing, TODO remove
             self.placeholders = use_settings.PLACEHOLDERS
         else:
             self.placeholders = singletons.settings.load_all('PLACEHOLDERS')

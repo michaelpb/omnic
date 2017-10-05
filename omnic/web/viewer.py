@@ -4,7 +4,7 @@ import os
 from omnic import singletons
 from omnic.types.resource import ForeignBytesResource
 
-VIEWER_EXT = 'omnic_viewer_descriptor'  # TODO Hack
+VIEWER_EXT = 'omnic_viewer_descriptor'
 
 
 class ViewerManager:

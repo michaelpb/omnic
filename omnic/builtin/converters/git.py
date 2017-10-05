@@ -10,11 +10,6 @@ templates = Jinja2TemplateHelper('omnic.builtin.converters', 'templates')
 class GitLsTreeToJson(converter.Converter):
     inputs = [
         'GIT',
-        # TODO: Clean this up, use the detector system instead
-        # ALSO TODO:
-        # When finishing Resolver graph system, give option of popping out
-        # known types in addition to unknown (for example, known type of
-        # .git-ls-tree)
     ]
     outputs = [
         'git-tree.json',
@@ -63,9 +58,6 @@ class GitTreeJsonToHtml(converter.Converter):
 class InlineJsVariable(converter.Converter):
     inputs = [
         'git-tree.html',
-        # 'HTML',
-        # TODO: once there is a type hierarchy, then this should handle any
-        # sub-type of HTML
     ]
 
     outputs = [

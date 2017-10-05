@@ -19,7 +19,6 @@ class Converter:
         return self.convert_sync(in_resource, out_resource)
 
     def convert_sync(self, in_resource, out_resource):
-        # TODO: Make both optional (run_until_complete here)
         msg = 'Converter subclass must override at least convert_sync.'
         raise NotImplementedError(msg)
 
@@ -46,7 +45,6 @@ class ExecConverter(Converter):
         )
 
     async def convert(self, in_resource, out_resource):
-        # TODO: make async
         return self.convert_sync(in_resource, out_resource)
 
     def convert_sync(self, in_resource, out_resource):

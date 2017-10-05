@@ -44,7 +44,6 @@ class Unoconv(converter.ExecConverter):
     ]
 
     command = [
-        # TODO Fix this, has to do with virtualenv issues
         '/usr/bin/python3',
         '/usr/bin/unoconv',
         '-f',

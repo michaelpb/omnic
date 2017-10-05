@@ -9,7 +9,6 @@ from omnic.conversion import converter
 
 
 class ManifestDownloader(converter.Converter):
-    # TODO: Possibly switch to using binary system packages like curl?
     inputs = [
         str(MANIFEST_JSON),
     ]
@@ -18,7 +17,6 @@ class ManifestDownloader(converter.Converter):
     ]
 
     async def convert(self, in_resource, out_resource):
-        # TODO: Create Manifest JSON helper util, support TXT format too
         with in_resource.cache_open('r') as fd:
             parsed = json.load(fd)
         files = parsed['files'].items()
@@ -35,7 +33,6 @@ class ManifestDownloader(converter.Converter):
         ])
         self._close()
 
-    # TODO: move all this to a helper class
     def _new_aiohttp_client(self):
         loop = singletons.eventloop.loop
         self.aiohttp = aiohttp.ClientSession(loop=loop)

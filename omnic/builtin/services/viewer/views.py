@@ -72,10 +72,4 @@ async def playbutton_svg(request):
 
 
 async def all_js(request):
-    # TODO:
-    # 1. Check if built cache is ready, if it is, include cached JS in the mix
-    # 2. Include reload-viewers if not
-    # 3. Include reload-thumb
-    # 4. Send back cache headers such that only if everything is working it
-    # gets a "perma" cache header set
     return templates.render(request, 'reload-viewers.js', {})

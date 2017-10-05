@@ -56,5 +56,5 @@ async def check(typestring, querydata):
     checker = checker_class()
     url_string = querydata['url'][0]
     foreign_res = ForeignResource(url_string)
-    foreign_res.validate()  # TODO move domain checks into this module
+    foreign_res.validate()
     await checker.check(typestring, querydata)

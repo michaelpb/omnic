@@ -30,7 +30,6 @@ async def media_route(request, ts):
     is_just_checking = bool(request.args.get('just_checking', [''])[0])
 
     # First do security check
-    # TODO: catch errors one up, and return 4xx errors?
     await security.check(ts, request.args)
 
     # Prep ForeignResource and ensure does not validate security settings

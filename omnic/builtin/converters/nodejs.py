@@ -80,10 +80,6 @@ class BabelES6Compiler(converter.ExecConverter):
             extra_args.extend(['--source-maps', 'inline'])
 
         if 'es5' in out:
-            # TODO XXX obviously broken hack: Must fix by adding the
-            # "configure" step mechanism, that gets the absolute path to
-            # whichever programs/libs/whatever are necessary, and also what is
-            # supported
             es2015_path = os.path.expanduser('~/.local/lib/node_modules'
                                              '/babel-preset-es2015')
             extra_args.extend(['--presets=%s' % es2015_path])
