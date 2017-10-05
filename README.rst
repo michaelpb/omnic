@@ -4,11 +4,7 @@
 Omni Converter
 ==============
 
-.. figure:: https://travis-ci.org/michaelpb/omnic.svg?branch=master
-   :alt: Travis CI
-
-.. image:: https://badge.fury.io/py/omnic.svg
-   :alt: Omnic PyPI Badge
+|Join the chat at https://gitter.im/sanic-python/Lobby| |Build Status| |PyPI| |PyPI version|
 
 Mostly stateless microservice for generating on-the-fly thumbs and previews of
 a wide variety of file types. Comes battery-included, but designed like a
@@ -72,6 +68,21 @@ dependencies:
 ::
 
     pip install sanic jinja2 uvloop
+
+
+Documentation
+-------------
+
+.. |Join the chat at https://gitter.im/omnic/Lobby| image:: https://badges.gitter.im/omnic/Lobby.svg
+:target: https://gitter.im/omnic/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+.. |Build Status| image:: https://travis-ci.org/channelcat/omnic.svg?branch=master
+:target: https://travis-ci.org/channelcat/omnic
+.. |Documentation| image:: https://readthedocs.org/projects/omnic/badge/?version=latest
+:target: http://omnic.readthedocs.io/en/latest/?badge=latest
+.. |PyPI| image:: https://img.shields.io/pypi/v/omnic.svg
+:target: https://pypi.python.org/pypi/omnic/
+.. |PyPI version| image:: https://img.shields.io/pypi/pyversions/omnic.svg
+:target: https://pypi.python.org/pypi/omnic/
 
 What is OmniC?
 ==============
