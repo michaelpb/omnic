@@ -4,7 +4,7 @@
 Omni Converter
 ==============
 
-|Join the chat at https://gitter.im/sanic-python/Lobby| |Build Status| |PyPI| |PyPI version|
+|Join the chat at https://gitter.im/omniconverter/Lobby| |Build Status| |PyPI| |PyPI version|
 
 Mostly stateless microservice for generating on-the-fly thumbs and previews of
 a wide variety of file types. Comes battery-included, but designed like a
