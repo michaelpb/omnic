@@ -1,11 +1,3 @@
-{% macro thumb_git_file(width, height, filepath, git_url, sha) %}
-    <img
-        src="http://localhost:8080/media/thumb.jpg:{{ width }}x{{ height }}/?url={{ git_url }}%3C{{ sha }}%3E%3C{{ filepath }}%3E"
-        width="{{ width }}" height="{{ height }}"
-        omnic-thumb 
-    />
-{% endmacro %}
-
 {% macro file_listing(git_url, git_sha, items) %}
     {% for item in items %}
         <div class="omnic-git--item {% if item.type == "directory" %}omnic-git--directory{% endif %}
@@ -20,7 +12,10 @@
                 </div>
             {% else %}
                 <div class="omnic-git--preview-thumb">
-                    {{ thumb_git_file(80, 80, item.path, git_url, git_sha) }}
+                    <img src="{{ git_url|media('thumb.jpg:80x80', git_sha, item.path) }}"
+                        width="80" height="80"
+                        omnic-thumb 
+                    />
                 </div>
                 <div class="omnic-git--path">
                     {{ item.path|basename }}

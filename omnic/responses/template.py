@@ -4,6 +4,7 @@ import random
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from omnic import singletons
+from omnic.web import shortcuts
 
 
 class Jinja2TemplateHelper:
@@ -13,6 +14,8 @@ class Jinja2TemplateHelper:
             autoescape=select_autoescape(['html'])
         )
         self.env.filters['basename'] = lambda s: os.path.basename(s)
+        self.env.filters['media'] = \
+            lambda url, ts, *a: shortcuts.reverse_media_url(ts, url, *a)
 
     def process_context(self, request):
         return {
