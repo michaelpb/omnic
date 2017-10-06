@@ -3,11 +3,13 @@ A read-only admin interface that is useful for monitoring broad server stats
 and testing conversions.
 '''
 import json
+
 from urllib.parse import urlencode
 
 from omnic import singletons
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic.types.resource import ForeignResource
+from omnic.web import shortcuts
 
 templates = Jinja2TemplateHelper('omnic.builtin.services.admin', 'templates')
 
@@ -35,9 +37,9 @@ FORM_DEFAULT = {
 
 
 def _gen_thumb_src(form):
-    qs = urlencode({'url': form['res_url']})
     ts = 'thumb.jpg:%sx%s' % (form['thumb_width'], form['thumb_height'])
-    return 'http://localhost:8080/media/%s/?%s' % (ts, qs)
+    url = form['res_url']
+    return shortcuts.reverse_media_url(ts, url)
 
 
 def _gen_viewer_src(form):
@@ -45,9 +47,8 @@ def _gen_viewer_src(form):
     if not viewer_type:
         return ''
     # For now, we just go by type, not URL
-    qs = urlencode({'url': form['res_url']})
-    return 'http://localhost:8080/media/%s/?%s' % (viewer_type, qs)
-    # return viewer_type
+    url = form['res_url']
+    return shortcuts.reverse_media_url(viewer_type, url)
 
 
 def _depluralize_query_dict(dct):
@@ -138,13 +139,10 @@ async def conversion_tester_root(request):
 
 async def zoo_tester(request):
     singletons.settings
-    await get_worker_info()
     sha = '8a192e251273a68091042fc169a604ce6bb5d868'
     ts = 'docwrite-inject.js'
-    qs = urlencode({
-        'url': 'git://github.com/michaelpb/omnic-zoo.git<%s>' % sha,
-    })
-    s = 'http://localhost:8080/media/%s/?%s' % (ts, qs)
+    url = 'git://github.com/michaelpb/omnic-zoo.git'
+    s = shortcuts.reverse_media_url(ts, url, sha)
     return templates.render(request, 'zoo.html', {
         'inject_zoo_url': s,
         'is_zoo': True,
