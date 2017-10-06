@@ -10,6 +10,7 @@ from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
 from omnic.worker.testing import autodrain_worker
+from omnic.web import shortcuts
 
 cli = singletons.cli  # Alias
 
@@ -178,6 +179,18 @@ async def precache_named(args):
             if not res.cache_exists():
                 res.save()
         await _precache(res.url_string, args.type)
+
+
+@cli.subcommand('Generate media URLs for given foreign resources', {
+    'urls': {'help': 'URLs for foreign resources', 'nargs': '+'},
+    ('--type', '-t'): {
+        'help': 'Desired file type for result, in TypeString format',
+        'required': True,
+    },
+})
+def generate_url(args):
+    for url in args.urls:
+        print(shortcuts.reverse_media_url(args.type, url))
 
 
 def main():
