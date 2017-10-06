@@ -35,8 +35,8 @@ class HmacSha1(SecurityChecker):
         if 'digest' not in querydata:
             raise InvalidQueryDataException('digest missing')
 
-        url_string = querydata.get('url')[0]
-        supplied_digest = querydata.get('digest')[0]
+        url_string = querydata.get('url')
+        supplied_digest = querydata.get('digest')
         correct_digest = get_hmac_sha1_digest(
             singletons.settings.HMAC_SECRET,
             url_string,
@@ -54,7 +54,7 @@ async def check(typestring, querydata):
     else:
         checker_class = DummySecurity
     checker = checker_class()
-    url_string = querydata['url'][0]
+    await checker.check(typestring, querydata)
+    url_string = querydata.get('url')
     foreign_res = ForeignResource(url_string)
     foreign_res.validate()
-    await checker.check(typestring, querydata)
