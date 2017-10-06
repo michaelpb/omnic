@@ -3,6 +3,7 @@ import subprocess
 
 from omnic.types.resource import ForeignResource, MutableResource
 
+
 async def download_http(resource_url):
     out_resource = ForeignResource(resource_url)
     out_resource.cache_makedirs()

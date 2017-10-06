@@ -9,8 +9,8 @@ from omnic.conversion.utils import convert_local
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
-from omnic.worker.testing import autodrain_worker
 from omnic.web import shortcuts
+from omnic.worker.testing import autodrain_worker
 
 cli = singletons.cli  # Alias
 

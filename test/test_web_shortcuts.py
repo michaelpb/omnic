@@ -1,20 +1,10 @@
 """
 Tests for `web.shortcuts` module.
 """
-import tempfile
-from os.path import islink, join
 
-import pytest
-
-from omnic.web import shortcuts
-
-from unittest.mock import call, mock_open, patch
-
-import pytest
 
 from omnic.config.utils import use_settings
-from omnic.conversion import resolver
-from omnic.types.resourceurl import ResourceURL
+from omnic.web import shortcuts
 
 settings = dict(
     host='testhost.com',
@@ -50,9 +40,9 @@ class TestUrlShortcuts:
         digest = '6d2a1495209af2d193affbb485d309a2e15bc5b1'
         result_url = shortcuts.reverse_media_url(ts, url)
         assert result_url == ('http://testhost.com/media/JPG/' +
-            '?digest=%s' % digest +
-            '&url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
-        )
+                              '?digest=%s' % digest +
+                              '&url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
+                              )
 
     @use_settings(**external_settings)
     def test_external_settings(self):
@@ -61,9 +51,9 @@ class TestUrlShortcuts:
         digest = '6d2a1495209af2d193affbb485d309a2e15bc5b1'
         result_url = shortcuts.reverse_media_url(ts, url)
         assert result_url == ('https://sillyplace.com:8080/media/JPG/' +
-            '?digest=%s' % digest +
-            '&url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
-        )
+                              '?digest=%s' % digest +
+                              '&url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
+                              )
 
     @use_settings(**no_sec_settings)
     def test_without_digest(self):
@@ -71,6 +61,5 @@ class TestUrlShortcuts:
         ts = 'thumb.png:200x200'
         result_url = shortcuts.reverse_media_url(ts, url)
         assert result_url == ('http://testhost.com/media/thumb.png:200x200/' +
-            '?url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
-        )
-
+                              '?url=http%3A%2F%2Fwhatevs.com%2Fstuff.png'
+                              )

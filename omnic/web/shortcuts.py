@@ -1,9 +1,9 @@
 from urllib.parse import urlencode
 
+from omnic import singletons
 from omnic.types.resourceurl import ResourceURL
 from omnic.types.typestring import TypeString
 from omnic.utils.security import get_hmac_sha1_digest
-from omnic import singletons
 
 
 def reverse_media_url(target_type, url_string, *args, **kwargs):
@@ -44,5 +44,3 @@ def reverse_media_url(target_type, url_string, *args, **kwargs):
         typestring_normalized,
         querystring,
     )
-
-

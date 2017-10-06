@@ -4,8 +4,6 @@ and testing conversions.
 '''
 import json
 
-from urllib.parse import urlencode
-
 from omnic import singletons
 from omnic.responses.template import Jinja2TemplateHelper
 from omnic.types.resource import ForeignResource
