@@ -16,6 +16,11 @@ HOST = '127.0.0.1'
 PORT = 8080
 DEBUG = True
 
+# External settings (used for generating external URLs)
+EXTERNAL_SCHEME = 'http'
+EXTERNAL_HOST = None
+EXTERNAL_PORT = None
+
 WEB_SERVER = 'sanic'
 EVENT_LOOP = 'uvloop'
 WORKER = 'omnic.worker.aioworker.AioWorker'
