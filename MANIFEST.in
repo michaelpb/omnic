@@ -4,4 +4,5 @@ include README.rst
 recursive-include omnic/builtin/services/admin/templates *
 recursive-include omnic/builtin/services/viewer/templates *
 recursive-include omnic/builtin/services/viewer/static *
+recursive-include omnic/builtin/converters/templates *
 recursive-include omnic/builtin/viewers *
