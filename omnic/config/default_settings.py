@@ -107,17 +107,14 @@ PLACEHOLDERS = [
 ]
 
 PATH_PREFIX = '/tmp/omnic/'
+
 RESOURCE_CACHE_INTERFIX = 'resource'
-# FOREIGN_RESOURCE_CACHE_INTERFIX = 'foreign'
 MUTABLE_RESOURCE_CACHE_INTERFIX = 'mutable'
+
 PATH_GROUPING = 'MD5'
 ALLOWED_LOCATIONS = {
     # local
     'localhost', '127.0.0.1',
-
-    # test sites mentioned in README
-    'unsplash.it', 'people.sc.fsu.edu', 'imr.sandia.gov', 'wiki.jmol.org',
-    'opendatakit.org',
 
     # github, for omnic-zoo
     'github.com',

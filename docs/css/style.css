@@ -1,0 +1,169 @@
+#background_container {
+    /*background: url('../images/example_slide.jpg') #fff no-repeat;*/
+    background-size: 100%;
+
+    filter:blur(1px);
+    -o-filter:blur(1px);
+    -ms-filter:blur(1px);
+    -moz-filter:blur(1px);
+    -webkit-filter:blur(1px);
+    top: -9px;
+    left: 0;
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+
+}
+
+.colorful {
+	background:
+		-webkit-linear-gradient(45deg, hsla(122, 98%, 50%, 1) 0%, hsla(122, 98%, 50%, 0) 70%),
+		-webkit-linear-gradient(315deg, hsla(173, 99%, 44%, 1) 10%, hsla(173, 99%, 44%, 0) 80%),
+		-webkit-linear-gradient(225deg, hsla(29, 92%, 49%, 1) 10%, hsla(29, 92%, 49%, 0) 80%),
+		-webkit-linear-gradient(135deg, hsla(163, 97%, 49%, 1) 100%, hsla(163, 97%, 49%, 0) 70%);
+	background:
+		linear-gradient(45deg, hsla(122, 98%, 50%, 1) 0%, hsla(122, 98%, 50%, 0) 70%),
+		linear-gradient(135deg, hsla(173, 99%, 44%, 1) 10%, hsla(173, 99%, 44%, 0) 80%),
+		linear-gradient(225deg, hsla(29, 92%, 49%, 1) 10%, hsla(29, 92%, 49%, 0) 80%),
+		linear-gradient(315deg, hsla(163, 97%, 49%, 1) 100%, hsla(163, 97%, 49%, 0) 70%);
+}
+
+.colorful2 {
+background:
+    -webkit-linear-gradient(45deg, hsla(37, 95%, 25%, 1) 0%, hsla(37, 95%, 25%, 0) 70%),
+    -webkit-linear-gradient(315deg, hsla(41, 100%, 30%, 1) 10%, hsla(41, 100%, 30%, 0) 80%),
+    -webkit-linear-gradient(225deg, hsla(51, 95%, 32%, 1) 10%, hsla(51, 95%, 32%, 0) 80%),
+    -webkit-linear-gradient(135deg, hsla(34, 91%, 19%, 1) 100%, hsla(34, 91%, 19%, 0) 70%);
+background:
+    linear-gradient(45deg, hsla(37, 95%, 25%, 1) 0%, hsla(37, 95%, 25%, 0) 70%),
+    linear-gradient(135deg, hsla(41, 100%, 30%, 1) 10%, hsla(41, 100%, 30%, 0) 80%),
+    linear-gradient(225deg, hsla(51, 95%, 32%, 1) 10%, hsla(51, 95%, 32%, 0) 80%),
+    linear-gradient(315deg, hsla(34, 91%, 19%, 1) 100%, hsla(34, 91%, 19%, 0) 70%);
+}
+
+
+
+
+.colorful {
+	background:
+		-webkit-linear-gradient(45deg, hsla(308, 91%, 48%, 1) 0%, hsla(308, 91%, 48%, 0) 70%),
+		-webkit-linear-gradient(315deg, hsla(174, 99%, 46%, 1) 10%, hsla(174, 99%, 46%, 0) 80%),
+		-webkit-linear-gradient(225deg, hsla(34, 93%, 44%, 1) 10%, hsla(34, 93%, 44%, 0) 80%),
+		-webkit-linear-gradient(135deg, hsla(222, 99%, 44%, 1) 100%, hsla(222, 99%, 44%, 0) 70%);
+	background:
+		linear-gradient(45deg, hsla(308, 91%, 48%, 1) 0%, hsla(308, 91%, 48%, 0) 70%),
+		linear-gradient(135deg, hsla(174, 99%, 46%, 1) 10%, hsla(174, 99%, 46%, 0) 80%),
+		linear-gradient(225deg, hsla(34, 93%, 44%, 1) 10%, hsla(34, 93%, 44%, 0) 80%),
+		linear-gradient(315deg, hsla(222, 99%, 44%, 1) 100%, hsla(222, 99%, 44%, 0) 70%);
+	}
+
+
+h1.title {
+	font-size: 60px;
+	font-weight: 200;
+}
+
+nav {
+    z-index: 1;
+}
+
+nav .whiteboard-logo {
+    letter-spacing: 0.1em;
+    font-weight: 200;
+    font-size: 14pt;
+}
+nav .whiteboard-logo img {
+    margin-right: 10px;
+}
+
+nav.navbar {
+    position: fixed !important; top: 0; left: 0; right: 0;
+}
+
+.carousel-cell {
+    margin-bottom: 50px;
+}
+
+.carousel-cell .content {
+    font-size: 1.5em;
+    font-weight: 200;
+}
+
+.black-links a {
+    color: black;
+}
+
+
+
+
+.omnic-git--root {
+    /*background: #eee;*/
+    padding: 20px;
+}
+
+.omnic-git--item {
+    display: block;
+    min-height: 80px;
+}
+
+.omnic-git--directory {
+}
+
+.omnic-git--item > div {
+    margin: 2px;
+    display: inline-block;
+    width: 100px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+div.omnic-git--directory > div.omnic-git--path:before {
+    content: '▶';
+    content: '▼';
+    width: 100px;
+    display: inline-block;
+    text-align: center;
+    font-size: 20pt;
+    margin-top: 20px;
+}
+
+div.omnic-git--directory > div.omnic-git--path.opened:before {
+    content: '▼';
+}
+
+div.omnic-git--directory > div.omnic-git--path {
+    display: block;
+}
+
+div.omnic-git--subdir {
+    border-left: 2px solid #eee;
+    padding-left: 10px;
+    margin-left: 30px;
+    width: 800px;
+}
+
+div.omnic-git--subdir {
+    /*display: none;*/ /* START EXPANDED */
+}
+
+div.omnic-git--subdir.tree-visible {
+    display: block;
+}
+
+div.omnic-git--path {
+    width: 400px;
+    font-size: 16pt;
+}
+
+.omnic-git--size {
+    color: #eee;
+}
+
+.omnic-git--sha {
+    color: #eee;
+    overflow: hidden;
+    ellipsis: auto;
+}
