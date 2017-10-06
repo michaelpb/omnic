@@ -167,3 +167,32 @@ div.omnic-git--path {
     overflow: hidden;
     ellipsis: auto;
 }
+
+.logo-link {
+    height: 300px;
+    display: block;
+    position: relative;
+    user-select: none;
+
+     -moz-user-select: none; /* Firefox */
+           -ms-user-select: none; /* Internet Explorer */
+              -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
+                -webkit-user-select: none; /* Chrome, Safari, and Opera */
+                  -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+}
+
+.spin-logo {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 300px;
+height: 300px;
+margin:-150px 0 0 -150px;
+-webkit-animation:spin 4s linear infinite;
+-moz-animation:spin 4s linear infinite;
+animation:spin 4s linear infinite;
+
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
