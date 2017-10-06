@@ -1,6 +1,6 @@
 __author__ = 'michaelb'
 __email__ = 'michaelpb@gmail.com'
-__version__ = '0.1.13'
+__version__ = '0.1.14'
 
 # flake8: noqa
 
