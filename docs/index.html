@@ -7,6 +7,81 @@
 <meta name="description" content="Mostly stateless microservice framework for generating on-the-fly thumbs and previews of a wide variety of file types."/>
 <meta name="HandheldFriendly" content="True"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.3/css/bulma.css" />
+
+<style>
+    .omnic-git--root {
+        /*background: #eee;*/
+        padding: 20px;
+    }
+
+    .omnic-git--item {
+        display: block;
+        min-height: 80px;
+    }
+
+    .omnic-git--directory {
+    }
+
+    .omnic-git--item > div {
+        margin: 2px;
+        display: inline-block;
+        width: 100px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+    }
+
+    div.omnic-git--directory > div.omnic-git--path:before {
+        content: '▶';
+        width: 100px;
+        display: inline-block;
+        text-align: center;
+        font-size: 20pt;
+        margin-top: 20px;
+    }
+
+    div.omnic-git--directory > div.omnic-git--path.opened:before {
+        content: '▼';
+    }
+
+    div.omnic-git--directory > div.omnic-git--path {
+        display: block;
+    }
+
+    div.omnic-git--subdir {
+        border-left: 2px solid gray;
+        padding-left: 10px;
+        margin-left: 30px;
+        width: 800px;
+    }
+
+    div.omnic-git--subdir {
+        display: none;
+    }
+
+    div.omnic-git--subdir.tree-visible {
+        display: block;
+    }
+
+    div.omnic-git--path {
+        width: 400px;
+        font-size: 16pt;
+    }
+
+    .omnic-git--size {
+        color: gray;
+    }
+
+    .omnic-git--sha {
+        color: gray;
+        overflow: hidden;
+        ellipsis: auto;
+    }
+</style>
+
+
 </head>
 <body>
 
@@ -24,12 +99,23 @@
                 to generate <strong>on-the-fly thumbs</strong> and previews <br />
                 of a zillion different filetypes.
             </h2>
+
+
             <h2 class="subtitle">pip install omnic</h2>
             <div class="block">
                 <img src="https://travis-ci.org/michaelpb/omnic.svg?branch=master" />
                 <br />
                 <a href="./htmlcov/">Coverage (85%+)</a>
             </div>
+            <hr />
+            <h1 class="title">Demo</h1>
+            <p>
+            This is a preview generated on-the-fly (and cached) of the
+            michaelpb/omnic-zoo GitHub repo, and inserted with just one copy /
+            pastable snippet.
+            </p>
+            <script src="http://omnic-demo.openlab.org/media/docwrite-inject.js/?digest=9163de5c1e2a011cdb4877bc5a737de72d772570&url=git%3A%2F%2Fgithub.com%2Fmichaelpb%2Fomnic-zoo.git%3C8a192e251273a68091042fc169a604ce6bb5d868%3E">
+            </script>
             <!--
             <div class="block">
                 <iframe src="https://ghbtns.com/github-btn.html?user=michaelpb&repo=omnic&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
@@ -39,6 +125,21 @@
         </div>
     </div>
 </section>
+
+
+<script src="http://code.jquery.com/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.omnic-git--directory').click(function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            $(this).children('.omnic-git--subdir').toggleClass('tree-visible');
+            $(this).children('.omnic-git--path').toggleClass('opened');
+        });
+    });
+</script>
+
 
 </body>
 </html>
