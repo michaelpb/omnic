@@ -5,7 +5,8 @@ import subprocess
 from omnic.conversion.exceptions import (ConversionInputError,
                                          ConverterUnavailable)
 from omnic.conversion.utils import apply_command_list_template
-from omnic.utils import filesystem
+from omnic.utils import filesystem, asynctools
+from omnic import singletons
 
 
 class Converter:
@@ -15,11 +16,8 @@ class Converter:
     def configure():
         pass
 
-    async def convert(self, in_resource, out_resource):
-        return self.convert_sync(in_resource, out_resource)
-
-    def convert_sync(self, in_resource, out_resource):
-        msg = 'Converter subclass must override at least convert_sync.'
+    def convert(self, in_resource, out_resource):
+        msg = 'Converter subclass must override convert.'
         raise NotImplementedError(msg)
 
 
@@ -45,9 +43,6 @@ class ExecConverter(Converter):
         )
 
     async def convert(self, in_resource, out_resource):
-        return self.convert_sync(in_resource, out_resource)
-
-    def convert_sync(self, in_resource, out_resource):
         cmd = self.get_command(in_resource, out_resource)
 
         # Ensure directories are created
@@ -58,7 +53,7 @@ class ExecConverter(Converter):
         working_dir = self.get_cwd(in_resource, out_resource)
 
         # Run the command itself
-        result = subprocess.run(cmd, cwd=working_dir)
+        result = await singletons.subprocess.run(cmd, cwd=working_dir)
 
         # Some conversion programs don't allow specifying output path. If the
         # command outputs to a non-standard path, fix by renaming it.
@@ -74,17 +69,17 @@ class ExecConverter(Converter):
 
 
 class HardLinkConverter(Converter):
-    def convert_sync(self, in_resource, out_resource):
+    async def convert(self, in_resource, out_resource):
         os.link(in_resource.cache_path, out_resource.cache_path)
 
 
 class SymLinkConverter(Converter):
-    def convert_sync(self, in_resource, out_resource):
+    async def convert(self, in_resource, out_resource):
         os.symlink(in_resource.cache_path, out_resource.cache_path)
 
 
 class DetectorConverter(SymLinkConverter):
-    def convert_sync(self, in_resource, out_resource):
+    async def convert(self, in_resource, out_resource):
         path = in_resource.cache_path
         detector = self.detector()
         if not os.path.exists(path):
@@ -93,7 +88,7 @@ class DetectorConverter(SymLinkConverter):
             raise ConversionInputError('Cannot detect: %s' % str(path))
         if not detector.detect(path):
             raise ConversionInputError('Invalid: %s' % str(path))
-        super().convert_sync(in_resource, out_resource)
+        await super().convert(in_resource, out_resource)
 
 
 class AdditiveDirectoryExecConverter(ExecConverter):
@@ -113,8 +108,4 @@ class AdditiveDirectoryExecConverter(ExecConverter):
 
     async def convert(self, in_resource, out_resource):
         self.recursive_hardlink(in_resource, out_resource)
-        super().convert_sync(in_resource, out_resource)
-
-    def convert_sync(self, in_resource, out_resource):
-        self.recursive_hardlink(in_resource, out_resource)
-        super().convert_sync(in_resource, out_resource)
+        await super().convert(in_resource, out_resource)

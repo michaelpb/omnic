@@ -139,8 +139,8 @@ class ConverterTestBase:
     def _path(self, in_str, out_str):
         return self.cgraph.find_path(TypeString(in_str), TypeString(out_str))
 
-    def _check_convert(self):
-        self.converter.convert_sync(self.res, self.res2)
+    async def _check_convert(self):
+        await self.converter.convert(self.res, self.res2)
         assert self.res2.cache_exists()
         with self.res2.cache_open() as f:
             assert f.read() == Magic.JPEG
@@ -167,9 +167,10 @@ class DirectoryConverterTestBase:
 
 
 class TestAdditiveDirectoryExecConverter(DirectoryConverterTestBase):
-    def test_convert(self):
+    @pytest.mark.asyncio
+    async def test_convert(self):
         self.converter = MockNpmConverter()
-        self.converter.convert_sync(self.res, self.res2)
+        await self.converter.convert(self.res, self.res2)
         j = os.path.join
         assert self.res2.cache_exists()
 
@@ -190,29 +191,33 @@ class TestAdditiveDirectoryExecConverter(DirectoryConverterTestBase):
 
 
 class TestHardLinkConverter(ConverterTestBase):
-    def test_convert(self):
+    @pytest.mark.asyncio
+    async def test_convert(self):
         self.converter = HardLinkConverter()
-        self._check_convert()
+        await self._check_convert()
 
 
 class TestDetectorConverter(ConverterTestBase):
-    def test_convert_nothing(self):
+    @pytest.mark.asyncio
+    async def test_convert_nothing(self):
         self.converter = converter.DetectorConverter()
         self.converter.detector = AgreeableDetector
         with pytest.raises(converter.ConversionInputError):
             # Wrong direction (from nonexistent to existent)
-            self.converter.convert_sync(self.res2, self.res)
+            await self.converter.convert(self.res2, self.res)
 
-    def test_convert_invalid(self):
+    @pytest.mark.asyncio
+    async def test_convert_invalid(self):
         self.converter = converter.DetectorConverter()
         self.converter.detector = DummyDetector
         with pytest.raises(converter.ConversionInputError):
-            self.converter.convert_sync(self.res, self.res2)
+            await self.converter.convert(self.res, self.res2)
 
-    def test_convert_success(self):
+    @pytest.mark.asyncio
+    async def test_convert_success(self):
         self.converter = converter.DetectorConverter()
         self.converter.detector = AgreeableDetector
-        self._check_convert()  # valid conversion
+        await self._check_convert()  # valid conversion
 
 
 class TestDirectoryConverter(DirectoryConverterTestBase):
@@ -220,21 +225,24 @@ class TestDirectoryConverter(DirectoryConverterTestBase):
 
 
 class TestExecConverter(ConverterTestBase):
-    def test_convert(self):
+    @pytest.mark.asyncio
+    async def test_convert(self):
         self.converter = ExecConverter()
-        self._check_convert()
+        await self._check_convert()
 
-    def test_convert_with_arg(self):
+    @pytest.mark.asyncio
+    async def test_convert_with_arg(self):
         # cp -s creates a symbolic link
         self.res2 = TypedResource(URL, TypeString('JPG:-s'))
         self.converter = ExecConverterWithArgs()
-        self._check_convert()
+        await self._check_convert()
         assert os.path.islink(self.res2.cache_path)
 
-    def test_convert_with_custom_filename(self):
+    @pytest.mark.asyncio
+    async def test_convert_with_custom_filename(self):
         self.res2 = TypedResource(URL, TypeString('JPG'))
         self.converter = ExecConverterWithOutputFilename()
-        self._check_convert()
+        await self._check_convert()
 
 
 class TestExecConverterUnitTest:
@@ -258,13 +266,14 @@ class TestExecConverterUnitTest:
         with patch('omnic.conversion.converter.shutil', **shutil):
             self.Subclass.configure()
 
-    def test_convert_sync(self):
+    @pytest.mark.asyncio
+    async def test_convert(self):
         res1 = self._get_mocked_resource('input')
         res2 = self._get_mocked_resource('output')
         sb = self.Subclass()
         info = {'run.return_value': '/bin/test'}
-        with patch('omnic.conversion.converter.subprocess', **info) as sp:
-            sb.convert_sync(res1, res2)
+        with patch('omnic.worker.subprocessmanager.subprocess', **info) as sp:
+            await sb.convert(res1, res2)
         res1.cache_makedirs.assert_called_once_with()
         res2.cache_makedirs.assert_called_once_with()
         sp.run.assert_called_once_with(

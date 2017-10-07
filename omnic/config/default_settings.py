@@ -9,6 +9,7 @@ AUTOLOAD = [
     'omnic.web.eventloop',
     'omnic.web.viewer',
     'omnic.worker.manager',
+    'omnic.worker.subprocessmanager',
     'omnic.types.detectors',
 ]
 

@@ -2,6 +2,7 @@ import os
 import subprocess
 
 from omnic.types.resource import ForeignResource, MutableResource
+from omnic import singletons
 
 
 async def download_http(resource_url):
@@ -17,7 +18,7 @@ async def download_http(resource_url):
     # print('-----------------------------')
     # print(' '.join(cmd))
     # print('-----------------------------')
-    subprocess.run(cmd)
+    await singletons.subprocess.run(cmd)
 
 GIT_ARCHIVE_FORMATS = '''
 [tar "raw"]
@@ -36,7 +37,7 @@ async def download_git(resource_url):
     if not git_resource.cache_exists():
         # Check out bare repo into cache path
         cmd = ['git', 'clone', '--bare', git_url, git_resource.cache_path]
-        subprocess.run(cmd)
+        await singletons.subprocess.run(cmd)
 
         # Append to git config customized git archive format
         config_path = os.path.join(git_resource.cache_path, 'config')
@@ -92,9 +93,9 @@ async def download_git(resource_url):
 
     if output_file:
         with open(output_file, 'w+') as fd:
-            subprocess.run(cmd, cwd=git_resource.cache_path, stdout=fd)
+            await singletons.subprocess.run(cmd, cwd=git_resource.cache_path, stdout=fd)
     else:
-        subprocess.run(cmd, cwd=git_resource.cache_path)
+        await singletons.subprocess.run(cmd, cwd=git_resource.cache_path)
 
     out_resource = ForeignResource(resource_url)
 

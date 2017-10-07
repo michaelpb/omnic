@@ -23,7 +23,7 @@ class TestDownloaderFunction:
         self.mkdir = patcher.start()
         self.patchers.append(patcher)
 
-        patcher = patch('omnic.conversion.resolver.subprocess')
+        patcher = patch('omnic.worker.subprocessmanager.subprocess')
         self.subprocess = patcher.start()
         self.patchers.append(patcher)
 
