@@ -10,6 +10,8 @@ from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
                                                Unoconv)
 from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
 from omnic.builtin.converters.thumb import ImageMagickThumb
+from omnic.builtin.converters.video import FfmpegThumbnailer
+from omnic.builtin.converters.audio import FfmpegAudioWaveformRenderer
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
@@ -204,3 +206,37 @@ class TestThumbConverterCommands:
         _, out_resource = _get_resources('JPEG', 'thumb.png')
         args = conv. get_arguments(out_resource)
         assert args == ['200x200^']
+
+
+class TestVideoConverterCommands:
+    def test_ffmpegthumbnailer(self):
+        in_resource, out_resource = _get_resources('AVI', 'PNG')
+        conv = FfmpegThumbnailer()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'ffmpegthumbnailer',
+            '-s',
+            '0',
+            '-i',
+            in_resource.cache_path,
+            '-o',
+            out_resource.cache_path,
+        ]
+
+
+class TestAudioConverterCommands:
+    def test_ffmpeg_audiowaveform_renderer(self):
+        in_resource, out_resource = _get_resources('MP3', 'PNG')
+        conv = FfmpegAudioWaveformRenderer()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'ffmpeg',
+            '-i',
+            in_resource.cache_path,
+            '-filter_complex',
+            'compand,showwavespic=s=640x240:colors=SlateGray|SteelBlue',
+            '-frames:v',
+            '1',
+            '-y',
+            out_resource.cache_path,
+        ]

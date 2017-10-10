@@ -72,6 +72,12 @@ class Resource:
             dirname = os.path.dirname(self.cache_path)
         os.makedirs(dirname, exist_ok=True)
 
+    def cache_lock(self):
+        '''
+        Call AFTER a resource has been prepared or finished resolving.
+        '''
+        pass # TODO fill in
+
     def cache_open(self, mode='rb'):
         if 'w' in mode:
             self.cache_makedirs()
@@ -84,6 +90,10 @@ class Resource:
         return open(path, mode=mode)
 
     def cache_exists(self):
+        return os.path.exists(self.cache_path)
+
+    async def cache_ready(self):
+        # TODO fill in, check if locked
         return os.path.exists(self.cache_path)
 
     def cache_remove(self):
