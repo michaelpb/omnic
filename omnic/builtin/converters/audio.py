@@ -12,9 +12,18 @@ class FfmpegAudioWaveformRenderer(converter.ExecConverter):
         'OGG',
         'OPUS',
         'SPX',
+        'FLAC',
+        'RA',
+        'WAV',
 
         'audio/ogg',
+        'audio/mp4a-latm',
+        'audio/mpa-robust',
         'audio/mpeg',
+        'audio/flac',
+        'audio/x-realaudio',
+        'audio/x-flac',
+        'audio/x-wav',
     ]
 
     outputs = [
