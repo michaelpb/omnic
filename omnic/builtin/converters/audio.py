@@ -42,6 +42,7 @@ class FfmpegAudioWaveformRenderer(converter.ExecConverter):
         '$OUT',
     ]
 
+
 class SoxAudioSpectrogramRenderer(converter.ExecConverter):
     inputs = [
         'OGA',

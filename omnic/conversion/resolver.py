@@ -1,8 +1,7 @@
 import os
-import subprocess
 
-from omnic.types.resource import ForeignResource, MutableResource
 from omnic import singletons
+from omnic.types.resource import ForeignResource, MutableResource
 
 
 async def download_http(resource_url):
@@ -93,7 +92,11 @@ async def download_git(resource_url):
 
     if output_file:
         with open(output_file, 'w+') as fd:
-            await singletons.subprocess.run(cmd, cwd=git_resource.cache_path, stdout=fd)
+            await singletons.subprocess.run(
+                cmd,
+                cwd=git_resource.cache_path,
+                stdout=fd,
+            )
     else:
         await singletons.subprocess.run(cmd, cwd=git_resource.cache_path)
 

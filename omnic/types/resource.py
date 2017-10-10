@@ -76,7 +76,7 @@ class Resource:
         '''
         Call AFTER a resource has been prepared or finished resolving.
         '''
-        pass # TODO fill in
+        pass  # TODO fill in
 
     def cache_open(self, mode='rb'):
         if 'w' in mode:

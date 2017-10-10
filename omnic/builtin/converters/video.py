@@ -1,5 +1,6 @@
 from omnic.conversion import converter
 
+
 class FfmpegThumbnailer(converter.ExecConverter):
     inputs = [
         'FLV',

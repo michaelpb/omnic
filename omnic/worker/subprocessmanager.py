@@ -1,5 +1,7 @@
-from omnic import singletons
 import subprocess
+
+from omnic import singletons
+
 
 class SubprocessManager(list):
     '''

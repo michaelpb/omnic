@@ -1,12 +1,11 @@
 import os
 import shutil
-import subprocess
 
+from omnic import singletons
 from omnic.conversion.exceptions import (ConversionInputError,
                                          ConverterUnavailable)
 from omnic.conversion.utils import apply_command_list_template
-from omnic.utils import filesystem, asynctools
-from omnic import singletons
+from omnic.utils import filesystem
 
 
 class Converter:

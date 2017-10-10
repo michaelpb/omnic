@@ -4,16 +4,16 @@ import tempfile
 import pytest
 
 from omnic import singletons
+from omnic.builtin.converters.audio import FfmpegAudioWaveformRenderer
 from omnic.builtin.converters.chemical import (NodeSdfToSvgRenderer,
                                                OpenBabelConverter)
 from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
                                                Unoconv)
 from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
 from omnic.builtin.converters.thumb import ImageMagickThumb
-from omnic.builtin.converters.video import FfmpegThumbnailer
-from omnic.builtin.converters.audio import FfmpegAudioWaveformRenderer
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
+from omnic.builtin.converters.video import FfmpegThumbnailer
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
                                                       generate_index_js)
 from omnic.types.resource import ForeignBytesResource, TypedResource
