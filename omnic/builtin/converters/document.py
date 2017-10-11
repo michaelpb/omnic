@@ -6,24 +6,20 @@ from omnic.conversion import converter
 class Unoconv(converter.ExecConverter):
     inputs = [
         # Document
-        'BIB',
         'DOC',
         'HTML',
         'XHTML',
         'HTM',
         'ODT',
         'OTT',
-        'RTF',
         'LTX',
         'SDW',
         'STW',
         'SXW',
-        'TXT',
         'UOT',
         'VOR',
 
         # Spreadsheet
-        'CSV',
         'XLS',
         'DBF',
         'ODS',

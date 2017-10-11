@@ -67,6 +67,7 @@ SERVICES = [
 
 CONVERTERS = [
     # 'omnic.builtin.converters.thumb.PILThumb', # Disabling Pillow thumb
+    # 'omnic.builtin.converters.audio.SoxAudioSpectrogramRenderer',
     'omnic.builtin.converters.thumb.ImageMagickThumb',
     'omnic.builtin.converters.document.Unoconv',
     'omnic.builtin.converters.document.ImageMagickPageRasterizer',
@@ -78,7 +79,7 @@ CONVERTERS = [
     'omnic.builtin.converters.manifest.ManifestDownloader',
     'omnic.builtin.converters.video.FfmpegThumbnailer',
     'omnic.builtin.converters.audio.FfmpegAudioWaveformRenderer',
-    # 'omnic.builtin.converters.audio.SoxAudioSpectrogramRenderer',
+    'omnic.builtin.converters.text.PandocMarkupCompiler',
 
     # Git preview system
     'omnic.builtin.converters.git.GitLsTreeToJson',

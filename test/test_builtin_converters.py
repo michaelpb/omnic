@@ -14,6 +14,7 @@ from omnic.builtin.converters.thumb import ImageMagickThumb
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
 from omnic.builtin.converters.video import FfmpegThumbnailer
+from omnic.builtin.converters.text import PandocMarkupCompiler
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
                                                       generate_index_js)
 from omnic.types.resource import ForeignBytesResource, TypedResource
@@ -238,5 +239,35 @@ class TestAudioConverterCommands:
             '-frames:v',
             '1',
             '-y',
+            out_resource.cache_path,
+        ]
+
+
+class TestMarkdownCommands:
+    def test_pandoc_markdown(self):
+        in_resource, out_resource = _get_resources('MD', 'HTML')
+        conv = PandocMarkupCompiler()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'pandoc',
+            in_resource.cache_path,
+            '-f',
+            'markdown_github',
+            '-t',
+            'html',
+            '-o',
+            out_resource.cache_path,
+        ]
+
+    def test_pandoc_txt(self):
+        in_resource, out_resource = _get_resources('TXT', 'HTML')
+        conv = PandocMarkupCompiler()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'pandoc',
+            in_resource.cache_path,
+            '-t',
+            'html',
+            '-o',
             out_resource.cache_path,
         ]
