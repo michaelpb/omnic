@@ -15,6 +15,7 @@ from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
 from omnic.builtin.converters.video import FfmpegThumbnailer
 from omnic.builtin.converters.text import PandocMarkupCompiler
+from omnic.builtin.converters.code import HighlightSyntaxHighlighter
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
                                                       generate_index_js)
 from omnic.types.resource import ForeignBytesResource, TypedResource
@@ -271,3 +272,18 @@ class TestMarkdownCommands:
             '-o',
             out_resource.cache_path,
         ]
+
+class TestCodeCommands:
+    def test_highlight_code(self):
+        in_resource, out_resource = _get_resources('PY', 'HTML')
+        conv = HighlightSyntaxHighlighter()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'highlight',
+            '-f',
+            in_resource.cache_path,
+            '--inline-css',
+            '-o',
+            out_resource.cache_path,
+        ]
+

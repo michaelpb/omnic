@@ -80,6 +80,7 @@ CONVERTERS = [
     'omnic.builtin.converters.video.FfmpegThumbnailer',
     'omnic.builtin.converters.audio.FfmpegAudioWaveformRenderer',
     'omnic.builtin.converters.text.PandocMarkupCompiler',
+    'omnic.builtin.converters.code.HighlightSyntaxHighlighter',
 
     # Git preview system
     'omnic.builtin.converters.git.GitLsTreeToJson',
