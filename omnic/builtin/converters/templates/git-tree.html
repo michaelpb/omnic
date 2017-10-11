@@ -33,4 +33,11 @@
 
 <div class="omnic-git--root">
     {{ file_listing(root.git_url, root.git_sha, root.children) }}
+
+    {% if readme %}
+        <div class="omnic-git--readme">
+            <script src="{{ root.git_url|media('docwrite-inject.js', root.git_sha, readme.path) }}">
+            </script>
+        </div>
+    {% endif %}
 </div>

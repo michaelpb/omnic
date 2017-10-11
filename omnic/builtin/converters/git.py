@@ -1,4 +1,5 @@
 import json
+import os
 
 from omnic.conversion import converter
 from omnic.responses.template import Jinja2TemplateHelper
@@ -48,8 +49,16 @@ class GitTreeJsonToHtml(converter.Converter):
     async def convert(self, in_resource, out_resource):
         with in_resource.cache_open('r') as fd:
             root = json.load(fd)
+
+        # Looks for all README-like files in the root path
+        readmes = [
+            item for item in root.get('children', [])
+            if os.path.splitext(item.get('path', ''))[0].lower() == 'readme'
+        ]
+
         html_result = templates.render_to_string(None, 'git-tree.html', {
             'root': root,
+            'readme': readmes[0] if readmes else None,
         })
         with out_resource.cache_open('w+') as fd:
             fd.write(html_result)
@@ -58,6 +67,7 @@ class GitTreeJsonToHtml(converter.Converter):
 class InlineJsVariable(converter.Converter):
     inputs = [
         'git-tree.html',
+        'HTML',
     ]
 
     outputs = [
