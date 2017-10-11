@@ -4,16 +4,20 @@ MAINTAINER michaelb <michaelpb@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
 
-# Terrible way to add sources for node
+# NOTE: Node.js is not version locked, see #47
 RUN curl -sL http://deb.nodesource.com/setup_6.x | bash -
 
-# Pull in system reqs
+# Install system reqs
 RUN apt-get update && apt-get install -y \
     imagemagick=8:6.9.7.4+dfsg-11+deb9u1 \
     inkscape=0.92.1-1 \
     meshlab=1.3.2+dfsg1-3 \
-    nodejs=6.11.2-1nodesource1~stretch1 \
+    ffmpeg=7:3.2.7-1~deb9u1 \
+    ffmpegthumbnailer=2.1.1-0.1+b3 \
+    pandoc=1.17.2~dfsg-3 \
+    nodejs=6* \
     openbabel=2.3.2+dfsg-3 \
+    highlight=3.18-3+b5 \
     unoconv=0.7-1.1
 
 RUN npm install -g \
