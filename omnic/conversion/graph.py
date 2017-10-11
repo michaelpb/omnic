@@ -10,7 +10,9 @@ log = logging.getLogger()
 
 
 def _format(string):
-    # Helper alias to easily extract the TypeString format from a string
+    '''
+    Helper alias to easily extract the TypeString format from a string
+    '''
     return TypeString(string).ts_format
 
 
@@ -20,12 +22,14 @@ class ConverterGraph:
         self.converter_list = converter_list
         if self.converter_list is None:
             self.converter_list = singletons.settings.load_all('CONVERTERS')
-        self.conversion_profiles = {}
 
-        # Set up directed conversion graph, punning unavailable converters as
-        # necessary
+        self.conversion_profiles = {}
+        self.direct_converters = {}
         self.dgraph = DirectedGraph()
         self.converters = {}
+
+        # Set up directed conversion graph, pruning unavailable converters
+        # as necessary
         for converter in self.converter_list:
             if prune_converters:
                 try:
@@ -39,6 +43,9 @@ class ConverterGraph:
                 for out in converter.outputs:
                     self.dgraph.add_edge(in_, out, converter.cost)
                     self.converters[(in_, out)] = converter
+
+            if hasattr(converter, 'direct_outputs'):
+                self._setup_direct_converter(converter)
 
         # Add all valid preferred conversions
         for path in singletons.settings.PREFERRED_CONVERSION_PATHS:
@@ -65,7 +72,26 @@ class ConverterGraph:
                 # If it did not break, then add to conversion profiles
                 self.conversion_profiles[key] = path
 
+    def _setup_direct_converter(self, converter):
+        '''
+        Given a converter, set up the direct_output routes for conversions,
+        which is used for transcoding between similar datatypes.
+        '''
+        inputs = (
+            converter.direct_inputs
+            if hasattr(converter, 'direct_inputs')
+            else converter.inputs
+        )
+        for in_ in inputs:
+            for out in converter.direct_outputs:
+                self.direct_converters[(in_, out)] = converter
+
     def find_path(self, in_, out):
+        '''
+        Given an input and output TypeString, produce a graph traversal,
+        keeping in mind special options like Conversion Profiles, Preferred
+        Paths, and Direct Conversions.
+        '''
         if in_.arguments:
             raise ValueError('Cannot originate path in argumented TypeString')
 
@@ -77,12 +103,24 @@ class ConverterGraph:
             profile = (profile, )
         types_by_format = {_format(s): TypeString(s) for s in profile}
 
-        # Determine full path. If profile was plural, add in extra steps
-        path = self.dgraph.shortest_path(str(in_), _format(profile[0]))
+        # Normalize input and output types to string
+        in_str = str(in_)
+        out_str = _format(profile[0])
+
+        # First check for direct conversions, returning immediately if found
+        direct_converter = self.direct_converters.get((in_str, out_str))
+        if direct_converter:
+            out_ts = types_by_format.get(out_str, TypeString(out_str))
+            return [(direct_converter, TypeString(in_str), out_ts)]
+
+        # No direct conversions was found, so find path through graph.
+        # If profile was plural, add in extra steps.
+        path = self.dgraph.shortest_path(in_str, out_str)
         path += profile[1:]
 
-        # Loop through each edge traversal, adding converters and type string
-        # pairs as we go along
+        # Loop through each edge traversal, adding converters and type
+        # string pairs as we go along. This is to ensure conversion
+        # profiles that have arguments mid-profile get included.
         results = []
         for left, right in pair_looper(path):
             converter = self.converters.get((_format(left), _format(right)))

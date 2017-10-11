@@ -80,6 +80,24 @@ class MockNpmConverter(converter.AdditiveDirectoryExecConverter):
     outputs = ['installed_nodepackage']
     command = ['mkdir', 'node_modules']  # Mock npm install
 
+class MockVideoDirectConverter(converter.Converter):
+    inputs = [
+        'AVI',
+        'MP4',
+        'MKV',
+    ]
+
+    outputs = [
+        'WEBM',
+    ]
+
+    direct_outputs = [
+        'AVI',
+        'MP4',
+        'MKV',
+        'WEBM',
+    ]
+
 
 # Set up system of dummy converters
 class ConvertMovieToImage(converter.HardLinkConverter):
@@ -117,6 +135,7 @@ class MockConfig:
         Convert3DGraphicsToMovie,
         Convert3DGraphicsToImage,
         CleanUpAudio,
+        MockVideoDirectConverter,
     ]
 
 
@@ -368,3 +387,30 @@ class TestConverterGraphCustomPaths:
         assert results[2][0] is ConvertImageToThumb
         assert results[1][2].arguments == ('frame=2', )
         assert results[2][2].arguments == ('123x456', )
+
+
+class TestConverterGraphDirectConverions(ConverterTestBase):
+    def test_conversion_normal(self):
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('MKV', 'WEBM')
+        assert len(results) == 1  # Ensure it is 1 "extra" step
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is MockVideoDirectConverter
+
+    def test_direct_only(self):
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        results = self._path('MKV', 'AVI:400x400')
+        assert len(results) == 1  # Ensure it is 1 "extra" step
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is MockVideoDirectConverter
+        assert results[0][2].arguments == ('400x400', )
+
+
+    def test_not_include_in_graph(self):
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+
+        with pytest.raises(NoPath):
+            self._path('MKV', 'JPEG')
+
