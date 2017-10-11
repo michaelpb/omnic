@@ -194,6 +194,7 @@ class TestThumbConverterCommands:
         cmd = conv.get_command(in_resource, out_resource)
         assert cmd == [
             'convert',
+            '-trim',
             '-thumbnail',
             '123x456^',
             '-gravity',
@@ -206,7 +207,7 @@ class TestThumbConverterCommands:
 
         # Test default arguments
         _, out_resource = _get_resources('JPEG', 'thumb.png')
-        args = conv. get_arguments(out_resource)
+        args = conv.get_arguments(out_resource)
         assert args == ['200x200^']
 
 
@@ -280,9 +281,16 @@ class TestCodeCommands:
         cmd = conv.get_command(in_resource, out_resource)
         assert cmd == [
             'highlight',
-            '-f',
-            in_resource.cache_path,
+            '--fragment',
+            '--line-numbers',
+            '--force',
+            '--anchors',
+            '--anchor-prefix=num',
+            '--class-name=omnic-highlight--',
+            '--enclose-pre',
             '--inline-css',
+            '--replace-tabs=8',
+            in_resource.cache_path,
             '-o',
             out_resource.cache_path,
         ]

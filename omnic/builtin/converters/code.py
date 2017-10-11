@@ -745,6 +745,37 @@ class HighlightSyntaxHighlighter(converter.ExecConverter):
 
         # Zonnon
         'ZNN',
+
+
+        # Mimetypes of above:
+        'text/x-boo',
+        'text/x-c++hdr',
+        'text/x-c++src',
+        'text/x-chdr',
+        # 'text/x-component',  # Not sure
+        'text/x-crontab',
+        'text/x-csh',
+        'text/x-csrc',
+        'text/x-dsrc',
+        'text/x-diff',
+        'text/x-haskell',
+        'text/x-java',
+        # 'text/x-lilypond',  # Should be handled by a music related one
+        # 'text/x-literate-haskell',  # Handled by PanDoc
+        'text/x-makefile',
+        'text/x-moc',
+        'text/x-pascal',
+        'text/x-pcs-gcd',
+        'text/x-perl',
+        'text/x-python',
+        'text/x-scala',
+        # 'text/x-server-parsed-html',  # Not sure
+        'text/x-setext',
+        'text/x-sfv',
+        'text/x-sh',
+        'text/x-tcl',
+        # 'text/x-tex',  # Hndled by PanDoc
+        # 'text/x-vcalendar',  # ditto
     ]
 
     outputs = [
@@ -753,9 +784,16 @@ class HighlightSyntaxHighlighter(converter.ExecConverter):
 
     command = [
         'highlight',
-        '-f',
-        '$IN',
+        '--fragment',
+        '--line-numbers',
+        '--force',
+        '--anchors',
+        '--anchor-prefix=num',
+        '--class-name=omnic-highlight--',
+        '--enclose-pre',
         '--inline-css',
+        '--replace-tabs=8',
+        '$IN',
         '-o',
         '$OUT',
     ]

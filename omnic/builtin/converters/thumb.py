@@ -77,6 +77,7 @@ class ImageMagickThumb(converter.ExecConverter):
         'convert',
         # -define jpeg:size=500x180 ... should be 2x
         # size, and correspond to JPEG or PNG
+        '-trim',
         '-thumbnail',
         '$0',
         '-gravity',
