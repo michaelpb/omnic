@@ -2,10 +2,11 @@
 ResourceURL is a core class that extends mimetypes
 '''
 import hashlib
-import os
 import re
+
 from urllib.parse import urlparse
 
+from omnic import singletons
 from omnic.types.exceptions import URLParseException
 
 DEFAULT_SCHEME = 'http'
@@ -15,13 +16,6 @@ SPLIT_URL_RE = re.compile(r'^([^<]+)(<?.*)$')
 ARG_RE = re.compile(r'^\s*([a-zA-Z0-9]+)\s*:\s*(.*)$')
 SCHEME_RE = re.compile(r'^[a-zA-Z0-9+-]+://')
 
-
-def _get_basename_based_on_url(resource_url):
-    path_basename = resource_url.path_split[-1]
-    if len(path_basename) < 1:
-        # Path is too small, probably ends with /, try 1 up
-        path_basename = resource_url.path_split[-2]
-    return path_basename
 
 
 class ResourceURL:
@@ -87,27 +81,23 @@ class ResourceURL:
 
         return url_string.strip(), args, kwargs
 
+    def guess_basename(self):
+        path_basename = self.path_split[-1]
+        if len(path_basename) < 1:
+            # Path is too small, probably ends with /, try 1 up
+            path_basename = self.path_split[-2]
+        return path_basename
+
     @staticmethod
     def get_basename(resource_url):
-        '''
-        Figures out path basename for given resource_url
-        '''
-        # NOTE: Needs to be moved into resolver architecture
-        scheme = resource_url.parsed.scheme
-        if scheme in ('http', 'https', 'file'):
-            return _get_basename_based_on_url(resource_url)
+        try:
+            resolver_graph = singletons.resolver_graph
+        except AttributeError:
+            # For some reason, resolver_graph isn't yet loaded (happens during
+            # unit tests), fall back on simplest version
+            return resource_url.guess_basename()
 
-        elif scheme in ('git', 'git+https', 'git+http'):
-            if len(resource_url.args) == 2:
-                # For now, git has 2 positional args, hash and path
-                git_tree, subpath = resource_url.args
-                basename = os.path.basename(subpath)
-                if basename:
-                    return basename  # subpath was not '/' or ''
-            return _get_basename_based_on_url(resource_url)
-
-        else:
-            raise ValueError('Unknown URL scheme: "%s"' % scheme)
+        return resolver_graph.find_resource_url_basename(resource_url)
 
 
 class BytesResourceURL(ResourceURL):

@@ -19,18 +19,28 @@ def _format(string):
 class ConverterGraph:
     def __init__(self, converter_list=None, prune_converters=False):
         # Configure graph from arguments and global setting
+        if converter_list is None:
+            converter_list = singletons.settings.load_all('CONVERTERS')
         self.converter_list = converter_list
-        if self.converter_list is None:
-            self.converter_list = singletons.settings.load_all('CONVERTERS')
+        self._init_fields()
 
+        settings = singletons.settings
+        self._setup_converter_graph(converter_list, prune_converters)
+        self._setup_preferred_paths(settings.PREFERRED_CONVERSION_PATHS)
+        self._setup_profiles(settings.CONVERSION_PROFILES)
+
+    def _init_fields(self):
         self.conversion_profiles = {}
         self.direct_converters = {}
         self.dgraph = DirectedGraph()
         self.converters = {}
 
-        # Set up directed conversion graph, pruning unavailable converters
-        # as necessary
-        for converter in self.converter_list:
+    def _setup_converter_graph(self, converter_list, prune_converters):
+        '''
+        Set up directed conversion graph, pruning unavailable converters as
+        necessary
+        '''
+        for converter in converter_list:
             if prune_converters:
                 try:
                     converter.configure()
@@ -47,8 +57,11 @@ class ConverterGraph:
             if hasattr(converter, 'direct_outputs'):
                 self._setup_direct_converter(converter)
 
-        # Add all valid preferred conversions
-        for path in singletons.settings.PREFERRED_CONVERSION_PATHS:
+    def _setup_preferred_paths(self, preferred_conversion_paths):
+        '''
+        Add given valid preferred conversion paths
+        '''
+        for path in preferred_conversion_paths:
             for pair in pair_looper(path):
                 if pair not in self.converters:
                     log.warning('Invalid conversion path %s, unknown step %s' %
@@ -58,8 +71,12 @@ class ConverterGraph:
                 # If it did not break, then add to dgraph
                 self.dgraph.add_preferred_path(*path)
 
+    def _setup_profiles(self, conversion_profiles):
+        '''
+        Add given conversion profiles checking for invalid profiles
+        '''
         # Check for invalid profiles
-        for key, path in singletons.settings.CONVERSION_PROFILES.items():
+        for key, path in conversion_profiles.items():
             if isinstance(path, str):
                 path = (path, )
             for left, right in pair_looper(path):

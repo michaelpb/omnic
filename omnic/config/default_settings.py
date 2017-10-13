@@ -1,6 +1,7 @@
 # Modules which are automatically loaded as soon as settings is loaded, to
 # ensure singletons etc get hooked up correctly
 AUTOLOAD = [
+    'omnic.conversion.resolvergraph',
     'omnic.conversion.graph',
     'omnic.cli.commandparser',
     'omnic.cli.commands',
@@ -95,6 +96,15 @@ CONVERTERS = [
     'omnic.builtin.converters.nodejs.UglifyJSMinifier',
 
     'omnic.builtin.services.viewer.converters.ViewerNodePackageBuilder',
+]
+
+RESOLVERS = [
+    'omnic.builtin.resolvers.http.CurlDownloader',
+    'omnic.builtin.resolvers.git.GitCloner',
+    'omnic.builtin.resolvers.git.GitUpdater',
+    'omnic.builtin.resolvers.git.GitTreeResolver',
+    'omnic.builtin.resolvers.git.GitLogResolver',
+    'omnic.builtin.resolvers.git.GitFileResolver',
 ]
 
 PREFERRED_CONVERSION_PATHS = []

@@ -5,6 +5,7 @@ import pytest
 from omnic.config.utils import use_settings
 from omnic.conversion import resolver
 from omnic.types.resourceurl import ResourceURL
+from omnic import singletons
 
 normalized_settings = dict(
     path_prefix='/t/',
@@ -12,10 +13,16 @@ normalized_settings = dict(
     interfix=None,
     resource_cache_interfix='res',
     mutable_resource_cache_interfix='mut',
+    resolvers=[
+        'omnic.builtin.resolvers.http.CurlDownloader',
+        'omnic.builtin.resolvers.git.GitCloner',
+        'omnic.builtin.resolvers.git.GitUpdater',
+        'omnic.builtin.resolvers.git.GitTreeResolver',
+        'omnic.builtin.resolvers.git.GitLogResolver',
+    ],
 )
 
-
-class TestDownloaderFunction:
+class BaseResolverTest:
     def setup_method(self, method):
         self.patchers = []
 
@@ -36,6 +43,7 @@ class TestDownloaderFunction:
         for patcher in self.patchers:
             patcher.stop()
 
+class TestDownloaderFunction(BaseResolverTest):
     @pytest.mark.asyncio
     async def test_download_http(self):
         # info = {'run.return_value': None}
@@ -121,3 +129,48 @@ class TestDownloaderFunction:
                   tree_object],
                  cwd='/t/mut/lol.git', stdout=self.open()),
         ]
+
+class TestResolverGraph(BaseResolverTest):
+    def test_find_destination_type_http(self):
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL('http://site.com/whatever.png')
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == 'file'
+
+        resource_url = ResourceURL('https://site.com/whatever.png')
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == 'file'
+
+    def test_find_destination_type_invalid(self):
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL('idontexist://site.com/whatever.png')
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == None
+
+    def test_find_path_from_url_http(self):
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL('http://site.com/whatever.png')
+        path = self.rgraph.find_path_from_url(resource_url)
+        assert len(path) == 1
+        assert path[0][0].__name__ == 'CurlDownloader'
+
+    def test_find_destination_type_git(self):
+        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
+        git_url = 'git://githoobie.com/lol.git<%s>' % tree_object
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL(git_url)
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == 'git-ls-tree'
+
+        git_url = 'git://githoobie.com/lol.git<%s><some/path>' % tree_object
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL(git_url)
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == 'file'
+
+        git_url = 'git://githoobie.com/lol.git'
+        self.rgraph = singletons.resolver_graph
+        resource_url = ResourceURL(git_url)
+        destination_type = self.rgraph.find_destination_type(resource_url)
+        assert destination_type == 'git-log'
+
