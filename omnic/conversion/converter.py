@@ -30,6 +30,9 @@ class ExecConverter(Converter):
     def get_arguments(self, resource):
         return resource.typestring.arguments
 
+    def get_kwds(self, in_resource, out_resource):
+        return {}
+
     def get_cwd(self, in_resource, out_resource):
         return os.path.dirname(in_resource.cache_path)
 
@@ -41,6 +44,9 @@ class ExecConverter(Converter):
             self.get_arguments(out_resource),
         )
 
+    def get_capture(self, in_resource, out_resource):
+        return []
+
     async def convert(self, in_resource, out_resource):
         cmd = self.get_command(in_resource, out_resource)
 
@@ -48,11 +54,22 @@ class ExecConverter(Converter):
         in_resource.cache_makedirs()
         out_resource.cache_makedirs()
 
-        # Compute working directory
-        working_dir = self.get_cwd(in_resource, out_resource)
+        # Compute working directory and misc keyword args
+        kwds = self.get_kwds(in_resource, out_resource)
+        kwds.setdefault('cwd', self.get_cwd(in_resource, out_resource))
 
-        # Run the command itself
-        result = await singletons.subprocess.run(cmd, cwd=working_dir)
+        # Run the command itself, capturing stdout and/or stderr as necessary
+        captures = self.get_capture(in_resource, out_resource)
+        if captures:
+            if set(captures) - set(['stdout', 'stderr']):
+                raise ValueError('Invalid captures: %s' % str(captures))
+            output_file = out_resource.cache_path
+            with open(output_file, 'w+') as fd:
+                for capture in captures:
+                    kwds[capture] = fd
+                result = await singletons.subprocess.run(cmd, **kwds)
+        else:
+            result = await singletons.subprocess.run(cmd, **kwds)
 
         # Some conversion programs don't allow specifying output path. If the
         # command outputs to a non-standard path, fix by renaming it.

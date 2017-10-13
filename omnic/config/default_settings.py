@@ -105,6 +105,7 @@ RESOLVERS = [
     'omnic.builtin.resolvers.git.GitTreeResolver',
     'omnic.builtin.resolvers.git.GitLogResolver',
     'omnic.builtin.resolvers.git.GitFileResolver',
+    'omnic.builtin.resolvers.git.GitDirectoryResolver',
 ]
 
 PREFERRED_CONVERSION_PATHS = []

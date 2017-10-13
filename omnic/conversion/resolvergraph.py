@@ -2,6 +2,7 @@ import os
 
 from omnic.conversion.graph import ConverterGraph
 from omnic.types.typestring import TypeString
+from omnic.types.resource import ForeignResource, MutableResource
 from omnic import singletons
 from omnic.utils.iters import first_last_iterator
 
@@ -68,19 +69,9 @@ class ResolverGraph(ConverterGraph):
         for is_first, is_last, path_step in first_last_iterator(resolver_path):
             converter_class, _, _ = path_step
             converter = converter_class()
-            in_resource = MutableResource(resource_url)
-            if is_last:
-                out_resource = ForeignResource(resource_url)
-            else:
-                out_resource = MutableResource(argument_free_url)
-            await converter.convert(in_resource, out_resource)
-
-        # if scheme in ('http', 'https'):
-        #     await download_http(resource_url)
-        # elif scheme in ('git', 'git+https', 'git+http'):
-        #     await download_git(resource_url)
-        # else:
-        #     raise ValueError('Unknown URL scheme: "%s"' % scheme)
+            mutable_resource = MutableResource(argument_free_url)
+            out_resource = ForeignResource(resource_url)
+            await converter.convert(mutable_resource, out_resource)
 
     async def download(self, resource_url):
         '''

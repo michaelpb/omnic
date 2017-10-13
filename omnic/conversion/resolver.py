@@ -1,3 +1,6 @@
+### XXX These methods are deprecated, were generally replaced by Resolver Grid
+### XXX (see #23)
+
 import os
 
 from omnic import singletons

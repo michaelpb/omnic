@@ -45,11 +45,14 @@ class TestSettingsBuiltinDefaults:
         assert len(s.load_all('AUTOLOAD')) > 3
         assert len(s.load_all('CONVERTERS')) > 7
         assert len(s.load_all('SERVICES')) > 3
+        assert len(s.load_all('RESOLVERS')) > 5
         assert s.load('WORKER')
 
     def test_singletons(self):
         cg = singletons.converter_graph
         assert len(cg.converters) > 7
+        rg = singletons.resolver_graph
+        assert len(rg.converters) > 3
         v = singletons.viewers
         assert len(v.viewers) > 2
 

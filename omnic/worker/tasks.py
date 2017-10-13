@@ -37,4 +37,4 @@ async def multiconvert(url_string, to_type, enqueue_convert):
 
 
 async def resolve_foreign_resource(foreign_resource):
-    await resolver.download(foreign_resource.url)
+    await singletons.resolver_graph.download(foreign_resource.url)
