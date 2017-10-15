@@ -1,5 +1,7 @@
 import os
+import subprocess
 
+from io import StringIO
 from omnic import singletons
 from omnic.conversion import converter
 
@@ -71,11 +73,39 @@ class GitUpdater(GitExecConverter):
         'git-updated',
     ]
 
-    # TODO For now, just is NOOP, will be fixed when implemented
+    lru_cache = {}
+
     def get_command(self, mutable_resource, out_resource):
         return [
-            'true',
+            'git',
+            'fetch',
         ]
+
+    async def convert(self, mutable_resource, out_resource):
+        hash_or_tag = out_resource.url.args[0]
+
+        # First check if we have need to update -- cache successes
+        if GitUpdater.lru_cache.get(hash_or_tag) is True:
+            return
+
+        # Update from git fetch
+        await super().convert(mutable_resource, out_resource)
+
+        # Run rev-parse to check if it exists now in history
+        #stdout = StringIO()
+        kwds = self.get_kwds(mutable_resource, out_resource)
+        kwds['stdout'] = subprocess.PIPE
+        cmd = ['git', 'rev-parse', '--quiet', '--verify', hash_or_tag]
+        result = await super()._run_command(cmd, kwds, mutable_resource, out_resource)
+        result_str = result.stdout.decode('ascii').strip()
+
+        if result_str == hash_or_tag:
+            GitUpdater.lru_cache[hash_or_tag] = True
+        else:
+            # Should do something like cause error
+            GitUpdater.lru_cache[hash_or_tag] = False
+            raise ValueError('couldnt find %s - %s' % (hash_or_tag, result_str))
+
 
 class GitTreeResolver(GitExecConverter):
     inputs = [

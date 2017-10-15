@@ -47,15 +47,8 @@ class ExecConverter(Converter):
     def get_capture(self, in_resource, out_resource):
         return []
 
-    async def convert(self, in_resource, out_resource):
-        cmd = self.get_command(in_resource, out_resource)
-
-        # Ensure directories are created
-        in_resource.cache_makedirs()
-        out_resource.cache_makedirs()
-
+    async def _run_command(self, cmd, kwds, in_resource, out_resource):
         # Compute working directory and misc keyword args
-        kwds = self.get_kwds(in_resource, out_resource)
         kwds.setdefault('cwd', self.get_cwd(in_resource, out_resource))
 
         # Run the command itself, capturing stdout and/or stderr as necessary
@@ -70,6 +63,15 @@ class ExecConverter(Converter):
                 result = await singletons.subprocess.run(cmd, **kwds)
         else:
             result = await singletons.subprocess.run(cmd, **kwds)
+        return result
+
+    async def convert(self, in_resource, out_resource):
+        # Ensure directories are created and run the actual command
+        in_resource.cache_makedirs()
+        out_resource.cache_makedirs()
+        cmd = self.get_command(in_resource, out_resource)
+        kwds = self.get_kwds(in_resource, out_resource)
+        result = await self._run_command(cmd, kwds, in_resource, out_resource)
 
         # Some conversion programs don't allow specifying output path. If the
         # command outputs to a non-standard path, fix by renaming it.
