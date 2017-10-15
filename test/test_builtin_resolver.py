@@ -1,4 +1,4 @@
-from unittest.mock import call, mock_open, patch
+from unittest.mock import call, mock_open, patch, MagicMock
 
 import pytest
 
@@ -23,6 +23,7 @@ class Settings:
         'omnic.builtin.resolvers.git.GitDirectoryResolver',
     ]
 
+tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
 class BaseResolverTest:
     def setup_method(self, method):
         self.patchers = []
@@ -33,6 +34,9 @@ class BaseResolverTest:
 
         patcher = patch('omnic.worker.subprocessmanager.subprocess')
         self.subprocess = patcher.start()
+        class FakeResult:
+            stdout = tree_object.encode('utf8')
+        self.subprocess.run.return_value = FakeResult
         self.patchers.append(patcher)
 
         self.open = mock_open()
@@ -41,6 +45,9 @@ class BaseResolverTest:
         self.patchers.append(patcher)
         singletons.settings.use_settings(Settings)
         self.rgraph = resolvergraph.ResolverGraph()  # Create resolver graph
+
+        from omnic.builtin.resolvers.git import GitUpdater
+        GitUpdater.reset_hash_cache()
 
     def teardown_method(self, method):
         singletons.settings.use_previous_settings()
@@ -80,7 +87,6 @@ class TestDownloaderFunction(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_path_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         path = 'README.md'
         git_url = 'git://githoobie.com/lol.git<%s><%s>' % (tree_object, path)
         await self._do_download(git_url)
@@ -97,7 +103,6 @@ class TestDownloaderFunction(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_directory_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         path = '/'
         git_url = 'git://githoobie.com/lol.git<%s><%s>' % (tree_object, path)
         await self._do_download(git_url)
@@ -114,7 +119,6 @@ class TestDownloaderFunction(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_lstree_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         git_url = 'git://githoobie.com/lol.git<%s>' % tree_object
         await self._do_download(git_url)
 
@@ -154,7 +158,6 @@ class TestResolverGraphHelperMethods(BaseResolverTest):
         assert path[0][0].__name__ == 'CurlDownloader'
 
     def test_find_destination_type_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         git_url = 'git://githoobie.com/lol.git<%s>' % tree_object
         resource_url = ResourceURL(git_url)
         destination_type = self.rgraph.find_destination_type(resource_url)
@@ -176,7 +179,6 @@ class TestResolverGraphHelperMethods(BaseResolverTest):
         assert destination_type == 'directory'
 
     def test_find_path_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         git_url = 'git://githoobie.com/lol.git<%s>' % tree_object
         resource_url = ResourceURL(git_url)
         path = self.rgraph.find_path_from_url(resource_url)
@@ -235,7 +237,6 @@ class TestResolverGraphDownload(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_path_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         path = 'README.md'
         git_url = 'git://githoobie.com/lol.git<%s><%s>' % (tree_object, path)
         await self._do_download(git_url)
@@ -246,7 +247,8 @@ class TestResolverGraphDownload(BaseResolverTest):
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
                   cwd='/t/mut'),
-            call(['true'], cwd='/t/mut/lol.git'),
+            call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
+                 cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'archive', '--output=/t/res/README.md',
                   '--format=raw', tree_object, 'README.md'],
                  cwd='/t/mut/lol.git'),
@@ -254,7 +256,6 @@ class TestResolverGraphDownload(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_directory_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         path = '/'
         git_url = 'git://githoobie.com/lol.git<%s><%s>' % (tree_object, path)
         await self._do_download(git_url)
@@ -265,7 +266,8 @@ class TestResolverGraphDownload(BaseResolverTest):
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
                   cwd='/t/mut'),
-            call(['true'], cwd='/t/mut/lol.git'),
+            call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
+                 cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'archive', '--prefix=/t/res/lol.git',
                   '--format=directory', tree_object],
                  cwd='/t/mut/lol.git'),
@@ -273,7 +275,6 @@ class TestResolverGraphDownload(BaseResolverTest):
 
     @pytest.mark.asyncio
     async def test_download_lstree_git(self):
-        tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
         git_url = 'git://githoobie.com/lol.git<%s>' % tree_object
         await self._do_download(git_url)
 
@@ -287,9 +288,33 @@ class TestResolverGraphDownload(BaseResolverTest):
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
                   cwd='/t/mut'),
-            call(['true'], cwd='/t/mut/lol.git'),
+            call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
+                 cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'ls-tree', '-r', '--long', '--full-tree',
                   tree_object],
                  cwd='/t/mut/lol.git', stdout=self.open()),
+        ]
+
+    @pytest.mark.asyncio
+    async def test_update_when_hash_not_present(self):
+        class FakeResult:
+            stdout = b''
+        self.subprocess.run.return_value = FakeResult
+        path = 'README.md'
+        git_url = 'git://githoobie.com/lol.git<%s><%s>' % (tree_object, path)
+        await self._do_download(git_url)
+        self._check_config()
+
+        # ensure the sequence of git commands were called
+        assert self.subprocess.run.mock_calls == [
+            call(['git', 'clone', '--bare',
+                  'git://githoobie.com/lol.git', '/t/mut/lol.git'],
+                  cwd='/t/mut'),
+            call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
+                 cwd='/t/mut/lol.git', stdout=-1),
+            call(['git', 'fetch'], cwd='/t/mut/lol.git'),
+            call(['git', 'archive', '--output=/t/res/README.md',
+                  '--format=raw', tree_object, 'README.md'],
+                 cwd='/t/mut/lol.git'),
         ]
 

@@ -73,7 +73,15 @@ class GitUpdater(GitExecConverter):
         'git-updated',
     ]
 
-    lru_cache = {}
+    hash_cache = {}
+
+    @classmethod
+    def reset_hash_cache(cls):
+        '''
+        Hashes are cached which radically cuts down excess system calls
+        '''
+        # TODO Right now memory leak. Turn into LRU with decently large limit.
+        cls.hash_cache = {}
 
     def get_command(self, mutable_resource, out_resource):
         return [
@@ -85,27 +93,24 @@ class GitUpdater(GitExecConverter):
         hash_or_tag = out_resource.url.args[0]
 
         # First check if we have need to update -- cache successes
-        if GitUpdater.lru_cache.get(hash_or_tag) is True:
+        if GitUpdater.hash_cache.get(hash_or_tag) is True:
             return
 
-        # Update from git fetch
-        await super().convert(mutable_resource, out_resource)
-
-        # Run rev-parse to check if it exists now in history
-        #stdout = StringIO()
+        # Run rev-parse to check if it exists in history
         kwds = self.get_kwds(mutable_resource, out_resource)
         kwds['stdout'] = subprocess.PIPE
         cmd = ['git', 'rev-parse', '--quiet', '--verify', hash_or_tag]
         result = await super()._run_command(cmd, kwds, mutable_resource, out_resource)
         result_str = result.stdout.decode('ascii').strip()
 
-        if result_str == hash_or_tag:
-            GitUpdater.lru_cache[hash_or_tag] = True
-        else:
-            # Should do something like cause error
-            GitUpdater.lru_cache[hash_or_tag] = False
-            raise ValueError('couldnt find %s - %s' % (hash_or_tag, result_str))
+        if result_str != hash_or_tag:
+            GitUpdater.hash_cache[hash_or_tag] = False
+            # Only try updating if not found
+            await super().convert(mutable_resource, out_resource)
+            GitUpdater.hash_cache[hash_or_tag] = True
 
+        # TODO: Once error checking system is in place, add check here for
+        # everything being squared away
 
 class GitTreeResolver(GitExecConverter):
     inputs = [
