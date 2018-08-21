@@ -18,7 +18,6 @@ help:
 	@echo "DOCKER"
 	@echo "docker-build - run a server with local checkout using docker"
 	@echo "docker-run - run a server with local checkout using docker"
-	@echo "cleanup-pep8 - automatical clean up some linting violations"
 
 clean: clean-build clean-pyc clean-coverage
 
