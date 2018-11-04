@@ -388,6 +388,19 @@ class TestConverterGraphCustomPaths:
         assert results[1][2].arguments == ('frame=2', )
         assert results[2][2].arguments == ('123x456', )
 
+    def test_find_path_with_profile(self):
+        self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
+        results = self.cgraph.find_path_with_profiles(
+            {'thumb': 'thumb.png:123x456'},
+            TypeString('STL'),
+            TypeString('thumb'),
+        )
+        assert len(results) == 2  # should be 2 steps
+        assert all(len(step) == 3 for step in results)  # each step should be 3
+        assert results[0][0] is Convert3DGraphicsToImage
+        assert results[1][0] is ConvertImageToThumb
+        assert results[1][2].arguments == ('123x456', )
+
 
 class TestConverterGraphDirectConverions(ConverterTestBase):
     def test_conversion_normal(self):
