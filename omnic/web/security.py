@@ -18,17 +18,21 @@ class InvalidQueryDataException(SecurityException):
 
 
 class SecurityChecker:
-    pass
+    async def rewrite(self, request):
+        return request.path
 
-
-class DummySecurity(SecurityChecker):
     async def check(self, typestring, querydata):
         pass
 
-# Simple built-in hmac request checker
+
+class DummySecurity(SecurityChecker):
+    pass
 
 
 class HmacSha1(SecurityChecker):
+    '''
+    Built-in HMAC SHA1 security checker
+    '''
     async def check(self, typestring, querydata):
         if 'url' not in querydata:
             raise InvalidQueryDataException('URL missing')
@@ -58,3 +62,23 @@ async def check(typestring, querydata):
     url_string = querydata['url'][0]
     foreign_res = ForeignResource(url_string)
     foreign_res.validate()
+
+async def rewrite_middleware(server, request):
+    '''
+    Sanic middleware that utilizes a security class's "rewrite" method to
+    check
+    '''
+    if singletons.settings.SECURITY is not None:
+        security_class = singletons.settings.load('SECURITY')
+    else:
+        security_class = DummySecurity
+    security = security_class()
+    try:
+        new_path = await security.rewrite(request)
+    except SecurityException as e:
+        msg = ''
+        if DEBUG:
+            msg = str(e)
+        return server.response.text(msg, status=400)
+    request.path = new_path
+

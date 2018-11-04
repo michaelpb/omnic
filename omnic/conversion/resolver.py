@@ -51,6 +51,7 @@ async def download_git(resource_url):
     subpath = None
     output_file = None
     if len(resource_url.args) == 2:
+        # Resolving to hash and subpath
         hash_or_tag, subpath = resource_url.args
     elif len(resource_url.args) == 1:
         # ls-tree instance

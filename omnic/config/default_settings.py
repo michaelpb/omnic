@@ -141,6 +141,7 @@ ALLOWED_LOCATIONS = {
 # Conversion type safety stuff:
 CONVERSION_SYSTEM_CHECK = True
 
+# Checks incoming conversion requests
 SECURITY = None
 
 HMAC_SECRET = 'REPLACE_ME_PRIVATE'

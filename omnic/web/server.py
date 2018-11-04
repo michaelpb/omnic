@@ -3,6 +3,7 @@ import re
 import signal
 
 from omnic import singletons
+from omnic.web import security
 
 
 class WebServer:
@@ -41,6 +42,10 @@ class WebServer:
                     view = getattr(service, view)
                 url = '%s/%s' % (service_name, partial_url)
                 self.app.add_route(view, url)
+
+        # Add in rewriting middleware if necessary
+        if singletons.settings.SECURITY:
+            app.middleware('request')(security.rewrite_middleware)
 
     def route_path(self, path):
         '''

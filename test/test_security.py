@@ -4,6 +4,7 @@ Tests for `security` module.
 
 import pytest
 
+from unittest.mock import MagicMock
 from omnic.config.utils import use_settings
 from omnic.web import security
 
@@ -59,3 +60,15 @@ class TestSecurity:
                 'url': ['http://whatevs.com/stuff.png'],
                 'digest': ['6d2a1495209af2d193affbb485d309a2e15bc5b1'],
             })
+
+    @pytest.mark.asyncio
+    async def test_rewrite_middleware(self):
+        with use_settings(**normalized_settings):
+            mock_request = MagicMock()
+            mock_request.path = '/stuff.png'
+            server = MagicMock()
+            ret_val = await security.rewrite_middleware(server, mock_request)
+            assert mock_request.path == '/stuff.png'
+            assert ret_val == None
+
+

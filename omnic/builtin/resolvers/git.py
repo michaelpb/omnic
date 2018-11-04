@@ -189,7 +189,7 @@ class GitDirectoryResolver(GitExecConverter):
 
     _is_output = staticmethod(lambda args: len(args) == 2 and args[1] == '/')
 
-    # For now, just is NOOP
+    # For now, just is NOOP  # Later comment: Or is it?
     def get_command(self, mutable_resource, out_resource):
         hash_or_tag = out_resource.url.args[0]
         return [
