@@ -206,7 +206,7 @@ class GitDirectoryResolver(GitExecConverter):
             '--prefix=%s' % prefix,
             '--format=directory',
             hash_or_tag,
-            #subpath,
+            # subpath,
         ]
         print(a)
         return a

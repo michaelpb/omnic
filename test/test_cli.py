@@ -396,7 +396,6 @@ class TestCacheCommands:
         assert list(multic.mock_calls[0])[1][:2] == first_two_args
         _check_silent(capsys)
 
-
     @use_settings(path_prefix='/some/path/')
     @pytest.mark.asyncio
     async def test_convert_url(self, capsys):
@@ -408,7 +407,7 @@ class TestCacheCommands:
 
         with patch('os.rename'):
             with patch('omnic.worker.tasks.multiconvert',
-                    new_callable=lambda: async_multic):
+                       new_callable=lambda: async_multic):
                 await self.commands.convert_url(self.args_with_type)
             assert len(multic.mock_calls) == 1
 
@@ -416,4 +415,3 @@ class TestCacheCommands:
         first_two_args = ('http://fake/foreign/resource', 'EXT')
         assert list(multic.mock_calls[0])[1][:2] == first_two_args
         _check_silent(capsys)
-

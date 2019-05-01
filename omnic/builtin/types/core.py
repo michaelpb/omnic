@@ -51,4 +51,3 @@ class ManifestDetector(Detector):
         with open(path, 'rb') as fd:
             if b'{' in fd.read(128):
                 return MANIFEST_JSON
-

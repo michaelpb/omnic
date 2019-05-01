@@ -4,6 +4,7 @@ from omnic.builtin.types.core import DIRECTORY
 from omnic.conversion import converter
 from omnic.conversion.exceptions import ConversionError
 
+
 class ArchiveConverter(converter.ExecConverter):
     inputs = [
         str(DIRECTORY),
@@ -16,7 +17,7 @@ class ArchiveConverter(converter.ExecConverter):
 
     def get_cwd(self, in_resource, out_resource):
         in_path = self._get_target_dir(in_resource, out_resource)
-        return os.path.dirname(in_path) # change to input dir by default
+        return os.path.dirname(in_path)  # change to input dir by default
 
     def _get_target_dir(self, in_resource, out_resource):
         in_path = in_resource.cache_path

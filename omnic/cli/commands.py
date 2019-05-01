@@ -5,10 +5,7 @@ import os
 
 from omnic import singletons
 from omnic.cli import consts
-from omnic.conversion.utils import (
-    cache_foreign_resource,
-    convert_local,
-)
+from omnic.conversion.utils import cache_foreign_resource, convert_local
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph

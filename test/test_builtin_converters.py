@@ -314,7 +314,8 @@ class TestDirectoryArchiver:
         assert cwd == os.path.dirname(in_resource.cache_path)
 
     def test_tgz_with_drill_down(self):
-        in_resource, out_resource = _get_resources('directory', 'TGZ:path/to/thing')
+        in_resource, out_resource = _get_resources(
+            'directory', 'TGZ:path/to/thing')
         conv = ArchiveConverter()
         cmd = conv.get_command(in_resource, out_resource)
         assert cmd == [
