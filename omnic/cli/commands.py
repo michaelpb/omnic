@@ -8,7 +8,6 @@ from omnic.cli import consts
 from omnic.conversion.utils import (
     cache_foreign_resource,
     convert_local,
-    enqueue_conversion_path,
 )
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
@@ -80,15 +79,18 @@ async def convert(args):
 })
 async def convert_url(args):
     for url_string in args.urls:
-        cli.print('Converting: %s -> %s' % (url_string, args.type))
 
         # Check if already downloaded. If not, do download.
+        cli.print('Retrieving: %s' % url_string)
         await cache_foreign_resource(url_string)
+
+        # Use _precache to download the cached version
+        cli.print('Converting: %s -> %s' % (url_string, args.type))
         with autodrain_worker():
             await _precache(url_string, args.type)
 
-            # Now, we copy from the resulting resource to the new one
-            _move_to_local(url_string, args.type)
+        # Now, we copy from the resulting resource to the new one
+        _move_to_local(url_string, args.type)
 
 
 @cli.subcommand('Minimal scaffolding for a new project', {

@@ -192,11 +192,6 @@ class TestCoreCommands:
         self.convert_local = patcher.start()
         self.patchers.append(patcher)
 
-        patcher = patch('omnic.cli.commands.enqueue_conversion_path',
-                        new_callable=CoroutineMock)
-        self.enqueue_conversion_path = patcher.start()
-        self.patchers.append(patcher)
-
         patcher = patch('omnic.cli.commands.cache_foreign_resource',
                         new_callable=CoroutineMock)
         self.cache_foreign_resource = patcher.start()
@@ -235,18 +230,6 @@ class TestCoreCommands:
         self.convert_local.assert_has_calls((
             call('/path/to/file1', TypeString('test')),
             call('/fake/to/file2', TypeString('test')),
-        ))
-
-    @pytest.mark.asyncio
-    async def test_convert_url_command(self):
-        class args:
-            urls = ['http://a.com/b.zip', 'git://a.com/b.git']
-            type = 'test'
-        await self.commands.convert_url(args)
-        assert self.enqueue_conversion_path.call_count == 2
-        self.cache_foreign_resource.assert_has_calls((
-            call('http://a.com/b.zip'),
-            call('git://a.com/b.git'),
         ))
 
     def test_runserver_command(self):
@@ -412,3 +395,25 @@ class TestCacheCommands:
         first_two_args = (mock_viewer_resource.url_string, 'min.js')
         assert list(multic.mock_calls[0])[1][:2] == first_two_args
         _check_silent(capsys)
+
+
+    @use_settings(path_prefix='/some/path/')
+    @pytest.mark.asyncio
+    async def test_convert_url(self, capsys):
+        # Wrap around magic mock to make async friendly
+        multic = MagicMock()
+
+        async def async_multic(*args, **kwargs):
+            multic(*args, **kwargs)
+
+        with patch('os.rename'):
+            with patch('omnic.worker.tasks.multiconvert',
+                    new_callable=lambda: async_multic):
+                await self.commands.convert_url(self.args_with_type)
+            assert len(multic.mock_calls) == 1
+
+        # Ensure it calls the download attempt
+        first_two_args = ('http://fake/foreign/resource', 'EXT')
+        assert list(multic.mock_calls[0])[1][:2] == first_two_args
+        _check_silent(capsys)
+
