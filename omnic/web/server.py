@@ -37,10 +37,11 @@ class WebServer:
         # Set up all routes for all services
         for service in singletons.settings.load_all('SERVICES'):
             service_name = service.SERVICE_NAME
+            prefix = getattr(service, 'SERVICE_URL_PREFIX', service_name + '/')
             for partial_url, view in service.urls.items():
                 if isinstance(view, str):
                     view = getattr(service, view)
-                url = '%s/%s' % (service_name, partial_url)
+                url = prefix + partial_url
                 self.app.add_route(view, url)
 
         # Add in rewriting middleware if necessary
@@ -57,6 +58,9 @@ class WebServer:
         name, _, subpath = path.partition('/')
         for service in singletons.settings.load_all('SERVICES'):
             if service.SERVICE_NAME == name:  # Found service!
+                break
+            if hasattr(service, 'SERVICE_URL_PREFIX') and\
+                    path.startswith(service.SERVICE_URL_PREFIX):
                 break
         else:
             return [], None  # found no service

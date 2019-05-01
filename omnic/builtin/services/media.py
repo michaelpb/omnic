@@ -1,10 +1,7 @@
 '''
 Core media conversion service.
 '''
-from omnic import singletons
 from omnic.conversion.utils import convert_endpoint
-from omnic.types.resource import ForeignResource, TypedResource
-from omnic.types.typestring import TypeString
 from omnic.web import security
 
 # Required interface for service module

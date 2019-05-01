@@ -41,7 +41,8 @@ class TypeString:
             fn = 'fn.%s' % self.extension
             self.mimetype, _ = mimetypes.guess_type(fn)  # discard encoding
         else:
-            # Is qualifier, can't determine mimetype OR extension
+            # Is qualifier (e.g. 'custom made-up type'), can't determine
+            # mimetype OR extension
             self.is_qualifier = True
 
     def modify_basename(self, basename):

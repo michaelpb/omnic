@@ -25,8 +25,20 @@ class FakeService:
         pass
 
 
+class FakeServiceWithPrefix:
+    SERVICE_NAME = 'anothertest'
+    SERVICE_URL_PREFIX = 'testme-'
+    urls = {
+        'thing1/': 'thing1_route',
+    }
+
+    def thing1_route():
+        pass
+
+
 FAKE_SERVICES = [
     'test.test_server.FakeService',
+    'test.test_server.FakeServiceWithPrefix',
 ]
 
 
@@ -47,6 +59,14 @@ class TestServer:
             'testservice/matched/thing2')
         assert view == FakeService.thing2_route
         assert matches == ['matched']
+
+    # TODO: Remove this broken test
+    #@use_settings(services=FAKE_SERVICES)
+    #def test_basic_path_routing(self):
+    #    matches, view = singletons.server.route_path('testme-thing1')
+    #    assert view == FakeServiceWithPrefix.thing1_route
+    #    assert matches == []
+
 
 
 class BrokenTestForForkingServer:

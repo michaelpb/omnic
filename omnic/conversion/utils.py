@@ -12,7 +12,7 @@ def _just_checking_response(resource_exists, resource):
         'ready': resource_exists,
     })
 
-async def convert_endpoint(url_string, ts, is_just_checking):
+async def convert_endpoint(url_string, ts, is_just_checking, custom_profiles=None):
     '''
     Main logic for HTTP endpoint.
     '''
@@ -43,7 +43,8 @@ async def convert_endpoint(url_string, ts, is_just_checking):
         enqueue_conversion_path,
         url_string,
         str(target_ts),
-        singletons.workers.enqueue_convert
+        singletons.workers.enqueue_convert,
+        custom_profiles,
     )
 
     if is_just_checking:
@@ -98,7 +99,7 @@ async def convert_local(path, to_type):
         await converter.convert(in_resource, out_resource)
 
 
-def enqueue_conversion_path(url_string, to_type, enqueue_convert):
+def enqueue_conversion_path(url_string, to_type, enqueue_convert, custom_profiles=None):
     '''
     Given a URL string that has already been downloaded, enqueue
     necessary conversion to get to target type
@@ -115,7 +116,11 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert):
 
     # Now find path between types
     original_ts = typed_foreign_res.typestring
-    path = singletons.converter_graph.find_path(original_ts, target_ts)
+    cgraph = singletons.converter_graph
+    if custom_profiles:
+        path = cgraph.find_path_with_profiles(custom_profiles, original_ts, target_ts)
+    else:
+        path = cgraph.find_path(original_ts, target_ts)
 
     # Loop through each step in graph path and convert
     is_first = True
