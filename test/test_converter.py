@@ -80,6 +80,7 @@ class MockNpmConverter(converter.AdditiveDirectoryExecConverter):
     outputs = ['installed_nodepackage']
     command = ['mkdir', 'node_modules']  # Mock npm install
 
+
 class MockVideoDirectConverter(converter.Converter):
     inputs = [
         'AVI',
@@ -420,10 +421,8 @@ class TestConverterGraphDirectConverions(ConverterTestBase):
         assert results[0][0] is MockVideoDirectConverter
         assert results[0][2].arguments == ('400x400', )
 
-
     def test_not_include_in_graph(self):
         self.cgraph = ConverterGraph(MockConfig.CONVERTERS)
 
         with pytest.raises(NoPath):
             self._path('MKV', 'JPEG')
-

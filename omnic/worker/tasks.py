@@ -1,5 +1,4 @@
 from omnic import singletons
-from omnic.conversion import resolver
 from omnic.types.resource import (ForeignResource, TypedForeignResource,
                                   TypedResource)
 from omnic.types.typestring import TypeString

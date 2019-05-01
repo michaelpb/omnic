@@ -1,6 +1,6 @@
-import os
 
 from omnic.conversion import converter
+
 
 class CurlDownloader(converter.ExecConverter):
     inputs = [
@@ -28,4 +28,3 @@ class CurlDownloader(converter.ExecConverter):
             out_resource.cache_path,
             resource_url.url,
         ]
-

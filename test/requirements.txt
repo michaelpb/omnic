@@ -10,7 +10,7 @@ async_timeout==1.2.1
 sanic==0.5.4
 
 # Soft dependencies (only for admin module ATM)
-jinja2==2.10
+jinja2==2.10.1
 
 # Probably deprecated dependencies:
 requests==2.14.2

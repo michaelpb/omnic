@@ -1,11 +1,11 @@
-from unittest.mock import call, mock_open, patch, MagicMock
+from unittest.mock import call, mock_open, patch
 
 import pytest
 
-from omnic.conversion import resolver
-from omnic.conversion import resolvergraph
-from omnic.types.resourceurl import ResourceURL
 from omnic import singletons
+from omnic.conversion import resolver, resolvergraph
+from omnic.types.resourceurl import ResourceURL
+
 
 class Settings:
     PATH_PREFIX = '/t/'
@@ -23,7 +23,10 @@ class Settings:
         'omnic.builtin.resolvers.git.GitDirectoryResolver',
     ]
 
+
 tree_object = '343fa8b9c4ec521fd6d382c8f1f9ec0ac500a240'
+
+
 class BaseResolverTest:
     def setup_method(self, method):
         self.patchers = []
@@ -34,6 +37,7 @@ class BaseResolverTest:
 
         patcher = patch('omnic.worker.subprocessmanager.subprocess')
         self.subprocess = patcher.start()
+
         class FakeResult:
             stdout = tree_object.encode('utf8')
         self.subprocess.run.return_value = FakeResult
@@ -53,6 +57,7 @@ class BaseResolverTest:
         singletons.settings.use_previous_settings()
         for patcher in self.patchers:
             patcher.stop()
+
 
 class TestDownloaderFunction(BaseResolverTest):
     @pytest.mark.asyncio
@@ -136,6 +141,7 @@ class TestDownloaderFunction(BaseResolverTest):
                  cwd='/t/mut/lol.git', stdout=self.open()),
         ]
 
+
 class TestResolverGraphHelperMethods(BaseResolverTest):
     def test_find_destination_type_http(self):
         resource_url = ResourceURL('http://site.com/whatever.png')
@@ -203,6 +209,7 @@ class TestResolverGraphHelperMethods(BaseResolverTest):
         assert path[1][0].__name__ == 'GitUpdater'
         assert path[2][0].__name__ == 'GitLogResolver'
 
+
 class TestResolverGraphDownload(BaseResolverTest):
     @pytest.mark.asyncio
     async def test_download_http(self):
@@ -246,7 +253,7 @@ class TestResolverGraphDownload(BaseResolverTest):
         assert self.subprocess.run.mock_calls == [
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
-                  cwd='/t/mut'),
+                 cwd='/t/mut'),
             call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
                  cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'archive', '--output=/t/res/README.md',
@@ -265,7 +272,7 @@ class TestResolverGraphDownload(BaseResolverTest):
         assert self.subprocess.run.mock_calls == [
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
-                  cwd='/t/mut'),
+                 cwd='/t/mut'),
             call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
                  cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'archive', '--prefix=/t/res/lol.git',
@@ -287,7 +294,7 @@ class TestResolverGraphDownload(BaseResolverTest):
         assert self.subprocess.run.mock_calls == [
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
-                  cwd='/t/mut'),
+                 cwd='/t/mut'),
             call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
                  cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'ls-tree', '-r', '--long', '--full-tree',
@@ -309,7 +316,7 @@ class TestResolverGraphDownload(BaseResolverTest):
         assert self.subprocess.run.mock_calls == [
             call(['git', 'clone', '--bare',
                   'git://githoobie.com/lol.git', '/t/mut/lol.git'],
-                  cwd='/t/mut'),
+                 cwd='/t/mut'),
             call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
                  cwd='/t/mut/lol.git', stdout=-1),
             call(['git', 'fetch'], cwd='/t/mut/lol.git'),
@@ -317,4 +324,3 @@ class TestResolverGraphDownload(BaseResolverTest):
                   '--format=raw', tree_object, 'README.md'],
                  cwd='/t/mut/lol.git'),
         ]
-

@@ -2,9 +2,10 @@
 Tests for `security` module.
 """
 
+from unittest.mock import MagicMock
+
 import pytest
 
-from unittest.mock import MagicMock
 from omnic.config.utils import use_settings
 from omnic.web import security
 
@@ -70,5 +71,3 @@ class TestSecurity:
             ret_val = await security.rewrite_middleware(server, mock_request)
             assert mock_request.path == '/stuff.png'
             assert ret_val == None
-
-

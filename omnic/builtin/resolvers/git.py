@@ -1,9 +1,8 @@
 import os
 import subprocess
 
-from io import StringIO
-from omnic import singletons
 from omnic.conversion import converter
+
 
 GIT_ARCHIVE_FORMATS = '''
 [tar "raw"]
@@ -11,6 +10,7 @@ GIT_ARCHIVE_FORMATS = '''
 [tar "directory"]
 \tcommand = tar xf
 '''
+
 
 class GitExecConverter(converter.ExecConverter):
     @classmethod
@@ -27,6 +27,7 @@ class GitExecConverter(converter.ExecConverter):
 
     def get_cwd(self, mutable_resource, out_resource):
         return mutable_resource.cache_path
+
 
 class GitCloner(converter.ExecConverter):
     '''
@@ -63,6 +64,7 @@ class GitCloner(converter.ExecConverter):
             # Note: Not too concerned with staying idempotent, unlikely it
             # could happen twice, and extra entries cause no issue
             fd.write(GIT_ARCHIVE_FORMATS)
+
 
 class GitUpdater(GitExecConverter):
     inputs = [
@@ -112,6 +114,7 @@ class GitUpdater(GitExecConverter):
         # TODO: Once error checking system is in place, add check here for
         # everything being squared away
 
+
 class GitTreeResolver(GitExecConverter):
     inputs = [
         'git-updated',
@@ -138,6 +141,7 @@ class GitTreeResolver(GitExecConverter):
             hash_or_tag,
         ]
 
+
 class GitLogResolver(GitExecConverter):
     inputs = [
         'git-updated',
@@ -154,6 +158,7 @@ class GitLogResolver(GitExecConverter):
         return [
             'true',
         ]
+
 
 class GitFileResolver(GitExecConverter):
     inputs = [
@@ -178,6 +183,7 @@ class GitFileResolver(GitExecConverter):
             subpath,
         ]
 
+
 class GitDirectoryResolver(GitExecConverter):
     inputs = [
         'git-updated',
@@ -199,5 +205,3 @@ class GitDirectoryResolver(GitExecConverter):
             '--format=directory',
             hash_or_tag,
         ]
-
-

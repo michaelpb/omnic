@@ -3,7 +3,6 @@ ResourceURL is a core class that extends mimetypes
 '''
 import hashlib
 import re
-
 from urllib.parse import urlparse
 
 from omnic import singletons
@@ -15,7 +14,6 @@ URL_ARGUMENTS_RE = re.compile(r'<([^>]+)>')
 SPLIT_URL_RE = re.compile(r'^([^<]+)(<?.*)$')
 ARG_RE = re.compile(r'^\s*([a-zA-Z0-9]+)\s*:\s*(.*)$')
 SCHEME_RE = re.compile(r'^[a-zA-Z0-9+-]+://')
-
 
 
 class ResourceURL:

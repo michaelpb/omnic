@@ -5,12 +5,14 @@ from omnic.types.resource import (ForeignResource, TypedForeignResource,
 from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
 
+
 def _just_checking_response(resource_exists, resource):
     response = singletons.server.response
     return response.json({
         'url': resource.url_string,
         'ready': resource_exists,
     })
+
 
 async def convert_endpoint(url_string, ts, is_just_checking, custom_profiles=None):
     '''
@@ -53,6 +55,7 @@ async def convert_endpoint(url_string, ts, is_just_checking, custom_profiles=Non
     # Respond with placeholder
     return singletons.placeholders.stream_response(target_ts, response)
 
+
 def apply_command_list_template(command_list, in_path, out_path, args):
     '''
     Perform necessary substitutions on a command list to create a CLI-ready
@@ -71,7 +74,6 @@ def apply_command_list_template(command_list, in_path, out_path, args):
 
     # Returns list of truthy replaced arguments in command
     return [item for item in results if item]
-
 
 
 async def convert_local(path, to_type):
@@ -118,7 +120,8 @@ def enqueue_conversion_path(url_string, to_type, enqueue_convert, custom_profile
     original_ts = typed_foreign_res.typestring
     cgraph = singletons.converter_graph
     if custom_profiles:
-        path = cgraph.find_path_with_profiles(custom_profiles, original_ts, target_ts)
+        path = cgraph.find_path_with_profiles(
+            custom_profiles, original_ts, target_ts)
     else:
         path = cgraph.find_path(original_ts, target_ts)
 

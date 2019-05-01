@@ -62,11 +62,10 @@ class TestServer:
 
     # TODO: Remove this broken test
     #@use_settings(services=FAKE_SERVICES)
-    #def test_basic_path_routing(self):
+    # def test_basic_path_routing(self):
     #    matches, view = singletons.server.route_path('testme-thing1')
     #    assert view == FakeServiceWithPrefix.thing1_route
     #    assert matches == []
-
 
 
 class BrokenTestForForkingServer:

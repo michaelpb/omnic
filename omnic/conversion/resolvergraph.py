@@ -1,10 +1,11 @@
 import os
 
-from omnic.conversion.graph import ConverterGraph
-from omnic.types.typestring import TypeString
-from omnic.types.resource import ForeignResource, MutableResource
 from omnic import singletons
+from omnic.conversion.graph import ConverterGraph
+from omnic.types.resource import ForeignResource, MutableResource
+from omnic.types.typestring import TypeString
 from omnic.utils.iters import first_last_iterator
+
 
 def _get_basename_based_on_url(resource_url):
     path_basename = resource_url.path_split[-1]
@@ -12,6 +13,7 @@ def _get_basename_based_on_url(resource_url):
         # Path is too small, probably ends with /, try 1 up
         path_basename = resource_url.path_split[-2]
     return path_basename
+
 
 class ResolverGraph(ConverterGraph):
     def __init__(self):
@@ -80,5 +82,6 @@ class ResolverGraph(ConverterGraph):
         '''
         resolver_path = self.find_path_from_url(resource_url)
         await self.apply_resolver_path(resource_url, resolver_path)
+
 
 singletons.register('resolver_graph', ResolverGraph)

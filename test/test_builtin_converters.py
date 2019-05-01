@@ -7,15 +7,16 @@ from omnic import singletons
 from omnic.builtin.converters.audio import FfmpegAudioWaveformRenderer
 from omnic.builtin.converters.chemical import (NodeSdfToSvgRenderer,
                                                OpenBabelConverter)
+from omnic.builtin.converters.code import HighlightSyntaxHighlighter
+from omnic.builtin.converters.directory import ArchiveConverter
 from omnic.builtin.converters.document import (ImageMagickPageRasterizer,
                                                Unoconv)
 from omnic.builtin.converters.mesh import Jsc3dRenderer, MeshLabConverter
+from omnic.builtin.converters.text import PandocMarkupCompiler
 from omnic.builtin.converters.thumb import ImageMagickThumb
 from omnic.builtin.converters.vector import (InkscapeConverter,
                                              InkscapeRasterizer)
 from omnic.builtin.converters.video import FfmpegThumbnailer
-from omnic.builtin.converters.text import PandocMarkupCompiler
-from omnic.builtin.converters.code import HighlightSyntaxHighlighter
 from omnic.builtin.services.viewer.converters import (ViewerNodePackageBuilder,
                                                       generate_index_js)
 from omnic.types.resource import ForeignBytesResource, TypedResource
@@ -274,6 +275,7 @@ class TestMarkdownCommands:
             out_resource.cache_path,
         ]
 
+
 class TestCodeCommands:
     def test_highlight_code(self):
         in_resource, out_resource = _get_resources('PY', 'HTML')
@@ -295,3 +297,26 @@ class TestCodeCommands:
             out_resource.cache_path,
         ]
 
+
+class TestDirectoryArchiver:
+    def test_zip_file(self):
+        in_resource, out_resource = _get_resources('directory', 'ZIP')
+        conv = ArchiveConverter()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'zip',
+            out_resource.cache_path,
+            '-r',
+            in_resource.cache_path,
+        ]
+
+    def test_tgz_with_drill_down(self):
+        in_resource, out_resource = _get_resources('directory', 'TGZ:path/to/thing')
+        conv = ArchiveConverter()
+        cmd = conv.get_command(in_resource, out_resource)
+        assert cmd == [
+            'tar',
+            '-pczf',
+            out_resource.cache_path,
+            in_resource.cache_path + '/path/to/thing',
+        ]

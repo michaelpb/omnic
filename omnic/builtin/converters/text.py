@@ -1,5 +1,6 @@
 from omnic.conversion import converter
 
+
 class PandocMarkupCompiler(converter.ExecConverter):
     inputs = [
         'MD',
@@ -69,5 +70,3 @@ class PandocMarkupCompiler(converter.ExecConverter):
             '-o',
             out_resource.cache_path,
         ]
-
-

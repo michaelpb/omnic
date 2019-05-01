@@ -157,4 +157,5 @@ class ConverterGraph:
         self.conversion_profiles = original_profiles
         return results
 
+
 singletons.register('converter_graph', ConverterGraph)

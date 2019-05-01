@@ -63,6 +63,7 @@ async def check(typestring, querydata):
     foreign_res = ForeignResource(url_string)
     foreign_res.validate()
 
+
 async def rewrite_middleware(server, request):
     '''
     Sanic middleware that utilizes a security class's "rewrite" method to
@@ -81,4 +82,3 @@ async def rewrite_middleware(server, request):
             msg = str(e)
         return server.response.text(msg, status=400)
     request.path = new_path
-

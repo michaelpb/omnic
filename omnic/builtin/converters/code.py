@@ -1,5 +1,6 @@
 from omnic.conversion import converter
 
+
 class HighlightSyntaxHighlighter(converter.ExecConverter):
     inputs = [
         # ABAP/4
@@ -797,4 +798,3 @@ class HighlightSyntaxHighlighter(converter.ExecConverter):
         '-o',
         '$OUT',
     ]
-
