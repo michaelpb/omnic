@@ -240,7 +240,7 @@ class TestResolverGraphDownload(BaseResolverTest):
         assert '[tar "raw"]' in contents
         assert 'command = tar xfO -' in contents
         assert '[tar "directory"]' in contents
-        assert 'command = tar xf' in contents
+        assert 'command = tar xfP -' in contents
 
     @pytest.mark.asyncio
     async def test_download_path_git(self):
@@ -275,7 +275,7 @@ class TestResolverGraphDownload(BaseResolverTest):
                  cwd='/t/mut'),
             call(['git', 'rev-parse', '--quiet', '--verify', tree_object],
                  cwd='/t/mut/lol.git', stdout=-1),
-            call(['git', 'archive', '--prefix=/t/res/lol.git',
+            call(['git', 'archive', '--prefix=/t/res/lol.git/',
                   '--format=directory', tree_object],
                  cwd='/t/mut/lol.git'),
         ]

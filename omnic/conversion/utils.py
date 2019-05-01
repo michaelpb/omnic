@@ -55,6 +55,18 @@ async def convert_endpoint(url_string, ts, is_just_checking, custom_profiles=Non
     # Respond with placeholder
     return singletons.placeholders.stream_response(target_ts, response)
 
+async def cache_foreign_resource(url_string):
+    '''
+    Resolve a foreign resource to cache.
+    '''
+
+    # Prep ForeignResource and ensure does not validate security settings
+    foreign_res = ForeignResource(url_string)
+
+    # Check if already downloaded. If not, queue up download.
+    if not foreign_res.cache_exists():
+        await singletons.resolver_graph.download(foreign_res.url)
+    return foreign_res
 
 def apply_command_list_template(command_list, in_path, out_path, args):
     '''

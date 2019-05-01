@@ -5,7 +5,11 @@ import os
 
 from omnic import singletons
 from omnic.cli import consts
-from omnic.conversion.utils import convert_local
+from omnic.conversion.utils import (
+    cache_foreign_resource,
+    convert_local,
+    enqueue_conversion_path,
+)
 from omnic.types.resource import ForeignResource, TypedResource
 from omnic.types.typestring import TypeString
 from omnic.utils.graph import DirectedGraph
@@ -60,6 +64,31 @@ async def convert(args):
         cli.print('Converting: %s -> %s' % (path, to_type))
         try:
             await convert_local(path, to_type)
+        except DirectedGraph.NoPath as e:
+            cli.printerr('ERROR: %s' % str(e))
+
+
+@cli.subcommand('Convert foreign resource to target type', {
+    'urls': {
+        'help': 'URLs for foreign resource to download and convert',
+        'nargs': '+',
+    },
+    ('--type', '-t'): {
+        'help': 'Desired file type for result, in TypeString format',
+        'required': True,
+    },
+})
+async def convert_url(args):
+    async def _do_convert(converter, in_resource, out_resource):
+        await converter.convert(in_resource, out_resource)
+
+    for url_string in args.urls:
+        cli.print('Converting: %s -> %s' % (url_string, args.type))
+
+        # Check if already downloaded. If not, do download.
+        await cache_foreign_resource(url_string)
+        try:
+            await enqueue_conversion_path(url_string, args.type, _do_convert)
         except DirectedGraph.NoPath as e:
             cli.printerr('ERROR: %s' % str(e))
 

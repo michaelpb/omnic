@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 
 import pytest
@@ -307,8 +308,10 @@ class TestDirectoryArchiver:
             'zip',
             out_resource.cache_path,
             '-r',
-            in_resource.cache_path,
+            os.path.basename(in_resource.cache_path),
         ]
+        cwd = conv.get_cwd(in_resource, out_resource)
+        assert cwd == os.path.dirname(in_resource.cache_path)
 
     def test_tgz_with_drill_down(self):
         in_resource, out_resource = _get_resources('directory', 'TGZ:path/to/thing')
@@ -318,5 +321,7 @@ class TestDirectoryArchiver:
             'tar',
             '-pczf',
             out_resource.cache_path,
-            in_resource.cache_path + '/path/to/thing',
+            'thing',
         ]
+        cwd = conv.get_cwd(in_resource, out_resource)
+        assert cwd == in_resource.cache_path + '/path/to'

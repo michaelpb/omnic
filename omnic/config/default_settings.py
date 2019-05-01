@@ -72,6 +72,7 @@ CONVERTERS = [
     'omnic.builtin.converters.thumb.ImageMagickThumb',
     'omnic.builtin.converters.document.Unoconv',
     'omnic.builtin.converters.document.ImageMagickPageRasterizer',
+    'omnic.builtin.converters.directory.ArchiveConverter',
     'omnic.builtin.converters.mesh.MeshLabConverter',
     'omnic.builtin.converters.mesh.Jsc3dRenderer',
     'omnic.builtin.converters.chemical.OpenBabelConverter',

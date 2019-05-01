@@ -8,7 +8,7 @@ GIT_ARCHIVE_FORMATS = '''
 [tar "raw"]
 \tcommand = tar xfO -
 [tar "directory"]
-\tcommand = tar xf
+\tcommand = tar xfP -
 '''
 
 
@@ -198,10 +198,15 @@ class GitDirectoryResolver(GitExecConverter):
     # For now, just is NOOP  # Later comment: Or is it?
     def get_command(self, mutable_resource, out_resource):
         hash_or_tag = out_resource.url.args[0]
-        return [
+        subpath = out_resource.url.args[1]
+        prefix = out_resource.cache_path + subpath
+        a = [
             'git',
             'archive',
-            '--prefix=%s' % out_resource.cache_path,
+            '--prefix=%s' % prefix,
             '--format=directory',
             hash_or_tag,
+            #subpath,
         ]
+        print(a)
+        return a

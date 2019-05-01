@@ -192,6 +192,16 @@ class TestCoreCommands:
         self.convert_local = patcher.start()
         self.patchers.append(patcher)
 
+        patcher = patch('omnic.cli.commands.enqueue_conversion_path',
+                        new_callable=CoroutineMock)
+        self.enqueue_conversion_path = patcher.start()
+        self.patchers.append(patcher)
+
+        patcher = patch('omnic.cli.commands.cache_foreign_resource',
+                        new_callable=CoroutineMock)
+        self.cache_foreign_resource = patcher.start()
+        self.patchers.append(patcher)
+
         patcher = patch('omnic.cli.commands.os.path.abspath',
                         new_callable=lambda: (lambda p: '/fake/to/' + p))
         patcher.start()
@@ -225,6 +235,18 @@ class TestCoreCommands:
         self.convert_local.assert_has_calls((
             call('/path/to/file1', TypeString('test')),
             call('/fake/to/file2', TypeString('test')),
+        ))
+
+    @pytest.mark.asyncio
+    async def test_convert_url_command(self):
+        class args:
+            urls = ['http://a.com/b.zip', 'git://a.com/b.git']
+            type = 'test'
+        await self.commands.convert_url(args)
+        assert self.enqueue_conversion_path.call_count == 2
+        self.cache_foreign_resource.assert_has_calls((
+            call('http://a.com/b.zip'),
+            call('git://a.com/b.git'),
         ))
 
     def test_runserver_command(self):
