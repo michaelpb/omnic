@@ -79,18 +79,16 @@ async def convert(args):
     },
 })
 async def convert_url(args):
-    async def _do_convert(converter, in_resource, out_resource):
-        await converter.convert(in_resource, out_resource)
-
     for url_string in args.urls:
         cli.print('Converting: %s -> %s' % (url_string, args.type))
 
         # Check if already downloaded. If not, do download.
         await cache_foreign_resource(url_string)
-        try:
-            await enqueue_conversion_path(url_string, args.type, _do_convert)
-        except DirectedGraph.NoPath as e:
-            cli.printerr('ERROR: %s' % str(e))
+        with autodrain_worker():
+            await _precache(url_string, args.type)
+
+            # Now, we copy from the resulting resource to the new one
+            _move_to_local(url_string, args.type)
 
 
 @cli.subcommand('Minimal scaffolding for a new project', {
@@ -149,6 +147,16 @@ async def _precache(url, to_type, force=False):
         await singletons.workers.async_enqueue_multiconvert(url, to_type)
     result = TypedResource(url, TypeString(to_type))
     cli.print('%s: %s precached at: %s' % (url, to_type, result.cache_path))
+
+
+def _move_to_local(url_string, to_type):
+    '''
+    Helper function to copy a resource to the CWD
+    '''
+    result = TypedResource(url_string, TypeString(to_type))
+    filename = os.path.basename(result.cache_path)
+    outpath = os.path.abspath(os.path.join('.', filename))
+    os.rename(result.cache_path, outpath)
 
 
 @cli.subcommand('Clears cache for one or more given foreign resource URLs', {
