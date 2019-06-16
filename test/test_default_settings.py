@@ -35,6 +35,8 @@ class TestSettingsBuiltinDefaults:
         assert hasattr(s, 'PLACEHOLDERS')
         assert hasattr(s, 'ALLOWED_LOCATIONS')
         assert len(s.ALLOWED_LOCATIONS) > 1  # at least localhost
+        assert hasattr(s, 'ALLOWED_PATH')
+        assert s.ALLOWED_PATH == '' # allow all
         assert hasattr(s, 'LOGGING')
         assert s.LOGGING.keys()
 

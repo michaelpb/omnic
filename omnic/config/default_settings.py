@@ -138,6 +138,7 @@ ALLOWED_LOCATIONS = {
     'github.com',
     'raw.githubusercontent.com',
 }
+ALLOWED_PATH = ''
 
 # Conversion type safety stuff:
 CONVERSION_SYSTEM_CHECK = True

@@ -1,5 +1,6 @@
 import os
 import shutil
+import re
 
 from omnic import singletons
 from omnic.types.resourceurl import BytesResourceURL, ResourceURL
@@ -296,6 +297,12 @@ class CacheError(RuntimeError):
 
 
 def check_url(config, url):
+    # Check ALLOWED_PATH, which limits which paths are available
+    if config.ALLOWED_PATH:
+        if not re.match(config.ALLOWED_PATH, url.path):
+            return False
+
     if config.ALLOWED_LOCATIONS == '*':
         return True
+
     return url.netloc in config.ALLOWED_LOCATIONS

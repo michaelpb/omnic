@@ -133,6 +133,22 @@ class TestResourceValidate:
         with pytest.raises(URLError):
             res2.validate()  # exception since different domain
 
+    def test_validate_restrictive_path(self):
+
+        class MockConfigRestrictivePathRegexp(MockConfig):
+            ALLOWED_LOCATIONS = '*'
+            ALLOWED_PATH = r'^/test/'
+
+        okay_url = 'http://mocksite.local/test/'
+        not_okay_url = 'http://mocksite.local/tst/test/'
+
+        singletons.settings.use_settings(MockConfigRestrictivePathRegexp)
+        res1 = ForeignResource(okay_url)
+        res2 = ForeignResource(not_okay_url)
+        res1.validate()  # no exceptions since okay
+        with pytest.raises(URLError):
+            res2.validate()  # exception since different domain
+
 
 class TestTypedResource:
     @classmethod
