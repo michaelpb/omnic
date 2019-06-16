@@ -1,6 +1,6 @@
 import os
-import shutil
 import re
+import shutil
 
 from omnic import singletons
 from omnic.types.resourceurl import BytesResourceURL, ResourceURL

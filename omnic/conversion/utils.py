@@ -14,7 +14,8 @@ def _just_checking_response(resource_exists, resource):
     })
 
 
-async def convert_endpoint(url_string, ts, is_just_checking, custom_profiles=None):
+async def convert_endpoint(url_string, ts,
+                           is_just_checking, custom_profiles=None):
     '''
     Main logic for HTTP endpoint.
     '''
@@ -115,7 +116,8 @@ async def convert_local(path, to_type):
         await converter.convert(in_resource, out_resource)
 
 
-def enqueue_conversion_path(url_string, to_type, enqueue_convert, custom_profiles=None):
+def enqueue_conversion_path(url_string, to_type,
+                            enqueue_convert, custom_profiles=None):
     '''
     Given a URL string that has already been downloaded, enqueue
     necessary conversion to get to target type

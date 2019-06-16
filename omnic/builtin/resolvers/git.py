@@ -102,7 +102,8 @@ class GitUpdater(GitExecConverter):
         kwds = self.get_kwds(mutable_resource, out_resource)
         kwds['stdout'] = subprocess.PIPE
         cmd = ['git', 'rev-parse', '--quiet', '--verify', hash_or_tag]
-        result = await super()._run_command(cmd, kwds, mutable_resource, out_resource)
+        result = await super()._run_command(cmd, kwds,
+                                            mutable_resource, out_resource)
         result_str = result.stdout.decode('ascii').strip()
 
         if result_str != hash_or_tag:
