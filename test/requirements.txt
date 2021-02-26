@@ -3,7 +3,7 @@ wheel==0.29.0
 
 # Hard dependencies:
 python-magic==0.4.13
-aiohttp==2.1.0
+aiohttp==3.7.4
 async_timeout==1.2.1
 
 # Medium dependencies
