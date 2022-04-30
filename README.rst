@@ -13,9 +13,7 @@ framework to be extended into any arbitrary conversion pipelines.
 Omni Converter (which can be shortened to OmniC or ``omnic``) is free software,
 licensed under the GPL 3.0.
 
-- **WIP WARNING:** OmniC is still 'unreleased software', a work in progress.
-  The API is subject to rapid change. I intend to release the first stable
-  version before the end of this year (2017).
+- **WIP WARNING:** OmniC is in development hiatus
 
 Docker
 ======
@@ -140,7 +138,7 @@ JavaScript framework
   included JS snippet it will reload the relevant assets when the conversion is
   finished
 
-- OmniC also provides an **optional JavaScript viewer system**, hooked right
+- NOT COMPLETE: OmniC also provides an **optional JavaScript viewer system**, hooked right
   into its conversion system: For example, a Word document might initially show
   as a JPG thumbnail, then on click show a PDF-based viewer in a modal
 
@@ -149,7 +147,7 @@ Replacing the build step
 - OmniC's concept of conversion is extremely broad and versatile: For example,
   it can build minified JS bundles from ES6 sources
 
-- Ideally, OmniC could replace most of the build-step during production
+- NOT COMPLETE: Ideally, OmniC could replace most of the build-step during production
   deployments, making launches simply deploying new code to app servers, and
   everything else gets done as-needed on the first request (such as by a tester
   on staging)
