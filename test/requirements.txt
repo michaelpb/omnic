@@ -1,5 +1,5 @@
 ##### BASE REQUIREMENTS
-wheel==0.29.0
+wheel==0.38.1
 
 # Hard dependencies:
 python-magic==0.4.13
